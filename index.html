@@ -99,11 +99,22 @@ main{max-width:1300px;margin:0 auto;padding:20px}
 /* GRID for sections */
 .tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(560px,1fr));gap:20px}
 
-@media(max-width:640px){
-main{padding:12px}
-.tables-grid{grid-template-columns:1fr}
-.hdr-stat{display:none}
+@media print{
+:root{–bg:#fff;–surface:#fff;–surface2:#f5f5f5;–surface3:#eee;–border:#ccc;–accent:#007a6a;–gold:#b8860b;–text:#111;–dim:#444;–muted:#777;–res:#1a7a3a;–vis:#8a6a00;–tot:#007a6a;}
+header,.top-bar,.era-tabs,.era-config,.sec-tabs,.add-btn,.hdr-right{display:none!important}
+body,html{background:#fff;color:#111;font-size:10px}
+main{padding:8px;max-width:100%}
+.tables-grid{grid-template-columns:1fr!important}
+.record-table-wrap{border:1px solid #ccc;page-break-inside:avoid}
+.record-table{font-size:9px}
+.record-section{margin-bottom:16px;page-break-inside:avoid}
+.rs-title{color:#111;border-left-color:#007a6a;font-size:9px}
+.as-at{color:#444;font-size:9px}
+.pdf-header{display:block!important}
 }
+.pdf-header{display:none;text-align:center;margin-bottom:12px}
+.pdf-header h2{font-size:16px;font-weight:700;color:#111}
+.pdf-header p{font-size:10px;color:#444;margin-top:4px}
 </style>
 
 </head>
@@ -126,6 +137,7 @@ main{padding:12px}
       <div class="hdr-val" id="hdrRange" style="font-size:10px;color:var(--dim)"></div>
       <div class="hdr-label">date range</div>
     </div>
+    <button class="btn-sm" onclick="exportPDF()" style="border-color:var(--gold);color:var(--gold)">⬇ EXPORT PDF</button>
     <button class="btn-sm" onclick="resetAll()">RESET</button>
   </div>
 </header>
@@ -193,6 +205,10 @@ main{padding:12px}
 </div>
 
 <div class="as-at" id="asAt"></div>
+<div class="pdf-header" id="pdfHeader">
+  <h2>Record High of LSC — Passenger Statistics</h2>
+  <p id="pdfSubtitle"></p>
+</div>
 
 <!-- CONTENT -->
 <div id="content"></div>
@@ -410,174 +426,360 @@ function dayOfWeek(s){
   return new Date(s+'T00:00:00').toLocaleDateString('en-US',{weekday:'short'});
 }
 
+// ─── HK HOLIDAY REMARKS ENGINE ───────────────────────────────────────────────
+// Compute Easter Sunday for a given year (Anonymous Gregorian algorithm)
+function easterSunday(year){
+  const a=year%19,b=Math.floor(year/100),c=year%100;
+  const d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31);
+  const day=((h+l-7*m+114)%31)+1;
+  return new Date(year,month-1,day);
+}
+function dateAdd(d,days){const r=new Date(d);r.setDate(r.getDate()+days);return r;}
+function toISO(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+// Lunar New Year approximate dates (Year: [month, day] of first day)
+const LUNAR_NEW_YEAR = {
+  2003:[2,1],2004:[1,22],2005:[2,9],2006:[1,29],2007:[2,18],2008:[2,7],
+  2009:[1,26],2010:[2,14],2011:[2,3],2012:[1,23],2013:[2,10],2014:[1,31],
+  2015:[2,19],2016:[2,8],2017:[1,28],2018:[2,16],2019:[2,5],2020:[1,25],
+  2021:[2,12],2022:[2,1],2023:[1,22],2024:[2,10],2025:[1,29],2026:[2,17],
+  2027:[2,6],2028:[1,26],2029:[2,13],2030:[2,3],
+};
+
+// Chung Yeung: 9th day of 9th lunar month (approximate fixed dates)
+const CHUNG_YEUNG = {
+  2003:'2003-10-04',2004:'2004-10-22',2005:'2005-10-11',2006:'2006-10-30',
+  2007:'2007-10-19',2008:'2008-10-07',2009:'2009-10-26',2010:'2010-10-16',
+  2011:'2011-10-05',2012:'2012-10-23',2013:'2013-10-13',2014:'2014-10-02',
+  2015:'2015-10-21',2016:'2016-10-09',2017:'2017-10-28',2018:'2018-10-17',
+  2019:'2019-10-07',2020:'2020-10-25',2021:'2021-10-14',2022:'2022-10-04',
+  2023:'2023-10-23',2024:'2024-10-11',2025:'2025-10-29',2026:'2026-10-19',
+};
+
+// Dragon Boat / Tuen Ng Festival
+const TUEN_NG = {
+  2003:'2003-06-04',2004:'2004-06-22',2005:'2005-06-11',2006:'2006-05-31',
+  2007:'2007-06-19',2008:'2008-06-08',2009:'2009-05-28',2010:'2010-06-16',
+  2011:'2011-06-06',2012:'2012-06-23',2013:'2013-06-12',2014:'2014-06-02',
+  2015:'2015-06-20',2016:'2016-06-09',2017:'2017-05-30',2018:'2018-06-18',
+  2019:'2019-06-07',2020:'2020-06-25',2021:'2021-06-14',2022:'2022-06-03',
+  2023:'2023-06-22',2024:'2024-06-10',2025:'2025-05-31',2026:'2026-06-19',
+};
+
+// Ching Ming Festival (approx Apr 4-5 each year, sometimes Apr 6)
+const CHING_MING = {
+  2003:'2003-04-05',2004:'2004-04-05',2005:'2005-04-05',2006:'2006-04-05',
+  2007:'2007-04-05',2008:'2008-04-04',2009:'2009-04-04',2010:'2010-04-05',
+  2011:'2011-04-05',2012:'2012-04-04',2013:'2013-04-04',2014:'2014-04-05',
+  2015:'2015-04-05',2016:'2016-04-04',2017:'2017-04-04',2018:'2018-04-05',
+  2019:'2019-04-05',2020:'2020-04-04',2021:'2021-04-04',2022:'2022-04-05',
+  2023:'2023-04-05',2024:'2024-04-04',2025:'2025-04-04',2026:'2026-04-05',
+};
+
+// Buddha's Birthday (4th month 8th day lunar, approx)
+const BUDDHAS_BIRTHDAY = {
+  2003:'2003-05-09',2004:'2004-05-26',2005:'2005-05-15',2006:'2006-05-05',
+  2007:'2007-05-24',2008:'2008-05-12',2009:'2009-05-02',2010:'2010-05-21',
+  2011:'2011-05-10',2012:'2012-05-28',2013:'2013-05-17',2014:'2014-05-06',
+  2015:'2015-05-25',2016:'2016-05-14',2017:'2017-05-03',2018:'2018-05-22',
+  2019:'2019-05-12',2020:'2020-04-30',2021:'2021-05-19',2022:'2022-05-08',
+  2023:'2023-05-26',2024:'2024-05-15',2025:'2025-05-05',2026:'2026-05-24',
+};
+
+// National Games years (held in China, big cross-border movement)
+const NATIONAL_GAMES_YEARS = [2021, 2025]; // 2021 Shaanxi, 2025 Guangdong-HK-Macau
+
+function getRemarks(dateStr){
+  if(!dateStr)return'';
+  const d=new Date(dateStr+'T00:00:00');
+  const year=d.getFullYear();
+  const month=d.getMonth()+1; // 1-12
+  const day=d.getDate();
+  const dow=d.getDay(); // 0=Sun,6=Sat
+  const isWeekend=dow===0||dow===6;
+  const isSat=dow===6;
+  const isSun=dow===0;
+  const isSummer=month>=6&&month<=9; // Jun-Sep
+  const remarks=[];
+
+  // ── Fixed public holidays ──
+  // New Year's Day
+  if(month===1&&day===1)return"New Year's Day";
+  if(month===1&&day===2&&dow===1)return"New Year's Holiday";
+
+  // Labour Day (1 May)
+  if(month===5&&day===1)return'Labour Day';
+  if(month===5&&day===2&&dow===1)return'Labour Day Holiday';
+
+  // HKSAR Establishment Day (1 Jul)
+  if(month===7&&day===1)return'HKSAR Establishment Day';
+  if(month===7&&day===2&&dow===1)return'HKSAR Establishment Day Holiday';
+
+  // National Day Golden Week (1-7 Oct) — massive Mainland traffic
+  if(month===10&&day===1)return'National Day';
+  if(month===10&&day>=1&&day<=7){
+    if(isWeekend)return`National Day Golden Week (${isSat?'Saturday':'Sunday'})`;
+    return'National Day Golden Week';
+  }
+  if(month===10&&day===8&&dow===1)return'National Day Holiday';
+
+  // Christmas
+  if(month===12&&day===25)return'Christmas Day';
+  if(month===12&&day===26)return'Boxing Day';
+  if(month===12&&day===27&&dow===1)return'Christmas Holiday';
+
+  // ── Easter (computed) ──
+  const easter=easterSunday(year);
+  const goodFri=dateAdd(easter,-2);
+  const easterMon=dateAdd(easter,1);
+  const easterTue=dateAdd(easter,2);
+  const easterPre=dateAdd(easter,-7); // Palm Sunday week
+  const easterDate=toISO(easter);
+  const goodFriDate=toISO(goodFri);
+  const easterMonDate=toISO(easterMon);
+  const easterTueDate=toISO(easterTue);
+  if(dateStr===goodFriDate)return'Good Friday (Easter Holiday)';
+  if(dateStr===toISO(dateAdd(easter,-1)))return'Easter Eve';
+  if(dateStr===easterDate)return'Easter Sunday';
+  if(dateStr===easterMonDate)return'Easter Monday';
+  if(dateStr===easterTueDate)return'Day after Easter Holiday';
+  // Easter week
+  const easterDiff=Math.round((d-easter)/86400000);
+  if(easterDiff>=-6&&easterDiff<=3)return`Easter Holiday${isWeekend?' ('+( isSat?'Saturday':'Sunday')+')':''}`;
+
+  // ── Lunar New Year ──
+  const lny=LUNAR_NEW_YEAR[year];
+  if(lny){
+    const lnyDate=new Date(year,lny[0]-1,lny[1]);
+    const lnyDiff=Math.round((d-lnyDate)/86400000);
+    if(lnyDiff===0)return'Lunar New Year (Day 1)';
+    if(lnyDiff===1)return'Lunar New Year (Day 2)';
+    if(lnyDiff===2)return'Lunar New Year (Day 3)';
+    if(lnyDiff===-1)return'Lunar New Year Eve';
+    if(lnyDiff>=-3&&lnyDiff<=6){
+      const dayName=['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Day 7'][lnyDiff]||`Day ${lnyDiff+1}`;
+      return`Lunar New Year${lnyDiff>0?' ('+dayName+')':''}`;
+    }
+    // Golden Week before LNY
+    if(lnyDiff>=-7&&lnyDiff<0)return'Pre-Lunar New Year';
+  }
+
+  // ── Ching Ming ──
+  const chingMing=CHING_MING[year];
+  if(chingMing){
+    if(dateStr===chingMing)return'Ching Ming Festival';
+    const cmDate=new Date(chingMing);
+    const cmDiff=Math.round((d-cmDate)/86400000);
+    if(cmDiff===1&&dow===1)return'Ching Ming Festival Holiday';
+  }
+
+  // ── Buddha's Birthday ──
+  const bday=BUDDHAS_BIRTHDAY[year];
+  if(bday&&dateStr===bday)return"Buddha's Birthday";
+  if(bday){const bd=new Date(bday);if(Math.round((d-bd)/86400000)===1&&dow===1)return"Buddha's Birthday Holiday";}
+
+  // ── Dragon Boat / Tuen Ng ──
+  const tuenNg=TUEN_NG[year];
+  if(tuenNg&&dateStr===tuenNg)return'Dragon Boat Festival (Tuen Ng)';
+  if(tuenNg){const tn=new Date(tuenNg);if(Math.round((d-tn)/86400000)===1&&dow===1)return'Tuen Ng Festival Holiday';}
+
+  // ── Chung Yeung ──
+  const chungyeung=CHUNG_YEUNG[year];
+  if(chungyeung&&dateStr===chungyeung)return'Chung Yeung Festival';
+  if(chungyeung){const cy=new Date(chungyeung);if(Math.round((d-cy)/86400000)===1&&dow===1)return'Chung Yeung Festival Holiday';}
+
+  // ── National Games ──
+  if(NATIONAL_GAMES_YEARS.includes(year)){
+    // National Games 2025: Nov 9 - Nov 26
+    if(year===2025&&month===11&&day>=9&&day<=26)return`National Games${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
+    // National Games 2021: Sep 15 - Sep 27
+    if(year===2021&&month===9&&day>=15&&day<=27)return`National Games${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
+  }
+
+  // ── Labour Week (Golden Week around May 1) ──
+  if(month===5&&day>=1&&day<=7){
+    if(isWeekend)return`Labour Week (${isSat?'Saturday':'Sunday'})`;
+    return'Labour Week';
+  }
+  if(month===4&&day>=29&&day<=30)return'Pre-Labour Day';
+
+  // ── Mainland National Week (carried over, ends Oct 7) ──
+  // Already handled above in Oct 1-7
+
+  // ── Summer weekends / weekdays ──
+  if(isSummer){
+    if(isSat)return'Summer Saturday';
+    if(isSun)return'Summer Sunday';
+    // Check if it's a special summer period
+    if(month===7||month===8)return'Summer Weekday';
+  }
+
+  // ── School holidays (HK) rough periods ──
+  // Christmas school holiday ~Dec 21 - Jan 2
+  if((month===12&&day>=21)||(month===1&&day<=2)){
+    if(isWeekend)return`Christmas Holiday (${isSat?'Saturday':'Sunday'})`;
+    return'Christmas Holiday';
+  }
+
+  // ── Weekends & normal days ──
+  if(isSat)return'Saturday';
+  if(isSun)return'Sunday';
+  return''; // weekday, no special remark
+}
+
+// ─── PDF EXPORT ──────────────────────────────────────────────────────────────
+function exportPDF(){
+  // Update subtitle for print
+  const asAtText=document.getElementById('asAt').textContent;
+  document.getElementById('pdfSubtitle').textContent=asAtText;
+  // Show all sections temporarily for full PDF
+  const savedSection=currentSection;
+  const sections=['total','hkr','visitor','hourly'];
+  // Build full content
+  const days=eraFilter(allDays);
+  let allHTML='';
+  for(const sec of sections){
+    currentSection=sec;
+    allHTML+=`<div style="page-break-before:${sec==='total'?'avoid':'always'}">
+      <h3 style="font-family:monospace;font-size:12px;margin-bottom:12px;color:#333;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #ccc;padding-bottom:4px">${
+        sec==='total'?'Total Traffic':sec==='hkr'?'HKR':sec==='visitor'?'Visitor':'Hourly Records'
+      }</h3>`;
+    const el=document.createElement('div');
+    el.innerHTML=buildSectionHTML(days,sec);
+    allHTML+=el.innerHTML+'</div>';
+  }
+  currentSection=savedSection;
+  document.getElementById('content').innerHTML=buildSectionHTML(days,savedSection);
+  // Temporarily replace content
+  const orig=document.getElementById('content').innerHTML;
+  document.getElementById('content').innerHTML=allHTML;
+  window.print();
+  // Restore
+  setTimeout(()=>{
+    document.getElementById('content').innerHTML=buildSectionHTML(eraFilter(allDays),savedSection);
+  },500);
+}
+
+function buildSectionHTML(days,sec){
+  if(sec==='total'){
+    return`<div class="tables-grid">
+      <div>${buildTotalTrafficTable(days)}</div>
+      <div>${buildInboundTable(days)}${buildOutboundTable(days)}</div>
+    </div>`;
+  }else if(sec==='hkr'){
+    return`<div class="tables-grid">
+      <div>${buildHKRTotalTable(days)}</div>
+      <div>${buildHKRInboundTable(days)}${buildHKROutboundTable(days)}</div>
+    </div>`;
+  }else if(sec==='visitor'){
+    return`<div class="tables-grid">
+      <div>${buildVisTotalTable(days)}</div>
+      <div>${buildVisInboundTable(days)}${buildVisOutboundTable(days)}</div>
+    </div>`;
+  }else{
+    return`<div class="tables-grid">
+      <div>
+        ${buildHourlyTable(days,'Hourly Record High on Total Passenger',h=>(h.arr_tot||0)+(h.dep_tot||0))}
+        ${buildHourlyTable(days,'Hourly Record High on Inbound Passenger',h=>h.arr_tot)}
+        ${buildHourlyTable(days,'Hourly Record High on Outbound Passenger',h=>h.dep_tot)}
+      </div>
+      <div>
+        ${buildHourlyTable(days,'Hourly Record High on Inbound Residents',h=>h.arr_res)}
+        ${buildHourlyTable(days,'Hourly Record High on Outbound Residents',h=>h.dep_res)}
+        ${buildHourlyTable(days,'Hourly Record High on Inbound Visitors',h=>h.arr_vis)}
+        ${buildHourlyTable(days,'Hourly Record High on Outbound Visitors',h=>h.dep_vis)}
+      </div>
+    </div>`;
+  }
+}
+
 // ─── TABLE BUILDERS ───────────────────────────────────────────────────────────
 
 function buildTotalTrafficTable(days){
-  // Columns: Record High | Date | Arr HKR | Arr Vis | Dep HKR | Dep Vis | Total | Remarks
   const rows=topN(days,d=>d.dt.ad_tot);
-  return buildTable(
-    'Record High on Total Passenger Traffic',
-    ['','Date','','ARRIVAL','','DEPARTURE','','Total','Remarks'],
+  return buildTable('Record High on Total Passenger Traffic',
     ['Rank','Date','Day','HKR','Visitors','HKR','Visitors','Total','Remarks'],
     [false,true,true,false,false,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.arr_res), fN(x.day.dt.arr_vis),
-      fN(x.day.dt.dep_res), fN(x.day.dt.dep_vis),
-      fN(x.day.dt.ad_tot), ''
-    ]),
-    [3,4,5,6,7],
-    [[3,4],[5,6]],
-    'var(--accent)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_res),fN(x.day.dt.dep_vis),fN(x.day.dt.ad_tot),getRemarks(x.day.date)]),
+    [7],['Arrival','Departure'],'var(--accent)');
 }
-
 function buildInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_tot);
-  return buildTable(
-    'Record High on Inbound Passengers',
-    ['','Date','','ARRIVAL','','Remarks'],
+  return buildTable('Record High on Inbound Passengers',
     ['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
     [false,true,true,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.arr_res), fN(x.day.dt.arr_vis),
-      fN(x.day.dt.arr_tot), ''
-    ]),
-    [5],[[]],
-    'var(--res)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.arr_vis),fN(x.day.dt.arr_tot),getRemarks(x.day.date)]),
+    [5],[],'var(--res)');
 }
-
 function buildOutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_tot);
-  return buildTable(
-    'Record High on Outbound Passengers',
-    ['','Date','','DEPARTURE','','Remarks'],
+  return buildTable('Record High on Outbound Passengers',
     ['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
     [false,true,true,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.dep_res), fN(x.day.dt.dep_vis),
-      fN(x.day.dt.dep_tot), ''
-    ]),
-    [5],[[]],
-    'var(--vis)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.dep_res),fN(x.day.dt.dep_vis),fN(x.day.dt.dep_tot),getRemarks(x.day.date)]),
+    [5],[],'var(--vis)');
 }
-
-// HKR SECTION
 function buildHKRTotalTable(days){
   const rows=topN(days,d=>(d.dt.arr_res||0)+(d.dt.dep_res||0));
-  return buildTable(
-    'Record High on Total Number of HKR',
-    ['','Date','','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+  return buildTable('Record High on Total Number of HKR',
     ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
     [false,true,true,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.arr_res), fN(x.day.dt.dep_res),
-      fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)), ''
-    ]),
-    [5],[[]],
-    'var(--res)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.dep_res),fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)),getRemarks(x.day.date)]),
+    [5],[],'var(--res)');
 }
 function buildHKRInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_res);
-  return buildTable(
-    'Record High on Inbound HKR',
-    ['','Date','','Arriving','Departing','Total HKR','Remarks'],
+  return buildTable('Record High on Inbound HKR',
     ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
     [false,true,true,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.arr_res), fN(x.day.dt.dep_res),
-      fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)), ''
-    ]),
-    [3],[[]],
-    'var(--res)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.dep_res),fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)),getRemarks(x.day.date)]),
+    [5],[],'var(--res)');
 }
 function buildHKROutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_res);
-  return buildTable(
-    'Record High on Outbound HKR',
-    ['','Date','','Arriving','Departing','Total HKR','Remarks'],
+  return buildTable('Record High on Outbound HKR',
     ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
     [false,true,true,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.arr_res), fN(x.day.dt.dep_res),
-      fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)), ''
-    ]),
-    [4],[[]],
-    'var(--res)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.dep_res),fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)),getRemarks(x.day.date)]),
+    [5],[],'var(--res)');
 }
-
-// VISITOR SECTION
 function buildVisTotalTable(days){
   const rows=topN(days,d=>(d.dt.arr_vis||0)+(d.dt.dep_vis||0));
-  return buildTable(
-    'Record High on Total Number of Visitors',
-    ['','Date','','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+  return buildTable('Record High on Total Number of Visitors',
     ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
     [false,true,true,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.arr_vis), fN(x.day.dt.dep_vis),
-      fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)), ''
-    ]),
-    [5],[[]],
-    'var(--vis)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_vis),fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)),getRemarks(x.day.date)]),
+    [5],[],'var(--vis)');
 }
 function buildVisInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_vis);
-  return buildTable(
-    'Record High on Inbound Visitors',
-    ['','Date','','Arriving','Departing','Total Visitors','Remarks'],
+  return buildTable('Record High on Inbound Visitors',
     ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
     [false,true,true,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.arr_vis), fN(x.day.dt.dep_vis),
-      fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)), ''
-    ]),
-    [3],[[]],
-    'var(--vis)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_vis),fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)),getRemarks(x.day.date)]),
+    [5],[],'var(--vis)');
 }
 function buildVisOutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_vis);
-  return buildTable(
-    'Record High on Outbound Visitors',
-    ['','Date','','Arriving','Departing','Total Visitors','Remarks'],
+  return buildTable('Record High on Outbound Visitors',
     ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
     [false,true,true,false,false,false,true],
-    rows.map((x,i)=>[
-      i+1, x.day.date, dayOfWeek(x.day.date),
-      fN(x.day.dt.arr_vis), fN(x.day.dt.dep_vis),
-      fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)), ''
-    ]),
-    [4],[[]],
-    'var(--vis)'
-  );
+    rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_vis),fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)),getRemarks(x.day.date)]),
+    [5],[],'var(--vis)');
 }
 
-// HOURLY
-function buildHourlyTable(days, title, valueFn, showCols){
-  // showCols: indices of the value columns to show
-  // Each row: Rank | Date | Day | Time | Arr R | Arr V | Arr Sub | Dep R | Dep V | Dep Sub | Total | Remarks
-  const rows=topNHourly(days, valueFn);
-  return `<div class="record-section">
+function buildHourlyTable(days,title,valueFn){
+  const rows=topNHourly(days,valueFn);
+  return`<div class="record-section">
   <div class="rs-title">${title}</div>
-  <div class="record-table-wrap">
-  <table class="record-table">
+  <div class="record-table-wrap"><table class="record-table">
     <thead>
       <tr>
-        <th rowspan="2" class="l">Record High</th>
+        <th rowspan="2" class="l">Rank</th>
         <th rowspan="2" class="l">Date</th>
         <th rowspan="2">Day</th>
         <th rowspan="2">Time</th>
@@ -586,58 +788,29 @@ function buildHourlyTable(days, title, valueFn, showCols){
         <th rowspan="2" style="color:var(--tot)">Total</th>
         <th rowspan="2" class="l">Remarks</th>
       </tr>
-      <tr>
-        <th>R</th><th>V</th><th>Sub-total</th>
-        <th class="group-hdr">R</th><th>V</th><th>Sub-total</th>
-      </tr>
+      <tr><th>R</th><th>V</th><th>Sub-total</th><th class="group-hdr">R</th><th>V</th><th>Sub-total</th></tr>
     </thead>
     <tbody>
-    ${rows.map((x,i)=>{
-      const h=x.hr;
-      return`<tr class="${i===0?'rank1':''}">
-        <td class="rank-cell ${i===0?'rank1-cell':''} l">${i+1}</td>
-        <td class="l ${i===0?'':'dim'}" style="${i===0?'color:var(--gold)':''}">${fDate(x.day.date)}</td>
-        <td>${dayOfWeek(x.day.date)}</td>
-        <td>${h.time}</td>
-        <td>${fN(h.arr_res)}</td>
-        <td>${fN(h.arr_vis)}</td>
-        <td style="color:var(--res)">${fN(h.arr_tot)}</td>
-        <td>${fN(h.dep_res)}</td>
-        <td>${fN(h.dep_vis)}</td>
-        <td style="color:var(--vis)">${fN(h.dep_tot)}</td>
-        <td class="total-cell ${i===0?'':'dim'}" style="${i===0?'color:var(--gold)':''}">${fN(x.value)}</td>
-        <td class="remarks-cell l"></td>
-      </tr>`;
-    }).join('')}
+    ${rows.map((x,i)=>`<tr class="${i===0?'rank1':''}">
+      <td class="rank-cell ${i===0?'rank1-cell':''} l">${i+1}</td>
+      <td class="l" style="${i===0?'color:var(--gold)':''}">${fDate(x.day.date)}</td>
+      <td>${dayOfWeek(x.day.date)}</td>
+      <td>${x.hr.time}</td>
+      <td>${fN(x.hr.arr_res)}</td><td>${fN(x.hr.arr_vis)}</td>
+      <td style="color:var(--res)">${fN(x.hr.arr_tot)}</td>
+      <td>${fN(x.hr.dep_res)}</td><td>${fN(x.hr.dep_vis)}</td>
+      <td style="color:var(--vis)">${fN(x.hr.dep_tot)}</td>
+      <td class="total-cell" style="${i===0?'color:var(--gold)':''}">${fN(x.value)}</td>
+      <td class="remarks-cell l">${getRemarks(x.day.date)}</td>
+    </tr>`).join('')}
     </tbody>
-  </table>
-  </div>
-  </div>`;
+  </table></div></div>`;
 }
 
-// Generic table builder
-function buildTable(title, groupHeaders, colHeaders, isLeft, rows, totalCols, groupSpans, accentColor){
-  const nCols=colHeaders.length;
-  // Build group header row
-  let ghRow='';
-  let ci=0;
-  for(const gh of groupHeaders){
-    if(gh===''){ghRow+=`<th rowspan="2" class="${isLeft[ci]?'l':''}">${colHeaders[ci]}</th>`;ci++;}
-    else{
-      // find how many subcolumns
-      const remaining=groupHeaders.slice(groupHeaders.indexOf(gh)+1);
-      const nextGroup=remaining.find(x=>x!=='');
-      const nextIdx=nextGroup?groupHeaders.indexOf(nextGroup,groupHeaders.indexOf(gh)+1):groupHeaders.length;
-      const span=nextIdx-groupHeaders.indexOf(gh)-1;
-      ghRow+=`<th colspan="${Math.max(1,span)}" class="group-hdr" style="color:${accentColor}">${gh}</th>`;
-      ci+=Math.max(1,span);
-    }
-  }
-
+function buildTable(title,colHeaders,isLeft,rows,totalCols,_unused,accentColor){
   return`<div class="record-section">
   <div class="rs-title">${title}</div>
-  <div class="record-table-wrap">
-  <table class="record-table">
+  <div class="record-table-wrap"><table class="record-table">
     <thead>
       <tr>${colHeaders.map((h,i)=>`<th class="${isLeft[i]?'l':''}">${h}</th>`).join('')}</tr>
     </thead>
@@ -647,20 +820,19 @@ function buildTable(title, groupHeaders, colHeaders, isLeft, rows, totalCols, gr
         const isTotal=totalCols.includes(ci);
         const isRank=ci===0;
         const isDateCol=ci===1;
-        const isRem=ci===row.length-1;
+        const isRem=ci===row.length-1&&isLeft[ci];
         let cls='';
         if(isRank)cls=`rank-cell ${ri===0?'rank1-cell':''} l`;
         else if(isDateCol)cls='l';
-        else if(isTotal)cls=`total-cell`;
+        else if(isTotal)cls='total-cell';
         else if(isRem)cls='remarks-cell l';
         const style=ri===0&&isDateCol?'style="color:var(--gold)"':'';
-        return`<td class="${cls}" ${style}>${isDateCol&&!isRank?fDate(cell):cell}</td>`;
+        const display=isDateCol&&ci!==0?fDate(cell):cell;
+        return`<td class="${cls}" ${style}>${display}</td>`;
       }).join('')}
     </tr>`).join('')}
     </tbody>
-  </table>
-  </div>
-  </div>`;
+  </table></div></div>`;
 }
 
 // ─── RENDER ──────────────────────────────────────────────────────────────────
@@ -670,41 +842,7 @@ function renderContent(){
   const eraLabel=currentEra==='postcovid'?`Post-COVID (from ${POST_COVID_DATE})`:`Since Commissioning (from ${COMM_DATE})`;
   document.getElementById('asAt').textContent=
     `Record High of LSC (${eraLabel}) [as at ${fDate(latestDate)}] — ${days.length} days in range`;
-
-  let html='';
-
-  if(currentSection==='total'){
-    html+=`<div class="tables-grid">
-      <div>${buildTotalTrafficTable(days)}</div>
-      <div>${buildInboundTable(days)}${buildOutboundTable(days)}</div>
-    </div>`;
-  } else if(currentSection==='hkr'){
-    html+=`<div class="tables-grid">
-      <div>${buildHKRTotalTable(days)}</div>
-      <div>${buildHKRInboundTable(days)}${buildHKROutboundTable(days)}</div>
-    </div>`;
-  } else if(currentSection==='visitor'){
-    html+=`<div class="tables-grid">
-      <div>${buildVisTotalTable(days)}</div>
-      <div>${buildVisInboundTable(days)}${buildVisOutboundTable(days)}</div>
-    </div>`;
-  } else if(currentSection==='hourly'){
-    html+=`<div class="tables-grid">
-      <div>
-        ${buildHourlyTable(days,'Hourly Record High on Total Passenger',h=>(h.arr_tot||0)+(h.dep_tot||0),[])}
-        ${buildHourlyTable(days,'Hourly Record High on Inbound Passenger',h=>h.arr_tot,[])}
-        ${buildHourlyTable(days,'Hourly Record High on Outbound Passenger',h=>h.dep_tot,[])}
-      </div>
-      <div>
-        ${buildHourlyTable(days,'Hourly Record High on Inbound Residents',h=>h.arr_res,[])}
-        ${buildHourlyTable(days,'Hourly Record High on Outbound Residents',h=>h.dep_res,[])}
-        ${buildHourlyTable(days,'Hourly Record High on Inbound Visitors',h=>h.arr_vis,[])}
-        ${buildHourlyTable(days,'Hourly Record High on Outbound Visitors',h=>h.dep_vis,[])}
-      </div>
-    </div>`;
-  }
-
-  document.getElementById('content').innerHTML=html;
+  document.getElementById('content').innerHTML=buildSectionHTML(days,currentSection);
 }
 </script>
 
