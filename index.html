@@ -1,268 +1,268 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Passenger Statistics Record Tracker</title>
+<title>LSC Record High — Passenger Statistics</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#08090c;--surface:#0f1117;--surface2:#161820;--surface3:#1e2030;
-  --border:#2a2d3e;--accent:#00e5c8;--accent2:#ff6b35;--accent3:#7c6af7;
-  --text:#e8eaf0;--dim:#8b8fa8;--muted:#50546a;
-  --arrival:#00e5c8;--departure:#ff6b35;--combined:#7c6af7;
-  --resident:#4ade80;--visitor:#facc15;
+  --bg:#07080b;--surface:#0d0f16;--surface2:#13151f;--surface3:#191c28;
+  --border:#252836;--accent:#00d4b8;--gold:#f5c842;--red:#e05555;--blue:#4a9eff;
+  --text:#dde1f0;--dim:#7c8099;--muted:#464a5e;
+  --res:#4ade80;--vis:#facc15;--tot:#00d4b8;
 }
 html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
-::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--surface)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-header{position:sticky;top:0;background:rgba(8,9,12,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;z-index:100}
-.logo{display:flex;align-items:center;gap:14px}
-.logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:16px}
-.logo-title{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.05em}
-.logo-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.header-stats{display:flex;align-items:center;gap:24px}
-.stat-item{text-align:right}
-.stat-val{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--accent);line-height:1}
-.stat-label{font-size:10px;color:var(--muted)}
-.btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Space Mono',monospace;transition:all .15s}
-.btn:hover{border-color:var(--dim);color:var(--text)}
-main{max-width:1400px;margin:0 auto;padding:32px}
-/* Upload */
-.upload-hero{max-width:600px;margin:80px auto;text-align:center}
-.hero-title{font-family:'Space Mono',monospace;font-size:32px;font-weight:700;line-height:1.2;margin-bottom:12px}
-.hero-sub{color:var(--dim);font-size:15px;margin-bottom:48px;line-height:1.7}
-.drop-zone{border:2px dashed var(--border);border-radius:16px;padding:60px 40px;cursor:pointer;position:relative;transition:all .2s}
-.drop-zone:hover,.drop-zone.over{border-color:var(--accent);background:rgba(0,229,200,.04)}
+
+/* HEADER */
+header{background:var(–surface);border-bottom:1px solid var(–border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(–accent),#7c6af7);display:flex;align-items:center;justify-content:center;font-size:13px}
+.brand-name{font-family:‘Space Mono’,monospace;font-size:12px;font-weight:700;letter-spacing:.04em}
+.brand-sub{font-size:10px;color:var(–muted);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.hdr-stat{text-align:right}
+.hdr-val{font-family:‘Space Mono’,monospace;font-size:16px;font-weight:700;color:var(–accent);line-height:1}
+.hdr-label{font-size:9px;color:var(–muted)}
+.btn-sm{background:transparent;border:1px solid var(–border);color:var(–muted);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;font-family:‘Space Mono’,monospace}
+
+/* MAIN */
+main{max-width:1300px;margin:0 auto;padding:20px}
+
+/* UPLOAD */
+.upload-wrap{max-width:520px;margin:60px auto;text-align:center}
+.upload-title{font-family:‘Space Mono’,monospace;font-size:22px;font-weight:700;line-height:1.3;margin-bottom:8px}
+.upload-sub{color:var(–dim);font-size:13px;margin-bottom:36px;line-height:1.7}
+.drop-zone{border:2px dashed var(–border);border-radius:12px;padding:44px 28px;cursor:pointer;position:relative;transition:all .2s}
+.drop-zone:hover,.drop-zone.over{border-color:var(–accent);background:rgba(0,212,184,.04)}
 .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.drop-icon{font-size:48px;margin-bottom:16px}
-.drop-title{font-family:'Space Mono',monospace;font-size:14px;color:var(--dim);margin-bottom:8px}
-.drop-hint{font-size:12px;color:var(--muted)}
-/* Tabs */
-.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:28px}
-.tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:12px 24px;cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;transition:all .15s;margin-bottom:-1px}
-.tab.active{border-bottom-color:var(--accent);color:var(--accent)}
-/* Group buttons */
-.group-btns{display:flex;gap:8px;margin-bottom:24px}
-.group-btn{padding:8px 20px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;font-size:12px;font-family:'Space Mono',monospace;transition:all .15s}
-/* Cards */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.record-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden}
-.card-glow{position:absolute;top:0;left:0;right:0;height:60px;pointer-events:none}
-.card-group{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
-.card-type{font-size:14px;font-weight:600}
-.sub-card{background:var(--surface2);border-radius:6px;padding:14px}
-.sub-label{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}
-.sub-val{font-size:28px;font-family:'Space Mono',monospace;font-weight:700;line-height:1}
-.sub-date{margin-top:6px;font-size:12px;color:var(--dim)}
-.sub-file{font-size:11px;color:var(--muted);margin-top:2px}
-/* Summary ribbon */
-.ribbon{margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.ribbon-cell{background:var(--surface2);padding:24px 28px}
-.ribbon-label{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:.1em;margin-bottom:8px}
-.ribbon-val{font-size:36px;font-family:'Space Mono',monospace;font-weight:700;line-height:1}
-.ribbon-date{margin-top:6px;font-size:12px;color:var(--dim)}
-/* Table */
-.table-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:16px}
-.table-title{font-size:16px;font-family:'Space Mono',monospace;color:var(--dim)}
-.search-input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 14px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;width:240px;outline:none}
-.search-input:focus{border-color:var(--accent)}
-.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:12px}
-thead th{padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:right;cursor:pointer;white-space:nowrap;user-select:none}
-thead th.date-th{text-align:left}
-thead th.active{color:var(--accent)}
-.group-th{text-align:center!important;font-size:9px;letter-spacing:.1em;border-left:1px solid var(--border)}
-tbody tr:nth-child(even){background:var(--surface2)}
-tbody tr:nth-child(odd){background:var(--surface)}
-tbody td{padding:8px 12px;text-align:right;font-family:'Space Mono',monospace;font-size:11px;color:var(--dim)}
-tbody td.date-td{text-align:left;color:var(--dim)}
-tbody td.total-col{color:var(--text);font-weight:600}
-.date-td-main{font-size:11px}
-.date-td-file{font-size:9px;color:var(--muted);margin-top:2px}
-/* Top bar */
-.top-bar{display:flex;align-items:center;gap:12px;margin-bottom:32px}
-.add-files-label{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-family:'Space Mono',monospace;color:var(--dim)}
-.add-files-label:hover{border-color:var(--accent);color:var(--accent)}
-.files-list{font-size:12px;color:var(--muted)}
-.loading{color:var(--accent);font-size:13px;font-family:'Space Mono',monospace}
-.error-box{color:#ff3d6a;font-size:11px;padding:12px;background:rgba(255,61,106,.1);border-radius:8px;margin-top:16px;white-space:pre-wrap;text-align:left;font-family:'Space Mono',monospace;max-height:300px;overflow-y:auto}
-@media(max-width:768px){
-  header{padding:0 16px}
-  main{padding:16px}
-  .hero-title{font-size:22px}
-  .ribbon{grid-template-columns:1fr}
-  .header-stats{display:none}
+.drop-icon{font-size:38px;margin-bottom:12px}
+.drop-t{font-family:‘Space Mono’,monospace;font-size:12px;color:var(–dim);margin-bottom:5px}
+.drop-h{font-size:11px;color:var(–muted)}
+.loading-msg{color:var(–accent);font-size:12px;font-family:‘Space Mono’,monospace;margin-top:16px}
+.err-box{color:#ff4d6a;font-size:10px;padding:10px;background:rgba(255,77,106,.1);border-radius:6px;margin-top:14px;white-space:pre-wrap;font-family:‘Space Mono’,monospace;max-height:240px;overflow-y:auto;text-align:left}
+
+/* DASHBOARD */
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.add-btn{display:flex;align-items:center;gap:6px;background:var(–surface);border:1px solid var(–border);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:10px;font-family:‘Space Mono’,monospace;color:var(–dim)}
+.add-btn:hover{border-color:var(–accent);color:var(–accent)}
+.files-label{font-size:11px;color:var(–muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ERA TABS */
+.era-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(–border)}
+.era-tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;font-family:‘Space Mono’,monospace;font-size:10px;letter-spacing:.08em;color:var(–muted);text-transform:uppercase;transition:all .15s;margin-bottom:-1px}
+.era-tab.active{border-bottom-color:var(–gold);color:var(–gold)}
+
+/* ERA CONFIG */
+.era-config{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.era-config label{font-size:11px;color:var(–dim);font-family:‘Space Mono’,monospace}
+.era-config input[type=date]{background:var(–surface3);border:1px solid var(–border);color:var(–text);padding:5px 10px;border-radius:5px;font-size:11px;font-family:‘Space Mono’,monospace}
+.era-config input[type=date]:focus{outline:none;border-color:var(–accent)}
+.era-apply{background:var(–accent);color:#000;border:none;padding:5px 14px;border-radius:5px;cursor:pointer;font-size:10px;font-family:‘Space Mono’,monospace;font-weight:700}
+
+/* SECTION TABS */
+.sec-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.sec-tab{background:transparent;border:1px solid var(–border);border-radius:5px;padding:6px 14px;cursor:pointer;font-size:10px;font-family:‘Space Mono’,monospace;color:var(–muted);transition:all .15s}
+.sec-tab.active{background:rgba(0,212,184,.1);border-color:var(–accent);color:var(–accent)}
+
+/* AS-AT DATE */
+.as-at{font-family:‘Space Mono’,monospace;font-size:11px;color:var(–dim);margin-bottom:16px}
+
+/* RECORD TABLE */
+.record-section{margin-bottom:28px}
+.rs-title{font-family:‘Space Mono’,monospace;font-size:11px;font-weight:700;color:var(–dim);letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase;border-left:3px solid var(–accent);padding-left:10px}
+.record-table-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(–border)}
+.record-table{width:100%;border-collapse:collapse;font-size:11px}
+.record-table thead tr:first-child th{background:var(–surface2);padding:7px 10px;font-family:‘Space Mono’,monospace;font-size:9px;letter-spacing:.07em;color:var(–muted);text-align:center;border-bottom:1px solid var(–border);white-space:nowrap}
+.record-table thead tr:last-child th{background:var(–surface);padding:6px 10px;font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:.06em;color:var(–muted);text-align:right;border-bottom:1px solid var(–border)}
+.record-table thead tr:last-child th.l{text-align:left}
+.record-table thead th.group-hdr{border-left:1px solid var(–border)}
+.record-table tbody tr{transition:background .1s}
+.record-table tbody tr:nth-child(even){background:var(–surface2)}
+.record-table tbody tr:nth-child(odd){background:var(–surface)}
+.record-table tbody tr.rank1{background:rgba(245,200,66,.06)!important}
+.record-table tbody tr.highlight{color:var(–gold)}
+.record-table tbody td{padding:7px 10px;font-family:‘Space Mono’,monospace;font-size:11px;text-align:right;color:var(–dim);white-space:nowrap}
+.record-table tbody td.l{text-align:left}
+.record-table tbody td.rank-cell{font-size:10px;color:var(–muted);text-align:center}
+.record-table tbody td.rank1-cell{color:var(–gold);font-weight:700}
+.record-table tbody td.total-cell{color:var(–tot);font-weight:700}
+.record-table tbody td.remarks-cell{color:var(–dim);font-size:10px;text-align:left}
+.record-table tbody tr.rank1 td.total-cell{color:var(–gold)}
+
+/* GRID for sections */
+.tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(560px,1fr));gap:20px}
+
+@media(max-width:640px){
+main{padding:12px}
+.tables-grid{grid-template-columns:1fr}
+.hdr-stat{display:none}
 }
 </style>
+
 </head>
 <body>
 
 <header>
-  <div class="logo">
-    <div class="logo-icon">⬡</div>
+  <div class="brand">
+    <div class="brand-icon">⬡</div>
     <div>
-      <div class="logo-title">PASSENGER STATS</div>
-      <div class="logo-sub">Record Tracker &amp; Analysis</div>
+      <div class="brand-name">LSC RECORD HIGH</div>
+      <div class="brand-sub">Passenger Statistics Tracker</div>
     </div>
   </div>
-  <div class="header-stats" id="headerStats" style="display:none">
-    <div class="stat-item">
-      <div class="stat-val" id="statDays">0</div>
-      <div class="stat-label">days loaded</div>
+  <div class="hdr-right" id="hdrRight" style="display:none">
+    <div class="hdr-stat">
+      <div class="hdr-val" id="hdrDays">0</div>
+      <div class="hdr-label">days loaded</div>
     </div>
-    <div class="stat-item">
-      <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--dim)" id="statRange"></div>
-      <div class="stat-label">date range</div>
+    <div class="hdr-stat">
+      <div class="hdr-val" id="hdrRange" style="font-size:10px;color:var(--dim)"></div>
+      <div class="hdr-label">date range</div>
     </div>
-    <button class="btn" onclick="resetAll()">RESET</button>
+    <button class="btn-sm" onclick="resetAll()">RESET</button>
   </div>
 </header>
 
 <main>
-  <!-- Upload Screen -->
-  <div class="upload-hero" id="uploadScreen">
-    <h1 class="hero-title">
-      <span style="color:var(--arrival)">Arrival</span> ·
-      <span style="color:var(--departure)">Departure</span><br/>Record Tracker
+  <!-- UPLOAD -->
+  <div class="upload-wrap" id="uploadScreen">
+    <h1 class="upload-title">
+      <span style="color:var(--accent)">LSC</span> Record High<br/>
+      <span style="color:var(--gold)">Passenger Statistics</span>
     </h1>
-    <p class="hero-sub">Upload monthly Excel files to discover all-time records for arrivals, departures, residents and visitors — daily totals and peak hours.</p>
-
+    <p class="upload-sub">Upload monthly Excel files to generate Record High tables for Total Traffic, HKR, and Visitors — both daily and hourly — across Post-COVID and Since Commissioning eras.</p>
     <div class="drop-zone" id="dropZone"
       ondragover="event.preventDefault();this.classList.add('over')"
       ondragleave="this.classList.remove('over')"
       ondrop="handleDrop(event)">
       <input type="file" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)" id="fileInput"/>
       <div class="drop-icon">📊</div>
-      <div class="drop-title">DROP EXCEL FILES HERE</div>
-      <div class="drop-hint">or click to browse · .xlsx and .xls supported</div>
-      <div class="drop-hint" style="margin-top:8px">Upload multiple files — all months, all years</div>
+      <div class="drop-t">DROP EXCEL FILES HERE</div>
+      <div class="drop-h">or tap to browse · .xlsx .xls · multiple files OK</div>
     </div>
-
-    <div class="loading" id="uploadLoading" style="display:none;margin-top:20px">Parsing files…</div>
-    <div class="error-box" id="uploadError" style="display:none"></div>
+    <div class="loading-msg" id="upLoading" style="display:none">Parsing files…</div>
+    <div class="err-box" id="upError" style="display:none"></div>
   </div>
 
-  <!-- Dashboard -->
+  <!-- DASHBOARD -->
+
   <div id="dashboard" style="display:none">
     <div class="top-bar">
-      <label class="add-files-label">
-        + ADD MORE FILES
+      <label class="add-btn">
+        + ADD FILES
         <input type="file" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)" style="display:none"/>
       </label>
-      <div class="files-list" id="filesList"></div>
-      <div class="loading" id="dashLoading" style="display:none">Parsing…</div>
+      <div class="files-label" id="filesLabel"></div>
+      <div class="loading-msg" id="dashLoading" style="display:none">Parsing…</div>
     </div>
 
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('records',this)">All-Time Records</button>
-      <button class="tab" onclick="switchTab('table',this)">Day-by-Day Table</button>
-    </div>
+```
+<!-- ERA TABS -->
+<div class="era-tabs">
+  <button class="era-tab active" onclick="switchEra('postcovid',this)">Post-COVID</button>
+  <button class="era-tab" onclick="switchEra('commissioning',this)">Since Commissioning</button>
+</div>
 
-    <!-- Records Panel -->
-    <div id="recordsPanel">
-      <div class="group-btns" id="groupBtns">
-        <button class="group-btn" onclick="switchGroup('arrival',this)"
-          style="border-color:var(--arrival);color:var(--arrival);background:rgba(0,229,200,.08)">ARRIVAL</button>
-        <button class="group-btn" onclick="switchGroup('departure',this)">DEPARTURE</button>
-        <button class="group-btn" onclick="switchGroup('combined',this)">ARR + DEP</button>
-      </div>
-      <div class="cards-grid" id="cardsGrid"></div>
-      <div class="ribbon" id="ribbon"></div>
-    </div>
+<!-- ERA DATE CONFIG -->
+<div class="era-config" id="eraConfig">
+  <div>
+    <label>Post-COVID start date:</label><br/>
+    <input type="date" id="postCovidDate" value="2023-01-08"/>
+  </div>
+  <div>
+    <label>Since Commissioning start date:</label><br/>
+    <input type="date" id="commDate" value="2003-09-07"/>
+  </div>
+  <button class="era-apply" onclick="applyConfig()">APPLY &amp; REFRESH</button>
+  <span style="font-size:10px;color:var(--muted)">Post-COVID default: 08 Jan 2023 (HK border reopening)</span>
+</div>
 
-    <!-- Table Panel -->
-    <div id="tablePanel" style="display:none">
-      <div class="table-toolbar">
-        <div class="table-title" id="tableTitle"></div>
-        <input class="search-input" type="text" placeholder="Filter by date or file…" oninput="filterTable(this.value)" id="tableFilter"/>
-      </div>
-      <div class="table-wrap">
-        <table id="mainTable">
-          <thead id="tableHead"></thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-    </div>
+<!-- SECTION TABS -->
+<div class="sec-tabs">
+  <button class="sec-tab active" onclick="switchSection('total',this)">Total Traffic</button>
+  <button class="sec-tab" onclick="switchSection('hkr',this)">HKR</button>
+  <button class="sec-tab" onclick="switchSection('visitor',this)">Visitor</button>
+  <button class="sec-tab" onclick="switchSection('hourly',this)">Hourly</button>
+</div>
+
+<div class="as-at" id="asAt"></div>
+
+<!-- CONTENT -->
+<div id="content"></div>
+```
+
   </div>
 </main>
 
 <script>
-// ─── Data ───────────────────────────────────────────────────────────────────
-const CATS = [
-  {key:'arr_res', label:'Arrival Resident',             group:'arrival',   type:'resident', colOffset:1},
-  {key:'arr_vis', label:'Arrival Visitor',              group:'arrival',   type:'visitor',  colOffset:2},
-  {key:'arr_tot', label:'Arrival Total',                group:'arrival',   type:'total',    colOffset:3},
-  {key:'dep_res', label:'Departure Resident',           group:'departure', type:'resident', colOffset:4},
-  {key:'dep_vis', label:'Departure Visitor',            group:'departure', type:'visitor',  colOffset:5},
-  {key:'dep_tot', label:'Departure Total',              group:'departure', type:'total',    colOffset:6},
-  {key:'ad_res',  label:'Arr+Dep Resident',             group:'combined',  type:'resident', colOffset:7},
-  {key:'ad_vis',  label:'Arr+Dep Visitor',              group:'combined',  type:'visitor',  colOffset:8},
-  {key:'ad_tot',  label:'Arr+Dep Total',                group:'combined',  type:'total',    colOffset:9},
-];
-const GROUP_COLORS = {arrival:'var(--arrival)',departure:'var(--departure)',combined:'var(--combined)'};
-const TYPE_COLORS  = {resident:'var(--resident)',visitor:'var(--visitor)',total:'var(--text)'};
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const TOP_N = 5;
+// Post-COVID default: HK fully reopened borders 2023-01-08
+let POST_COVID_DATE = '2023-01-08';
+let COMM_DATE = '2003-09-07';
+let currentEra = 'postcovid';
+let currentSection = 'total';
 
 let allDays = [];
-let records = null;
 let allFileNames = [];
-let activeGroup = 'arrival';
-let sortKey = 'date', sortDir = -1;
-let filterVal = '';
 
-// ─── Parse ───────────────────────────────────────────────────────────────────
+// ─── PARSE ────────────────────────────────────────────────────────────────────
 function toNum(v){
   if(v===null||v===undefined||v===''||v==='-')return null;
-  const n=Number(String(v).replace(/,/g,''));
-  return isNaN(n)?null:n;
+  const n=Number(String(v).replace(/,/g,''));return isNaN(n)?null:n;
+}
+function excelSerial(n){
+  const d=new Date(Math.round((n-25569)*86400000));
+  return`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+}
+function cellToDate(v){
+  if(v===null||v===undefined)return null;
+  const s=String(v).trim();
+  // YYYY/M/D or YYYY-MM-DD
+  let m=s.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+  if(m)return`${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  if(typeof v==='number'&&v>35000&&v<60000)return excelSerial(v);
+  return null;
 }
 function isTimeSlot(v){
   if(!v)return false;
   const s=String(v).trim();
   return /^\d{4}\s*[-–]\s*(\d{4}|[Cc]lose)/i.test(s)||/^CBS$/i.test(s);
 }
-function excelDateToString(n){
-  // Excel serial date to YYYY/M/D
-  const d=new Date(Math.round((n-25569)*86400*1000));
-  return`${d.getUTCFullYear()}/${d.getUTCMonth()+1}/${d.getUTCDate()}`;
+function isDateRow(row){
+  return row.some(c=>{
+    const s=String(c||'').trim();
+    return s==='Date:'||/Date:\s*\d{4}[\/\-]/.test(s);
+  });
 }
-function cellToDateString(v){
-  if(v===null||v===undefined)return null;
-  // Already a string like "2026/1/30"
-  const s=String(v).trim();
-  const m=s.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
-  if(m)return`${m[1]}/${m[2]}/${m[3]}`;
-  // Excel numeric date
-  if(typeof v==='number'&&v>40000&&v<60000)return excelDateToString(v);
-  return null;
-}
-function isDateRow(row){return row.some(c=>String(c||'').trim()==='Date:'||String(c||'').match(/Date:\s*\d{4}[\/\-]/));}
 function extractDate(row){
   for(let i=0;i<row.length;i++){
     const s=String(row[i]||'').trim();
-    // Case 1: "Date: 2026/1/30" all in one cell
     const m=s.match(/Date:\s*(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})/);
-    if(m){const d=cellToDateString(m[1]);if(d)return d;}
-    // Case 2: "Date:" in one cell, date value in next cell(s)
-    if(s==='Date:'){
-      for(let j=i+1;j<Math.min(i+4,row.length);j++){
-        const d=cellToDateString(row[j]);
-        if(d)return d;
+    if(m){const d=cellToDate(m[1]);if(d)return d;}
+    if(s==='Date:'||s.endsWith('Date:')){
+      for(let j=i+1;j<Math.min(i+5,row.length);j++){
+        const d=cellToDate(row[j]);if(d)return d;
       }
     }
   }
+  for(const c of row){const d=cellToDate(c);if(d&&d>'1990-01-01')return d;}
   return null;
 }
 function findTimeCol(rows,start){
-  for(let r=start;r<Math.min(start+12,rows.length);r++)
+  for(let r=start;r<Math.min(start+15,rows.length);r++)
     for(let c=0;c<rows[r].length;c++)
       if(isTimeSlot(rows[r][c]))return c;
   return -1;
 }
-function parseSheet(ws, fileName, sheetName){
+function parseSheet(ws,fileName,sheetName){
   const raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
   const days=[];
   for(let r=0;r<raw.length;r++){
@@ -271,32 +271,29 @@ function parseSheet(ws, fileName, sheetName){
     if(!date)continue;
     const tc=findTimeCol(raw,r+1);
     if(tc<0)continue;
-    const hourlyRows=[];
-    let totalRow=null;
+    const hrs=[];let totalRow=null;
     for(let i=r+1;i<raw.length;i++){
       const row=raw[i];
       const cell=String(row[tc]||'').trim();
       if(isDateRow(row))break;
       if(/^Total$/i.test(cell)){totalRow=row;break;}
       if(isTimeSlot(cell)){
-        const entry={time:cell};
-        for(const cat of CATS)entry[cat.key]=toNum(row[tc+cat.colOffset]);
-        hourlyRows.push(entry);
+        hrs.push({
+          time:cell,
+          arr_res:toNum(row[tc+1]),arr_vis:toNum(row[tc+2]),arr_tot:toNum(row[tc+3]),
+          dep_res:toNum(row[tc+4]),dep_vis:toNum(row[tc+5]),dep_tot:toNum(row[tc+6]),
+          ad_res:toNum(row[tc+7]),ad_vis:toNum(row[tc+8]),ad_tot:toNum(row[tc+9]),
+        });
       }
     }
-    const dailyTotals={}, hourlyPeak={};
-    for(const cat of CATS){
-      dailyTotals[cat.key]=totalRow?toNum(totalRow[tc+cat.colOffset])
-        :(hourlyRows.reduce((s,r)=>s+(r[cat.key]||0),0)||null);
-      let pk=null;
-      for(const hr of hourlyRows){
-        if(/^CBS$/i.test(hr.time))continue;
-        const v=hr[cat.key];
-        if(v!==null&&(pk===null||v>pk.value))pk={value:v,time:hr.time};
-      }
-      hourlyPeak[cat.key]=pk;
+    // Daily totals
+    const dt={};
+    const keys=['arr_res','arr_vis','arr_tot','dep_res','dep_vis','dep_tot','ad_res','ad_vis','ad_tot'];
+    for(const k of keys){
+      if(totalRow){dt[k]=toNum(totalRow[tc+keys.indexOf(k)+1]);}
+      else{dt[k]=hrs.reduce((s,h)=>s+(h[k]||0),0)||null;}
     }
-    days.push({date,dailyTotals,hourlyPeak,hourlyRows,file:fileName,sheet:sheetName});
+    days.push({date,dt,hrs,file:fileName,sheet:sheetName});
   }
   return days;
 }
@@ -305,212 +302,411 @@ async function parseFiles(files){
   for(const file of files){
     const buf=await file.arrayBuffer();
     const wb=XLSX.read(buf,{type:'array'});
-    for(const sn of wb.SheetNames){
+    for(const sn of wb.SheetNames)
       days.push(...parseSheet(wb.Sheets[sn],file.name,sn));
-    }
   }
   return days;
 }
-function computeRecords(days){
-  const daily={},hourly={};
-  for(const cat of CATS){daily[cat.key]=null;hourly[cat.key]=null;}
-  for(const day of days){
-    for(const cat of CATS){
-      const dv=day.dailyTotals[cat.key];
-      if(dv!==null&&dv!==undefined&&(daily[cat.key]===null||dv>daily[cat.key].value))
-        daily[cat.key]={value:dv,date:day.date,file:day.file,sheet:day.sheet};
-      const hp=day.hourlyPeak[cat.key];
-      if(hp&&hp.value!==null&&(hourly[cat.key]===null||hp.value>hourly[cat.key].value))
-        hourly[cat.key]={value:hp.value,date:day.date,time:hp.time,file:day.file,sheet:day.sheet};
-    }
-  }
-  return{daily,hourly};
-}
 
-// ─── Format ──────────────────────────────────────────────────────────────────
-function fNum(n){return(n===null||n===undefined)?'—':Number(n).toLocaleString();}
-function fDate(s){
-  if(!s)return'';
-  const[y,m,d]=s.split('/');
-  return new Date(y,parseInt(m)-1,parseInt(d)).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+// ─── FILE HANDLING ────────────────────────────────────────────────────────────
+function showLoad(v){
+  document.getElementById('upLoading').style.display=v?'block':'none';
+  document.getElementById('dashLoading').style.display=v?'block':'none';
 }
+function showErr(msg){const e=document.getElementById('upError');e.textContent=msg;e.style.display='block';}
 
-// ─── File handling ───────────────────────────────────────────────────────────
 async function handleFiles(files){
   if(!files.length)return;
-  showLoading(true);
+  showLoad(true);
   try{
     const newDays=await parseFiles(Array.from(files));
     if(newDays.length===0){
-      // Debug: show first few rows of first file
       const buf=await Array.from(files)[0].arrayBuffer();
       const wb=XLSX.read(buf,{type:'array'});
       const sn=wb.SheetNames[0];
       const raw=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null});
-      const preview=raw.slice(0,30).map((r,i)=>`Row ${i}: ${JSON.stringify(r.slice(0,6))}`).join('\n');
-      showError(`⚠️ No data found. First sheet "${sn}" rows:\n${preview}\n\nPlease share this with the developer to fix the parser.`);
-      showLoading(false);
-      return;
+      const preview=raw.slice(0,20).map((r,i)=>`R${i}: ${JSON.stringify(r.slice(0,8))}`).join('\n');
+      showErr(`No data found. First rows of "${sn}":\n\n${preview}\n\nSend this screenshot to fix the parser.`);
+      showLoad(false);return;
     }
     allDays=[...allDays,...newDays].sort((a,b)=>a.date.localeCompare(b.date));
-    records=computeRecords(allDays);
     allFileNames=[...allFileNames,...Array.from(files).map(f=>f.name)];
     showDashboard();
-  }catch(e){
-    showError('Parse error: '+e.message+'\n'+e.stack);
-  }finally{showLoading(false);}
+  }catch(e){showErr('Error: '+e.message);}
+  finally{showLoad(false);}
 }
-function handleDrop(e){
-  e.preventDefault();
-  document.getElementById('dropZone').classList.remove('over');
-  handleFiles(e.dataTransfer.files);
-}
+function handleDrop(e){e.preventDefault();document.getElementById('dropZone').classList.remove('over');handleFiles(e.dataTransfer.files);}
 function resetAll(){
-  allDays=[];records=null;allFileNames=[];activeGroup='arrival';sortKey='date';sortDir=-1;filterVal='';
+  allDays=[];allFileNames=[];
   document.getElementById('dashboard').style.display='none';
   document.getElementById('uploadScreen').style.display='block';
-  document.getElementById('headerStats').style.display='none';
-  document.getElementById('uploadError').style.display='none';
-  document.getElementById('fileInput').value='';
-}
-function showLoading(v){
-  document.getElementById('uploadLoading').style.display=v?'block':'none';
-  document.getElementById('dashLoading').style.display=v?'block':'none';
-}
-function showError(msg){
-  const el=document.getElementById('uploadError');
-  el.textContent=msg;el.style.display='block';
+  document.getElementById('hdrRight').style.display='none';
+  document.getElementById('upError').style.display='none';
 }
 
-// ─── Dashboard ───────────────────────────────────────────────────────────────
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
 function showDashboard(){
   document.getElementById('uploadScreen').style.display='none';
   document.getElementById('dashboard').style.display='block';
-  // Header stats
-  const hs=document.getElementById('headerStats');
-  hs.style.display='flex';
-  document.getElementById('statDays').textContent=allDays.length;
-  document.getElementById('statRange').textContent=
-    allDays.length?`${allDays[0].date} – ${allDays[allDays.length-1].date}`:'';
-  document.getElementById('filesList').textContent=allFileNames.join(', ');
-  renderCards();
-  renderRibbon();
-  renderTable();
+  document.getElementById('hdrRight').style.display='flex';
+  document.getElementById('hdrDays').textContent=allDays.length;
+  document.getElementById('hdrRange').textContent=allDays.length?`${allDays[0].date} – ${allDays[allDays.length-1].date}`:'';
+  document.getElementById('filesLabel').textContent=allFileNames.join(', ');
+  renderContent();
 }
-
-// ─── Tabs ────────────────────────────────────────────────────────────────────
-function switchTab(tab,btn){
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+function applyConfig(){
+  POST_COVID_DATE=document.getElementById('postCovidDate').value;
+  COMM_DATE=document.getElementById('commDate').value;
+  renderContent();
+}
+function switchEra(era,btn){
+  currentEra=era;
+  document.querySelectorAll('.era-tab').forEach(b=>{b.classList.remove('active');});
   btn.classList.add('active');
-  document.getElementById('recordsPanel').style.display=tab==='records'?'block':'none';
-  document.getElementById('tablePanel').style.display=tab==='table'?'block':'none';
+  renderContent();
 }
-function switchGroup(grp,btn){
-  activeGroup=grp;
-  document.querySelectorAll('.group-btn').forEach(b=>{
-    b.style.background='transparent';b.style.borderColor='var(--border)';b.style.color='var(--muted)';
-  });
-  const gc=GROUP_COLORS[grp];
-  btn.style.borderColor=gc;btn.style.color=gc;btn.style.background=`rgba(${hexToRgb(gc)||'0,229,200'},.08)`;
-  renderCards();
-}
-function hexToRgb(cssVar){
-  const map={'var(--arrival)':'0,229,200','var(--departure)':'255,107,53','var(--combined)':'124,106,247'};
-  return map[cssVar]||'0,229,200';
+function switchSection(sec,btn){
+  currentSection=sec;
+  document.querySelectorAll('.sec-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderContent();
 }
 
-// ─── Cards ───────────────────────────────────────────────────────────────────
-function renderCards(){
-  const cats=CATS.filter(c=>c.group===activeGroup);
-  const gc=GROUP_COLORS[activeGroup];
-  document.getElementById('cardsGrid').innerHTML=cats.map(cat=>{
-    const dr=records.daily[cat.key];
-    const hr=records.hourly[cat.key];
-    const tc=TYPE_COLORS[cat.type];
-    const typeLabel=cat.type==='resident'?'Resident':cat.type==='visitor'?'Visitor':'Total';
-    return`<div class="record-card" style="border-top:2px solid ${gc}">
-      <div class="card-glow" style="background:linear-gradient(180deg,${gc}14 0%,transparent 100%)"></div>
-      <div>
-        <div class="card-group">${cat.group==='combined'?'Arr + Dep':cat.group}</div>
-        <div class="card-type" style="color:${tc}">${typeLabel}</div>
-      </div>
-      <div class="sub-card">
-        <div class="sub-label">DAILY TOTAL RECORD</div>
-        ${dr?`<div class="sub-val" style="color:${gc}">${fNum(dr.value)}</div>
-          <div class="sub-date">${fDate(dr.date)}</div>
-          <div class="sub-file">${dr.file} · ${dr.sheet}</div>`
-          :`<div style="color:var(--muted);font-family:'Space Mono',monospace;font-size:13px">—</div>`}
-      </div>
-      <div class="sub-card">
-        <div class="sub-label">PEAK HOUR RECORD</div>
-        ${hr?`<div class="sub-val" style="color:${gc}">${fNum(hr.value)}</div>
-          <div class="sub-date">${fDate(hr.date)} · ${hr.time}</div>
-          <div class="sub-file">${hr.file} · ${hr.sheet}</div>`
-          :`<div style="color:var(--muted);font-family:'Space Mono',monospace;font-size:13px">—</div>`}
-      </div>
-    </div>`;
-  }).join('');
+// ─── FILTER BY ERA ────────────────────────────────────────────────────────────
+function eraFilter(days){
+  const cutoff=currentEra==='postcovid'?POST_COVID_DATE:COMM_DATE;
+  return days.filter(d=>d.date>=cutoff);
 }
 
-// ─── Ribbon ──────────────────────────────────────────────────────────────────
-function renderRibbon(){
-  const items=[
-    {label:'Peak Daily Total (All)',key:'ad_tot',color:'var(--combined)'},
-    {label:'Peak Arrival Day',key:'arr_tot',color:'var(--arrival)'},
-    {label:'Peak Departure Day',key:'dep_tot',color:'var(--departure)'},
-  ];
-  document.getElementById('ribbon').innerHTML=items.map(item=>{
-    const r=records.daily[item.key];
-    return`<div class="ribbon-cell">
-      <div class="ribbon-label">${item.label.toUpperCase()}</div>
-      <div class="ribbon-val" style="color:${item.color}">${r?fNum(r.value):'—'}</div>
-      ${r?`<div class="ribbon-date">${r.date}</div>`:''}
-    </div>`;
-  }).join('');
+// ─── TOP-N ───────────────────────────────────────────────────────────────────
+function topN(days,valueFn,n=TOP_N){
+  return [...days]
+    .map(d=>({day:d,value:valueFn(d)}))
+    .filter(x=>x.value!==null&&x.value>0)
+    .sort((a,b)=>b.value-a.value)
+    .slice(0,n);
+}
+function topNHourly(days,valueFn,n=TOP_N){
+  const candidates=[];
+  for(const day of days){
+    for(const hr of day.hrs){
+      if(/^CBS$/i.test(hr.time))continue;
+      const v=valueFn(hr);
+      if(v!==null&&v>0)candidates.push({day,hr,value:v});
+    }
+  }
+  return candidates.sort((a,b)=>b.value-a.value).slice(0,n);
 }
 
-// ─── Table ───────────────────────────────────────────────────────────────────
-function renderTable(){
-  const head=document.getElementById('tableHead');
-  head.innerHTML=`<tr>
-    <th rowspan="2" class="date-th active" onclick="doSort('date')">DATE${sortKey==='date'?(sortDir===-1?' ↓':' ↑'):''}</th>
-    <th colspan="3" class="group-th" style="color:var(--arrival)">ARRIVAL</th>
-    <th colspan="3" class="group-th" style="color:var(--departure)">DEPARTURE</th>
-    <th colspan="3" class="group-th" style="color:var(--combined)">ARR + DEP</th>
-  </tr><tr>
-    ${CATS.map(cat=>`<th onclick="doSort('${cat.key}')" class="${sortKey===cat.key?'active':''}">${
-      cat.type==='resident'?'RES':cat.type==='visitor'?'VIS':'TOT'
-    }${sortKey===cat.key?(sortDir===-1?' ↓':' ↑'):''}</th>`).join('')}
-  </tr>`;
-  renderTableBody();
-  document.getElementById('tableTitle').textContent=`ALL DAYS — ${allDays.length} records`;
+// ─── FORMAT ──────────────────────────────────────────────────────────────────
+function fN(n){return(n===null||n===undefined)?'—':Number(n).toLocaleString();}
+function fDate(s){
+  if(!s)return'';
+  const d=new Date(s+'T00:00:00');
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'-');
 }
-function renderTableBody(){
-  const filtered=allDays.filter(d=>
-    !filterVal||d.date.includes(filterVal)||d.file.toLowerCase().includes(filterVal.toLowerCase())
+function dayOfWeek(s){
+  if(!s)return'';
+  return new Date(s+'T00:00:00').toLocaleDateString('en-US',{weekday:'short'});
+}
+
+// ─── TABLE BUILDERS ───────────────────────────────────────────────────────────
+
+function buildTotalTrafficTable(days){
+  // Columns: Record High | Date | Arr HKR | Arr Vis | Dep HKR | Dep Vis | Total | Remarks
+  const rows=topN(days,d=>d.dt.ad_tot);
+  return buildTable(
+    'Record High on Total Passenger Traffic',
+    ['','Date','','ARRIVAL','','DEPARTURE','','Total','Remarks'],
+    ['Rank','Date','Day','HKR','Visitors','HKR','Visitors','Total','Remarks'],
+    [false,true,true,false,false,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.arr_res), fN(x.day.dt.arr_vis),
+      fN(x.day.dt.dep_res), fN(x.day.dt.dep_vis),
+      fN(x.day.dt.ad_tot), ''
+    ]),
+    [3,4,5,6,7],
+    [[3,4],[5,6]],
+    'var(--accent)'
   );
-  const sorted=[...filtered].sort((a,b)=>{
-    const av=sortKey==='date'?a.date:(a.dailyTotals[sortKey]||0);
-    const bv=sortKey==='date'?b.date:(b.dailyTotals[sortKey]||0);
-    return av<bv?sortDir:av>bv?-sortDir:0;
-  });
-  document.getElementById('tableBody').innerHTML=sorted.map((day,i)=>`
-    <tr>
-      <td class="date-td">
-        <div class="date-td-main">${fDate(day.date)}</div>
-        <div class="date-td-file">${day.file}</div>
-      </td>
-      ${CATS.map(cat=>`<td class="${cat.type==='total'?'total-col':''}">${fNum(day.dailyTotals[cat.key])}</td>`).join('')}
-    </tr>`).join('');
 }
-function doSort(key){
-  if(sortKey===key)sortDir*=-1;else{sortKey=key;sortDir=-1;}
-  renderTable();
+
+function buildInboundTable(days){
+  const rows=topN(days,d=>d.dt.arr_tot);
+  return buildTable(
+    'Record High on Inbound Passengers',
+    ['','Date','','ARRIVAL','','Remarks'],
+    ['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
+    [false,true,true,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.arr_res), fN(x.day.dt.arr_vis),
+      fN(x.day.dt.arr_tot), ''
+    ]),
+    [5],[[]],
+    'var(--res)'
+  );
 }
-function filterTable(v){
-  filterVal=v;
-  renderTableBody();
+
+function buildOutboundTable(days){
+  const rows=topN(days,d=>d.dt.dep_tot);
+  return buildTable(
+    'Record High on Outbound Passengers',
+    ['','Date','','DEPARTURE','','Remarks'],
+    ['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
+    [false,true,true,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.dep_res), fN(x.day.dt.dep_vis),
+      fN(x.day.dt.dep_tot), ''
+    ]),
+    [5],[[]],
+    'var(--vis)'
+  );
+}
+
+// HKR SECTION
+function buildHKRTotalTable(days){
+  const rows=topN(days,d=>(d.dt.arr_res||0)+(d.dt.dep_res||0));
+  return buildTable(
+    'Record High on Total Number of HKR',
+    ['','Date','','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+    ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+    [false,true,true,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.arr_res), fN(x.day.dt.dep_res),
+      fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)), ''
+    ]),
+    [5],[[]],
+    'var(--res)'
+  );
+}
+function buildHKRInboundTable(days){
+  const rows=topN(days,d=>d.dt.arr_res);
+  return buildTable(
+    'Record High on Inbound HKR',
+    ['','Date','','Arriving','Departing','Total HKR','Remarks'],
+    ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+    [false,true,true,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.arr_res), fN(x.day.dt.dep_res),
+      fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)), ''
+    ]),
+    [3],[[]],
+    'var(--res)'
+  );
+}
+function buildHKROutboundTable(days){
+  const rows=topN(days,d=>d.dt.dep_res);
+  return buildTable(
+    'Record High on Outbound HKR',
+    ['','Date','','Arriving','Departing','Total HKR','Remarks'],
+    ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+    [false,true,true,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.arr_res), fN(x.day.dt.dep_res),
+      fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)), ''
+    ]),
+    [4],[[]],
+    'var(--res)'
+  );
+}
+
+// VISITOR SECTION
+function buildVisTotalTable(days){
+  const rows=topN(days,d=>(d.dt.arr_vis||0)+(d.dt.dep_vis||0));
+  return buildTable(
+    'Record High on Total Number of Visitors',
+    ['','Date','','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+    ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+    [false,true,true,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.arr_vis), fN(x.day.dt.dep_vis),
+      fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)), ''
+    ]),
+    [5],[[]],
+    'var(--vis)'
+  );
+}
+function buildVisInboundTable(days){
+  const rows=topN(days,d=>d.dt.arr_vis);
+  return buildTable(
+    'Record High on Inbound Visitors',
+    ['','Date','','Arriving','Departing','Total Visitors','Remarks'],
+    ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+    [false,true,true,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.arr_vis), fN(x.day.dt.dep_vis),
+      fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)), ''
+    ]),
+    [3],[[]],
+    'var(--vis)'
+  );
+}
+function buildVisOutboundTable(days){
+  const rows=topN(days,d=>d.dt.dep_vis);
+  return buildTable(
+    'Record High on Outbound Visitors',
+    ['','Date','','Arriving','Departing','Total Visitors','Remarks'],
+    ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+    [false,true,true,false,false,false,true],
+    rows.map((x,i)=>[
+      i+1, x.day.date, dayOfWeek(x.day.date),
+      fN(x.day.dt.arr_vis), fN(x.day.dt.dep_vis),
+      fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)), ''
+    ]),
+    [4],[[]],
+    'var(--vis)'
+  );
+}
+
+// HOURLY
+function buildHourlyTable(days, title, valueFn, showCols){
+  // showCols: indices of the value columns to show
+  // Each row: Rank | Date | Day | Time | Arr R | Arr V | Arr Sub | Dep R | Dep V | Dep Sub | Total | Remarks
+  const rows=topNHourly(days, valueFn);
+  return `<div class="record-section">
+  <div class="rs-title">${title}</div>
+  <div class="record-table-wrap">
+  <table class="record-table">
+    <thead>
+      <tr>
+        <th rowspan="2" class="l">Record High</th>
+        <th rowspan="2" class="l">Date</th>
+        <th rowspan="2">Day</th>
+        <th rowspan="2">Time</th>
+        <th colspan="3" class="group-hdr" style="color:var(--res)">ARRIVAL</th>
+        <th colspan="3" class="group-hdr" style="color:var(--vis)">DEPARTURE</th>
+        <th rowspan="2" style="color:var(--tot)">Total</th>
+        <th rowspan="2" class="l">Remarks</th>
+      </tr>
+      <tr>
+        <th>R</th><th>V</th><th>Sub-total</th>
+        <th class="group-hdr">R</th><th>V</th><th>Sub-total</th>
+      </tr>
+    </thead>
+    <tbody>
+    ${rows.map((x,i)=>{
+      const h=x.hr;
+      return`<tr class="${i===0?'rank1':''}">
+        <td class="rank-cell ${i===0?'rank1-cell':''} l">${i+1}</td>
+        <td class="l ${i===0?'':'dim'}" style="${i===0?'color:var(--gold)':''}">${fDate(x.day.date)}</td>
+        <td>${dayOfWeek(x.day.date)}</td>
+        <td>${h.time}</td>
+        <td>${fN(h.arr_res)}</td>
+        <td>${fN(h.arr_vis)}</td>
+        <td style="color:var(--res)">${fN(h.arr_tot)}</td>
+        <td>${fN(h.dep_res)}</td>
+        <td>${fN(h.dep_vis)}</td>
+        <td style="color:var(--vis)">${fN(h.dep_tot)}</td>
+        <td class="total-cell ${i===0?'':'dim'}" style="${i===0?'color:var(--gold)':''}">${fN(x.value)}</td>
+        <td class="remarks-cell l"></td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table>
+  </div>
+  </div>`;
+}
+
+// Generic table builder
+function buildTable(title, groupHeaders, colHeaders, isLeft, rows, totalCols, groupSpans, accentColor){
+  const nCols=colHeaders.length;
+  // Build group header row
+  let ghRow='';
+  let ci=0;
+  for(const gh of groupHeaders){
+    if(gh===''){ghRow+=`<th rowspan="2" class="${isLeft[ci]?'l':''}">${colHeaders[ci]}</th>`;ci++;}
+    else{
+      // find how many subcolumns
+      const remaining=groupHeaders.slice(groupHeaders.indexOf(gh)+1);
+      const nextGroup=remaining.find(x=>x!=='');
+      const nextIdx=nextGroup?groupHeaders.indexOf(nextGroup,groupHeaders.indexOf(gh)+1):groupHeaders.length;
+      const span=nextIdx-groupHeaders.indexOf(gh)-1;
+      ghRow+=`<th colspan="${Math.max(1,span)}" class="group-hdr" style="color:${accentColor}">${gh}</th>`;
+      ci+=Math.max(1,span);
+    }
+  }
+
+  return`<div class="record-section">
+  <div class="rs-title">${title}</div>
+  <div class="record-table-wrap">
+  <table class="record-table">
+    <thead>
+      <tr>${colHeaders.map((h,i)=>`<th class="${isLeft[i]?'l':''}">${h}</th>`).join('')}</tr>
+    </thead>
+    <tbody>
+    ${rows.map((row,ri)=>`<tr class="${ri===0?'rank1':''}">
+      ${row.map((cell,ci)=>{
+        const isTotal=totalCols.includes(ci);
+        const isRank=ci===0;
+        const isDateCol=ci===1;
+        const isRem=ci===row.length-1;
+        let cls='';
+        if(isRank)cls=`rank-cell ${ri===0?'rank1-cell':''} l`;
+        else if(isDateCol)cls='l';
+        else if(isTotal)cls=`total-cell`;
+        else if(isRem)cls='remarks-cell l';
+        const style=ri===0&&isDateCol?'style="color:var(--gold)"':'';
+        return`<td class="${cls}" ${style}>${isDateCol&&!isRank?fDate(cell):cell}</td>`;
+      }).join('')}
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  </div>
+  </div>`;
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function renderContent(){
+  const days=eraFilter(allDays);
+  const latestDate=allDays.length?allDays[allDays.length-1].date:'';
+  const eraLabel=currentEra==='postcovid'?`Post-COVID (from ${POST_COVID_DATE})`:`Since Commissioning (from ${COMM_DATE})`;
+  document.getElementById('asAt').textContent=
+    `Record High of LSC (${eraLabel}) [as at ${fDate(latestDate)}] — ${days.length} days in range`;
+
+  let html='';
+
+  if(currentSection==='total'){
+    html+=`<div class="tables-grid">
+      <div>${buildTotalTrafficTable(days)}</div>
+      <div>${buildInboundTable(days)}${buildOutboundTable(days)}</div>
+    </div>`;
+  } else if(currentSection==='hkr'){
+    html+=`<div class="tables-grid">
+      <div>${buildHKRTotalTable(days)}</div>
+      <div>${buildHKRInboundTable(days)}${buildHKROutboundTable(days)}</div>
+    </div>`;
+  } else if(currentSection==='visitor'){
+    html+=`<div class="tables-grid">
+      <div>${buildVisTotalTable(days)}</div>
+      <div>${buildVisInboundTable(days)}${buildVisOutboundTable(days)}</div>
+    </div>`;
+  } else if(currentSection==='hourly'){
+    html+=`<div class="tables-grid">
+      <div>
+        ${buildHourlyTable(days,'Hourly Record High on Total Passenger',h=>(h.arr_tot||0)+(h.dep_tot||0),[])}
+        ${buildHourlyTable(days,'Hourly Record High on Inbound Passenger',h=>h.arr_tot,[])}
+        ${buildHourlyTable(days,'Hourly Record High on Outbound Passenger',h=>h.dep_tot,[])}
+      </div>
+      <div>
+        ${buildHourlyTable(days,'Hourly Record High on Inbound Residents',h=>h.arr_res,[])}
+        ${buildHourlyTable(days,'Hourly Record High on Outbound Residents',h=>h.dep_res,[])}
+        ${buildHourlyTable(days,'Hourly Record High on Inbound Visitors',h=>h.arr_vis,[])}
+        ${buildHourlyTable(days,'Hourly Record High on Outbound Visitors',h=>h.dep_vis,[])}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('content').innerHTML=html;
 }
 </script>
+
 </body>
 </html>
