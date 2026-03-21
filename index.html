@@ -4,8 +4,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>LSC Record High — Passenger Statistics</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<title>Record High — Passenger Statistics</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -124,7 +124,7 @@ main{padding:8px;max-width:100%}
   <div class="brand">
     <div class="brand-icon">⬡</div>
     <div>
-      <div class="brand-name">LSC RECORD HIGH</div>
+      <div class="brand-name">RECORD HIGH</div>
       <div class="brand-sub">Passenger Statistics Tracker</div>
     </div>
   </div>
@@ -137,7 +137,7 @@ main{padding:8px;max-width:100%}
       <div class="hdr-val" id="hdrRange" style="font-size:10px;color:var(--dim)"></div>
       <div class="hdr-label">date range</div>
     </div>
-    <button class="btn-sm" onclick="exportPDF()" style="border-color:var(--gold);color:var(--gold)">⬇ EXPORT PDF</button>
+    <button class="btn-sm" onclick="exportExcel()" style="border-color:#4ade80;color:#4ade80">⬇ EXPORT EXCEL</button>
     <button class="btn-sm" onclick="resetAll()">RESET</button>
   </div>
 </header>
@@ -146,7 +146,7 @@ main{padding:8px;max-width:100%}
   <!-- UPLOAD -->
   <div class="upload-wrap" id="uploadScreen">
     <h1 class="upload-title">
-      <span style="color:var(--accent)">LSC</span> Record High<br/>
+      Record High<br/>
       <span style="color:var(--gold)">Passenger Statistics</span>
     </h1>
     <p class="upload-sub">Upload monthly Excel files to generate Record High tables for Total Traffic, HKR, and Visitors — both daily and hourly — across Post-COVID and Since Commissioning eras.</p>
@@ -206,7 +206,7 @@ main{padding:8px;max-width:100%}
 
 <div class="as-at" id="asAt"></div>
 <div class="pdf-header" id="pdfHeader">
-  <h2>Record High of LSC — Passenger Statistics</h2>
+  <h2>Record High — Passenger Statistics</h2>
   <p id="pdfSubtitle"></p>
 </div>
 
@@ -632,37 +632,300 @@ function getRemarks(dateStr){
 }
 
 // ─── PDF EXPORT ──────────────────────────────────────────────────────────────
-function exportPDF(){
-  // Update subtitle for print
-  const asAtText=document.getElementById('asAt').textContent;
-  document.getElementById('pdfSubtitle').textContent=asAtText;
-  // Show all sections temporarily for full PDF
-  const savedSection=currentSection;
-  const sections=['total','hkr','visitor','hourly'];
-  // Build full content
+function exportExcel(){
   const days=eraFilter(allDays);
-  let allHTML='';
-  for(const sec of sections){
-    currentSection=sec;
-    allHTML+=`<div style="page-break-before:${sec==='total'?'avoid':'always'}">
-      <h3 style="font-family:monospace;font-size:12px;margin-bottom:12px;color:#333;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #ccc;padding-bottom:4px">${
-        sec==='total'?'Total Traffic':sec==='hkr'?'HKR':sec==='visitor'?'Visitor':'Hourly Records'
-      }</h3>`;
-    const el=document.createElement('div');
-    el.innerHTML=buildSectionHTML(days,sec);
-    allHTML+=el.innerHTML+'</div>';
+  const era=currentEra==='postcovid'?`Post-COVID (from ${POST_COVID_DATE})`:`Since Commissioning (from ${COMM_DATE})`;
+  const latestDate=allDays.length?allDays[allDays.length-1].date:'';
+  const wb=XLSX.utils.book_new();
+
+  // ── STYLE PALETTE ──────────────────────────────────────────────────────────
+  const C={
+    navyDark:  {rgb:'1F2D4E'}, // main title bg
+    navy:      {rgb:'2C3E6B'}, // section title bg
+    navyMid:   {rgb:'354F82'}, // col header bg
+    teal:      {rgb:'1A6B8A'}, // arrival group
+    orange:    {rgb:'8B4513'}, // departure group
+    gold:      {rgb:'B8860B'}, // #1 rank text
+    goldBg:    {rgb:'FFF3CD'}, // #1 rank row bg
+    altRow:    {rgb:'EBF3FB'}, // alternate row bg
+    white:     {rgb:'FFFFFF'},
+    black:     {rgb:'000000'},
+    dimText:   {rgb:'444444'},
+    totalBg:   {rgb:'E8F5E9'}, // total col bg light green
+    totalFg:   {rgb:'1B5E20'}, // total col text
+    sectionBg: {rgb:'F0F4FF'}, // section title light
+  };
+
+  const border={
+    thin:{style:'thin',color:{rgb:'BBCCE0'}},
+    med:{style:'medium',color:{rgb:'2C3E6B'}},
+  };
+  const allBorders={top:border.thin,bottom:border.thin,left:border.thin,right:border.thin};
+  const topBorders={top:border.med,bottom:border.thin,left:border.thin,right:border.thin};
+
+  function font(opts={}){return{name:'Calibri',sz:opts.sz||10,bold:opts.bold||false,color:opts.color||C.black,italic:opts.italic||false};}
+  function fill(rgb){return{type:'pattern',pattern:'solid',fgColor:rgb};}
+  function align(h='left',wrap=false){return{horizontal:h,vertical:'center',wrapText:wrap};}
+
+  // ── CELL STYLE FACTORIES ──────────────────────────────────────────────────
+  const S={
+    mainTitle: {font:font({sz:14,bold:true,color:C.white}),    fill:fill(C.navyDark), alignment:align('center'), border:{bottom:border.med}},
+    subTitle:  {font:font({sz:10,color:{rgb:'CCDDFF'}}),         fill:fill(C.navyDark), alignment:align('center')},
+    secTitle:  {font:font({sz:11,bold:true,color:C.white}),      fill:fill(C.navy),     alignment:align('left'),   border:{top:border.med,bottom:border.thin,left:border.med,right:border.med}},
+    colHdr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('center'), border:allBorders},
+    colHdrL:   {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('left'),   border:allBorders},
+    grpArr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill({rgb:'1A6B8A'}), alignment:align('center'), border:allBorders},
+    grpDep:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill({rgb:'7B3F00'}), alignment:align('center'), border:allBorders},
+    rank1:     {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
+    rank1L:    {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('left'),   border:allBorders},
+    rank1Tot:  {font:font({sz:10,bold:true,color:{rgb:'7B3F00'}}),fill:fill(C.goldBg),  alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
+    rankN:     {font:font({sz:10,color:C.dimText}),              fill:fill(C.white),    alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
+    rankNL:    {font:font({sz:10,color:C.dimText}),              fill:fill(C.white),    alignment:align('left'),   border:allBorders},
+    rankNAlt:  {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
+    rankNAltL: {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('left'),   border:allBorders},
+    rankNum:   {font:font({sz:10,bold:true,color:C.dimText}),    fill:fill(C.white),    alignment:align('center'), border:allBorders},
+    rankNumAlt:{font:font({sz:10,bold:true,color:C.dimText}),    fill:fill(C.altRow),   alignment:align('center'), border:allBorders},
+    rankNum1:  {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:allBorders},
+    totalN:    {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.white),    alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
+    totalNAlt: {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.altRow),   alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
+    blank:     {font:font(),                                     fill:fill(C.white),    border:{left:border.thin,right:border.thin}},
+  };
+
+  // ── SHEET BUILDER ─────────────────────────────────────────────────────────
+  function buildSheet(sheetTitle, sections, colWidths){
+    const ws={};
+    const merges=[];
+    let R=0;
+    const maxCols=Math.max(...sections.map(s=>s.headers.length));
+
+    // Main title row
+    ws[XLSX.utils.encode_cell({r:R,c:0})]={v:sheetTitle,t:'s',s:S.mainTitle};
+    for(let c=1;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.mainTitle};
+    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
+    R++;
+
+    // Subtitle
+    const sub=`[as at ${fDate(latestDate)}]  ·  ${era}  ·  ${days.length} days in range`;
+    ws[XLSX.utils.encode_cell({r:R,c:0})]={v:sub,t:'s',s:S.subTitle};
+    for(let c=1;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.subTitle};
+    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
+    R++;
+    R++; // blank gap
+
+    for(const sec of sections){
+      const nc=sec.headers.length;
+      // Section title
+      ws[XLSX.utils.encode_cell({r:R,c:0})]={v:sec.title,t:'s',s:S.secTitle};
+      for(let c=1;c<nc;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:{...S.secTitle,border:{top:border.med,bottom:border.thin,left:border.thin,right:c===nc-1?border.med:border.thin}}};
+      merges.push({s:{r:R,c:0},e:{r:R,c:nc-1}});
+      R++;
+
+      // Group headers (optional)
+      if(sec.groups){
+        let col=0;
+        for(const g of sec.groups){
+          const gs=g.style||S.colHdr;
+          ws[XLSX.utils.encode_cell({r:R,c:col})]={v:g.label,t:'s',s:gs};
+          for(let c=1;c<g.span;c++) ws[XLSX.utils.encode_cell({r:R,c:col+c})]={v:'',t:'s',s:{...gs}};
+          if(g.span>1) merges.push({s:{r:R,c:col},e:{r:R,c:col+g.span-1}});
+          col+=g.span;
+        }
+        R++;
+      }
+
+      // Column headers
+      for(let c=0;c<nc;c++){
+        const isLeft=c<=2||c===nc-1;
+        ws[XLSX.utils.encode_cell({r:R,c})]={v:sec.headers[c],t:'s',s:isLeft?S.colHdrL:S.colHdr};
+      }
+      R++;
+
+      // Data rows
+      sec.rows.forEach((row,ri)=>{
+        const isFirst=ri===0;
+        const isAlt=ri%2===1;
+        for(let c=0;c<nc;c++){
+          const val=row[c];
+          const isNum=typeof val==='number';
+          const isRank=c===0;
+          const isDate=c===1||c===2||c===3;
+          const isTotal=sec.totalCols&&sec.totalCols.includes(c);
+          const isRemark=c===nc-1;
+          let s;
+          if(isFirst){
+            if(isRank)s=S.rankNum1;
+            else if(isTotal)s=S.rank1Tot;
+            else if(isRemark)s=S.rank1L;
+            else if(isNum)s=S.rank1;
+            else s=S.rank1L;
+          } else if(isRank){
+            s=isAlt?S.rankNumAlt:S.rankNum;
+          } else if(isTotal){
+            s=isAlt?S.totalNAlt:S.totalN;
+          } else if(isRemark){
+            s=isAlt?S.rankNAltL:S.rankNL;
+          } else if(isNum){
+            s=isAlt?S.rankNAlt:S.rankN;
+          } else {
+            s=isAlt?S.rankNAltL:S.rankNL;
+          }
+          ws[XLSX.utils.encode_cell({r:R,c})]={v:val===null||val===undefined?'':val, t:isNum?'n':'s', s};
+        }
+        R++;
+      });
+
+      // Gap row
+      for(let c=0;c<nc;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.blank};
+      R++;
+      R++;
+    }
+
+    ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R,c:maxCols-1}});
+    ws['!merges']=merges;
+    ws['!cols']=colWidths.map(w=>({wch:w}));
+    ws['!rows']=[{hpt:22},{hpt:16}]; // title rows taller
+    return ws;
   }
-  currentSection=savedSection;
-  document.getElementById('content').innerHTML=buildSectionHTML(days,savedSection);
-  // Temporarily replace content
-  const orig=document.getElementById('content').innerHTML;
-  document.getElementById('content').innerHTML=allHTML;
-  window.print();
-  // Restore
-  setTimeout(()=>{
-    document.getElementById('content').innerHTML=buildSectionHTML(eraFilter(allDays),savedSection);
-  },500);
+
+  // ── DATA HELPERS ─────────────────────────────────────────────────────────
+  function daily9col(x,i){
+    return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),
+      x.day.dt.arr_res,x.day.dt.arr_vis,x.day.dt.dep_res,x.day.dt.dep_vis,x.day.dt.ad_tot,
+      getRemarks(x.day.date)];
+  }
+  function daily7col(x,i,arr){
+    const res=arr?x.day.dt.arr_res:x.day.dt.dep_res;
+    const vis=arr?x.day.dt.arr_vis:x.day.dt.dep_vis;
+    const tot=arr?x.day.dt.arr_tot:x.day.dt.dep_tot;
+    return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),res,vis,tot,getRemarks(x.day.date)];
+  }
+  function hkr7col(x,i){
+    return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),
+      x.day.dt.arr_res,x.day.dt.dep_res,
+      (x.day.dt.arr_res||0)+(x.day.dt.dep_res||0),getRemarks(x.day.date)];
+  }
+  function vis7col(x,i){
+    return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),
+      x.day.dt.arr_vis,x.day.dt.dep_vis,
+      (x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0),getRemarks(x.day.date)];
+  }
+  function hourlyRow(x,i){
+    return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),x.hr.time,
+      x.hr.arr_res,x.hr.arr_vis,x.hr.arr_tot,
+      x.hr.dep_res,x.hr.dep_vis,x.hr.dep_tot,
+      x.value,getRemarks(x.day.date)];
+  }
+
+  const grpArr9={label:'ARRIVAL',span:2,style:S.grpArr};
+  const grpDep9={label:'DEPARTURE',span:2,style:S.grpDep};
+  const grpBlank1={label:'',span:1,style:S.colHdrL};
+  const grpBlank2={label:'',span:2,style:S.colHdrL};
+  const grpTotal={label:'',span:1,style:S.colHdr};
+  const grpRem={label:'',span:1,style:S.colHdrL};
+  const hHdr=['Rank','Date','Day','Time','Arr Res','Arr Vis','Arr Total','Dep Res','Dep Vis','Dep Total','Total','Remarks'];
+
+  // ── SHEET 1: Total Traffic ──
+  {
+    const ws=buildSheet(
+      `Record High — Total Traffic`,
+      [
+        {title:'Record High on Total Passenger Traffic',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpArr9,grpDep9,grpTotal,grpRem],
+         headers:['Rank','Date','Day','Arr HKR','Arr Visitors','Dep HKR','Dep Visitors','Total','Remarks'],
+         totalCols:[7],
+         rows:topN(days,d=>d.dt.ad_tot).map(daily9col)},
+        {title:'Record High on Inbound Passengers',
+         headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
+         totalCols:[5],
+         rows:topN(days,d=>d.dt.arr_tot).map((x,i)=>daily7col(x,i,true))},
+        {title:'Record High on Outbound Passengers',
+         headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
+         totalCols:[5],
+         rows:topN(days,d=>d.dt.dep_tot).map((x,i)=>daily7col(x,i,false))},
+      ],
+      [6,13,5,14,14,14,14,13,32]
+    );
+    XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
+  }
+
+  // ── SHEET 2: HKR ──
+  {
+    const ws=buildSheet(
+      `Record High — HKR (Residents)`,
+      [
+        {title:'Record High on Total Number of HKR',
+         headers:['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+         totalCols:[5],
+         rows:topN(days,d=>(d.dt.arr_res||0)+(d.dt.dep_res||0)).map(hkr7col)},
+        {title:'Record High on Inbound HKR',
+         headers:['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+         totalCols:[5],
+         rows:topN(days,d=>d.dt.arr_res).map(hkr7col)},
+        {title:'Record High on Outbound HKR',
+         headers:['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+         totalCols:[5],
+         rows:topN(days,d=>d.dt.dep_res).map(hkr7col)},
+      ],
+      [6,13,5,15,15,13,32]
+    );
+    XLSX.utils.book_append_sheet(wb,ws,'HKR');
+  }
+
+  // ── SHEET 3: Visitor ──
+  {
+    const ws=buildSheet(
+      `Record High — Visitors`,
+      [
+        {title:'Record High on Total Number of Visitors',
+         headers:['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+         totalCols:[5],
+         rows:topN(days,d=>(d.dt.arr_vis||0)+(d.dt.dep_vis||0)).map(vis7col)},
+        {title:'Record High on Inbound Visitors',
+         headers:['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+         totalCols:[5],
+         rows:topN(days,d=>d.dt.arr_vis).map(vis7col)},
+        {title:'Record High on Outbound Visitors',
+         headers:['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+         totalCols:[5],
+         rows:topN(days,d=>d.dt.dep_vis).map(vis7col)},
+      ],
+      [6,13,5,16,17,14,32]
+    );
+    XLSX.utils.book_append_sheet(wb,ws,'Visitor');
+  }
+
+  // ── SHEET 4: Hourly ──
+  {
+    function hRows(fn){return topNHourly(days,fn).map(hourlyRow);}
+    const ws=buildSheet(
+      `Record High — Hourly`,
+      [
+        {title:'Hourly Record High on Total Passenger',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,grpArr9,grpBlank1,grpDep9,grpBlank1,grpTotal,grpRem],
+         headers:hHdr,totalCols:[10],rows:hRows(h=>(h.arr_tot||0)+(h.dep_tot||0))},
+        {title:'Hourly Record High on Inbound Passenger',
+         headers:hHdr,totalCols:[10],rows:hRows(h=>h.arr_tot)},
+        {title:'Hourly Record High on Outbound Passenger',
+         headers:hHdr,totalCols:[10],rows:hRows(h=>h.dep_tot)},
+        {title:'Hourly Record High on Inbound Residents',
+         headers:hHdr,totalCols:[10],rows:hRows(h=>h.arr_res)},
+        {title:'Hourly Record High on Outbound Residents',
+         headers:hHdr,totalCols:[10],rows:hRows(h=>h.dep_res)},
+        {title:'Hourly Record High on Inbound Visitors',
+         headers:hHdr,totalCols:[10],rows:hRows(h=>h.arr_vis)},
+        {title:'Hourly Record High on Outbound Visitors',
+         headers:hHdr,totalCols:[10],rows:hRows(h=>h.dep_vis)},
+      ],
+      [6,13,5,12,8,8,11,8,8,11,11,32]
+    );
+    XLSX.utils.book_append_sheet(wb,ws,'Hourly');
+  }
+
+  const eraSlug=currentEra==='postcovid'?'PostCOVID':'SinceCommissioning';
+  const filename=`RecordHigh_${eraSlug}_${latestDate||'export'}.xlsx`;
+  XLSX.writeFile(wb,filename);
 }
+
 
 function buildSectionHTML(days,sec){
   if(sec==='total'){
@@ -841,7 +1104,7 @@ function renderContent(){
   const latestDate=allDays.length?allDays[allDays.length-1].date:'';
   const eraLabel=currentEra==='postcovid'?`Post-COVID (from ${POST_COVID_DATE})`:`Since Commissioning (from ${COMM_DATE})`;
   document.getElementById('asAt').textContent=
-    `Record High of LSC (${eraLabel}) [as at ${fDate(latestDate)}] — ${days.length} days in range`;
+    `Record High (${eraLabel}) [as at ${fDate(latestDate)}] — ${days.length} days in range`;
   document.getElementById('content').innerHTML=buildSectionHTML(days,currentSection);
 }
 </script>
