@@ -775,6 +775,7 @@ function buildAnalysisHTML(days){
   const dow      = dowAnalysis(days);
   const holidays = holidayAnalysis(days);
   const wdwph    = weekdayWeekendAnalysis(days);
+  const _upcomingHol = detectUpcomingHoliday(days);
   const easter   = forecastEaster2026(days);
   const easterDays = getEasterDays(days);
 
@@ -862,10 +863,11 @@ function buildAnalysisHTML(days){
   push('<div class="af-grid">');
 
   // YoY table
-  push('<div class="af-card">');
+  push('<div class="af-card" style="grid-column:1/-1">');
   push('<div class="af-card-hdr"><h3>Annual Traffic — Same Period</h3><span class="kpi-sub" title="Only counts Jan 1 to latest date MM-DD each year for fair comparison">'+yoy.length+' yrs · up to '+latestMMDD+'</span></div>');
   push('<div class="af-card-body" style="padding:0">');
-  push('<table class="af-table"><thead><tr>');
+  push('<div style="overflow-x:auto">');
+  push('<table class="af-table" style="min-width:700px"><thead><tr>');
   ['Year','Days','Avg Daily','Arrival','Departure','HKR','Visitors','YoY Growth','Note'].forEach(h=>push('<th>'+h+'</th>'));
   push('</tr></thead><tbody>');
   yoy.forEach((y,i)=>{
@@ -883,7 +885,7 @@ function buildAnalysisHTML(days){
     push('<td style="font-size:9px;color:var(--muted)">'+(y.isPartial?'▶ as-at':'Full year')+'</td>');
     push('</tr>');
   });
-  push('</tbody></table></div></div>');
+  push('</tbody></table></div></div></div>');
 
   // Day of week
   const maxDow = Math.max(...dow.map(d=>d.avg))||1;
@@ -903,7 +905,7 @@ function buildAnalysisHTML(days){
     push('</div>');
   });
   push('</div></div>');
-  push('</div>'); // af-grid
+  push('</div>'); // af-grid (DoW card)
 
   // ══ ROW 2: Holiday type analysis ═════════════════════════════════════════════
 
@@ -984,7 +986,8 @@ function buildAnalysisHTML(days){
   push('</div>'); // af-grid
 
   // ══ SECTION 3: Easter 2026 Forecast ══════════════════════════════════════════
-  push('<div class="af-page-title">🐣 Easter 2026 Forecast</div>');
+  const _fcastTitle = easter ? (easter.targetEasterLabel||'Easter')+' Forecast' : 'Upcoming Holiday Forecast';
+  push('<div class="af-page-title">🐣 '+_fcastTitle+'</div>');
 
   if(!easter||easterDays.length===0){
     push('<div class="af-card"><div class="af-card-body" style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No Easter days found in loaded data.<br>Load data that includes past Easter holidays to generate the forecast.</div></div>');
@@ -1038,7 +1041,7 @@ function buildAnalysisHTML(days){
       const pDep = dp.projTotal - pArr;
       push('<div class="day-card">');
       push('<div class="day-card-tag" style="background:'+dp.color+'"></div>');
-      push('<div class="day-card-date">'+fDate(dp.date)+'</div>');
+      push('<div class="day-card-date">'+fDate(dp.date)+' ('+dayOfWeek(dp.date)+')</div>');
       push('<div class="day-card-occasion">'+dp.label+'</div>');
       push('<div class="day-card-total">'+nt(dp.projTotal)+'</div>');
       push('<div class="day-card-row"><span class="dcr-lbl">Arrival</span><span style="color:var(--arrival);font-weight:600">'+nt(pArr)+'</span></div>');
@@ -1063,7 +1066,7 @@ function buildAnalysisHTML(days){
       push('<div id="'+pid+'" class="eday-panel" style="display:'+(idx===0?'block':'none')+'">');
       push('<div class="af-card" style="margin-top:10px">');
       push('<div class="af-card-hdr">');
-      push('<h3 style="color:'+dp.color+'">'+dp.label+' — '+fDate(dp.date)+' — Hourly Profile</h3>');
+      push('<h3 style="color:'+dp.color+'">'+dp.label+' &nbsp;·&nbsp; '+dayOfWeek(dp.date)+' '+fDate(dp.date)+'</h3>');
       push('<span class="kpi-sub">'+(dp.isEstimated?'⚠ Estimated (no exact hist. data)':dp.histCount+' historical year(s)')+' · ×'+(f.factor>=1?'+':'')+((f.factor-1)*100).toFixed(1)+'% growth</span>');
       push('</div><div class="af-card-body">');
 
@@ -1932,13 +1935,13 @@ function yoyAnalysis(days){
 
 // ─── Day-of-week analysis ──────────────────────────────────────────────────
 function dowAnalysis(days){
-  const dow=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dow=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const dowMap=[1,2,3,4,5,6,0]; // Mon=1...Sun=0 in JS getDay()
   const buckets=dow.map(d=>({day:d,totals:[],arr:[],dep:[]}));
   for(const d of days){
-    const wd=new Date(d.date+'T00:00:00').getDay();
-    buckets[wd].totals.push(d.dt.ad_tot||0);
-    buckets[wd].arr.push(d.dt.arr_tot||0);
-    buckets[wd].dep.push(d.dt.dep_tot||0);
+    const jsDay=new Date(d.date+'T00:00:00').getDay(); // 0=Sun,6=Sat
+    const wd=dowMap.indexOf(jsDay); // remap to Mon-first index
+    if(wd>=0){ buckets[wd].totals.push(d.dt.ad_tot||0); buckets[wd].arr.push(d.dt.arr_tot||0); buckets[wd].dep.push(d.dt.dep_tot||0); }
   }
   return buckets.map(b=>({
     day:b.day,
@@ -2026,6 +2029,40 @@ function estimateResources(arrRes, arrVis, depRes, depVis){
 }
 
 // ─── Forecast Easter 2026 ──────────────────────────────────────────────────
+// Detect the next upcoming major HK holiday after the latest loaded date
+function detectUpcomingHoliday(days){
+  if(!days||!days.length) return null;
+  const latest = days[days.length-1].date;
+  const y = parseInt(latest.substring(0,4));
+  const candidates = [];
+
+  // Easter: Good Friday
+  for(let yr=y; yr<=y+2; yr++){
+    const easter = getEaster(yr);
+    const gf = new Date(easter); gf.setDate(gf.getDate()-2);
+    const gfStr = isoDate(gf);
+    if(gfStr > latest) candidates.push({type:'easter',year:yr,date:gfStr,label:'Easter '+yr,icon:'🐣'});
+  }
+  // Labour Day Golden Week May 1
+  for(let yr=y; yr<=y+1; yr++){
+    const d=yr+'-05-01';
+    if(d>latest) candidates.push({type:'labour',year:yr,date:d,label:'Labour Day Golden Week '+yr,icon:'⚒️'});
+  }
+  // National Day Oct 1
+  for(let yr=y; yr<=y+1; yr++){
+    const d=yr+'-10-01';
+    if(d>latest) candidates.push({type:'national',year:yr,date:d,label:'National Day Golden Week '+yr,icon:'🇨🇳'});
+  }
+  // Christmas Dec 25
+  for(let yr=y; yr<=y+1; yr++){
+    const d=yr+'-12-25';
+    if(d>latest) candidates.push({type:'christmas',year:yr,date:d,label:'Christmas '+yr,icon:'🎄'});
+  }
+  candidates.sort((a,b)=>a.date.localeCompare(b.date));
+  return candidates[0]||null;
+}
+
+
 function forecastEaster2026(days){
   const easterDays=getEasterDays(days);
   if(easterDays.length===0)return null;
@@ -2057,15 +2094,35 @@ function forecastEaster2026(days){
   }
   const factor=1+growthRate;
 
-  // ── Build per-day profiles for Easter 2026 ──
-  // Easter 2026: Easter Sunday = Apr 5
-  // Good Friday=-2 (Apr 3), Sat=-1 (Apr 4), Sun=0 (Apr 5), Mon=+1 (Apr 6), Tue=+2 (Apr 7)
+  // ── Dynamically compute target Easter year from latest loaded date ──────────
+  const _latestLoaded = days[days.length-1].date;
+  const _latestY = parseInt(_latestLoaded.substring(0,4));
+  let _targetY = _latestY;
+  for(let _y=_latestY; _y<=_latestY+5; _y++){
+    const _tryE=getEaster(_y);
+    const _tryGF=new Date(_tryE); _tryGF.setDate(_tryGF.getDate()-2);
+    if(isoDate(_tryGF)>_latestLoaded){ _targetY=_y; break; }
+  }
+  const _targetEaster=getEaster(_targetY);
+  function _eDate(off){ const d=new Date(_targetEaster); d.setDate(d.getDate()+off); return isoDate(d); }
+  function _eDow(off){ return new Date(_eDate(off)+'T00:00:00').toLocaleDateString('en-US',{weekday:'short'}); }
+  function _eLabel(off){
+    const dow=_eDow(off);
+    if(off===-2) return 'Good Friday ('+dow+') — PH';
+    if(off===-1) return 'Easter Saturday ('+dow+') — PH';
+    if(off=== 0) return 'Easter Sunday ('+dow+') — PH';
+    if(off=== 1) return 'Easter Monday ('+dow+') — PH';
+    const rem=getRemarks(_eDate(off))||'';
+    const isPH=rem!==''&&rem!=='Saturday'&&rem!=='Sunday';
+    return 'Day After ('+dow+') — '+(isPH?'PH':'Non PH');
+  }
+  const targetEasterLabel='Easter '+_targetY;
   const easter2026Dates={
-    '-2': {date:'2026-04-03', label:'Good Friday',    color:'#f59e0b'},
-    '-1': {date:'2026-04-04', label:'Easter Saturday', color:'#a78bfa'},
-     '0': {date:'2026-04-05', label:'Easter Sunday',   color:'var(--accent)'},
-     '1': {date:'2026-04-06', label:'Easter Monday',   color:'var(--res)'},
-     '2': {date:'2026-04-07', label:'Day After',       color:'var(--vis)'},
+    '-2':{date:_eDate(-2),label:_eLabel(-2),color:'#f59e0b'},
+    '-1':{date:_eDate(-1),label:_eLabel(-1),color:'#a78bfa'},
+     '0':{date:_eDate( 0),label:_eLabel( 0),color:'var(--accent)'},
+     '1':{date:_eDate( 1),label:_eLabel( 1),color:'var(--res)'},
+     '2':{date:_eDate( 2),label:_eLabel( 2),color:'var(--vis)'},
   };
 
   // Build per-day hourly profile and projected total
@@ -2091,12 +2148,13 @@ function forecastEaster2026(days){
   const avgEasterTotal=Math.round(easterDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/easterDays.length);
 
   return{
-    dayProfiles,           // per-day profiles keyed by offset (-2 to +2)
+    dayProfiles,
     avgEasterTotal,
     growthRate,
     factor,
     easterDays,
     byOffset,
+    targetEasterLabel: (typeof targetEasterLabel!=='undefined'?targetEasterLabel:'Easter'),
     projectedTotal:Math.round(avgEasterTotal*factor),
   };
 }
