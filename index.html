@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -21,102 +20,239 @@ html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-seri
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
 /* HEADER */
-header{background:var(–surface);border-bottom:1px solid var(–border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .brand{display:flex;align-items:center;gap:10px}
-.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(–accent),#7c6af7);display:flex;align-items:center;justify-content:center;font-size:13px}
-.brand-name{font-family:‘Space Mono’,monospace;font-size:12px;font-weight:700;letter-spacing:.04em}
-.brand-sub{font-size:10px;color:var(–muted);margin-top:1px}
+.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#7c6af7);display:flex;align-items:center;justify-content:center;font-size:13px}
+.brand-name{font-family:Space Mono,monospace;font-size:12px;font-weight:700;letter-spacing:.04em}
+.brand-sub{font-size:10px;color:var(--muted);margin-top:1px}
 .hdr-right{display:flex;align-items:center;gap:12px}
 .hdr-stat{text-align:right}
-.hdr-val{font-family:‘Space Mono’,monospace;font-size:16px;font-weight:700;color:var(–accent);line-height:1}
-.hdr-label{font-size:9px;color:var(–muted)}
-.btn-sm{background:transparent;border:1px solid var(–border);color:var(–muted);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;font-family:‘Space Mono’,monospace}
+.hdr-val{font-family:Space Mono,monospace;font-size:16px;font-weight:700;color:var(--accent);line-height:1}
+.hdr-label{font-size:9px;color:var(--muted)}
+.btn-sm{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace}
 
 /* MAIN */
 main{max-width:1300px;margin:0 auto;padding:20px}
 
 /* UPLOAD */
 .upload-wrap{max-width:520px;margin:60px auto;text-align:center}
-.upload-title{font-family:‘Space Mono’,monospace;font-size:22px;font-weight:700;line-height:1.3;margin-bottom:8px}
-.upload-sub{color:var(–dim);font-size:13px;margin-bottom:36px;line-height:1.7}
-.drop-zone{border:2px dashed var(–border);border-radius:12px;padding:44px 28px;cursor:pointer;position:relative;transition:all .2s}
-.drop-zone:hover,.drop-zone.over{border-color:var(–accent);background:rgba(0,212,184,.04)}
+.upload-title{font-family:Space Mono,monospace;font-size:22px;font-weight:700;line-height:1.3;margin-bottom:8px}
+.upload-sub{color:var(--dim);font-size:13px;margin-bottom:36px;line-height:1.7}
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:44px 28px;cursor:pointer;position:relative;transition:all .2s}
+.drop-zone:hover,.drop-zone.over{border-color:var(--accent);background:rgba(0,212,184,.04)}
 .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .drop-icon{font-size:38px;margin-bottom:12px}
-.drop-t{font-family:‘Space Mono’,monospace;font-size:12px;color:var(–dim);margin-bottom:5px}
-.drop-h{font-size:11px;color:var(–muted)}
-.loading-msg{color:var(–accent);font-size:12px;font-family:‘Space Mono’,monospace;margin-top:16px}
-.err-box{color:#ff4d6a;font-size:10px;padding:10px;background:rgba(255,77,106,.1);border-radius:6px;margin-top:14px;white-space:pre-wrap;font-family:‘Space Mono’,monospace;max-height:240px;overflow-y:auto;text-align:left}
+.drop-t{font-family:Space Mono,monospace;font-size:12px;color:var(--dim);margin-bottom:5px}
+.drop-h{font-size:11px;color:var(--muted)}
+.loading-msg{color:var(--accent);font-size:12px;font-family:Space Mono,monospace;margin-top:16px}
+.err-box{color:#ff4d6a;font-size:10px;padding:10px;background:rgba(255,77,106,.1);border-radius:6px;margin-top:14px;white-space:pre-wrap;font-family:Space Mono,monospace;max-height:240px;overflow-y:auto;text-align:left}
 
 /* DASHBOARD */
 .top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-.add-btn{display:flex;align-items:center;gap:6px;background:var(–surface);border:1px solid var(–border);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:10px;font-family:‘Space Mono’,monospace;color:var(–dim)}
-.add-btn:hover{border-color:var(–accent);color:var(–accent)}
-.files-label{font-size:11px;color:var(–muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.add-btn{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(--dim)}
+.add-btn:hover{border-color:var(--accent);color:var(--accent)}
+.files-label{font-size:11px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ERA TABS */
-.era-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(–border)}
-.era-tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;font-family:‘Space Mono’,monospace;font-size:10px;letter-spacing:.08em;color:var(–muted);text-transform:uppercase;transition:all .15s;margin-bottom:-1px}
-.era-tab.active{border-bottom-color:var(–gold);color:var(–gold)}
+.era-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.era-tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;font-family:Space Mono,monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;transition:all .15s;margin-bottom:-1px}
+.era-tab.active{border-bottom-color:var(--gold);color:var(--gold)}
 
 /* ERA CONFIG */
-.era-config{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.era-config label{font-size:11px;color:var(–dim);font-family:‘Space Mono’,monospace}
-.era-config input[type=date]{background:var(–surface3);border:1px solid var(–border);color:var(–text);padding:5px 10px;border-radius:5px;font-size:11px;font-family:‘Space Mono’,monospace}
-.era-config input[type=date]:focus{outline:none;border-color:var(–accent)}
-.era-apply{background:var(–accent);color:#000;border:none;padding:5px 14px;border-radius:5px;cursor:pointer;font-size:10px;font-family:‘Space Mono’,monospace;font-weight:700}
+.era-config{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.era-config label{font-size:11px;color:var(--dim);font-family:Space Mono,monospace}
+.era-config input[type=date]{background:var(--surface3);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:5px;font-size:11px;font-family:Space Mono,monospace}
+.era-config input[type=date]:focus{outline:none;border-color:var(--accent)}
+.era-apply{background:var(--accent);color:#000;border:none;padding:5px 14px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700}
 
 /* SECTION TABS */
 .sec-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
-.sec-tab{background:transparent;border:1px solid var(–border);border-radius:5px;padding:6px 14px;cursor:pointer;font-size:10px;font-family:‘Space Mono’,monospace;color:var(–muted);transition:all .15s}
-.sec-tab.active{background:rgba(0,212,184,.1);border-color:var(–accent);color:var(–accent)}
+.sec-tab{background:transparent;border:1px solid var(--border);border-radius:5px;padding:6px 14px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(--muted);transition:all .15s}
+.sec-tab.active{background:rgba(0,212,184,.1);border-color:var(--accent);color:var(--accent)}
 
 /* AS-AT DATE */
-.as-at{font-family:‘Space Mono’,monospace;font-size:11px;color:var(–dim);margin-bottom:16px}
+.as-at{font-family:Space Mono,monospace;font-size:11px;color:var(--dim);margin-bottom:16px}
 
 /* RECORD TABLE */
 .record-section{margin-bottom:28px}
-.rs-title{font-family:‘Space Mono’,monospace;font-size:11px;font-weight:700;color:var(–dim);letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase;border-left:3px solid var(–accent);padding-left:10px}
-.record-table-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(–border)}
+.rs-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase;border-left:3px solid var(--accent);padding-left:10px}
+.record-table-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(--border)}
 .record-table{width:100%;border-collapse:collapse;font-size:11px}
-.record-table thead tr:first-child th{background:var(–surface2);padding:7px 10px;font-family:‘Space Mono’,monospace;font-size:9px;letter-spacing:.07em;color:var(–muted);text-align:center;border-bottom:1px solid var(–border);white-space:nowrap}
-.record-table thead tr:last-child th{background:var(–surface);padding:6px 10px;font-family:‘Space Mono’,monospace;font-size:8px;letter-spacing:.06em;color:var(–muted);text-align:right;border-bottom:1px solid var(–border)}
+.record-table thead tr:first-child th{background:var(--surface2);padding:7px 10px;font-family:Space Mono,monospace;font-size:9px;letter-spacing:.07em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+.record-table thead tr:last-child th{background:var(--surface);padding:6px 10px;font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);text-align:right;border-bottom:1px solid var(--border)}
 .record-table thead tr:last-child th.l{text-align:left}
-.record-table thead th.group-hdr{border-left:1px solid var(–border)}
+.record-table thead th.group-hdr{border-left:1px solid var(--border)}
 .record-table tbody tr{transition:background .1s}
-.record-table tbody tr:nth-child(even){background:var(–surface2)}
-.record-table tbody tr:nth-child(odd){background:var(–surface)}
+.record-table tbody tr:nth-child(even){background:var(--surface2)}
+.record-table tbody tr:nth-child(odd){background:var(--surface)}
 .record-table tbody tr.rank1{background:rgba(245,200,66,.06)!important}
-.record-table tbody tr.highlight{color:var(–gold)}
-.record-table tbody td{padding:7px 10px;font-family:‘Space Mono’,monospace;font-size:11px;text-align:right;color:var(–dim);white-space:nowrap}
+.record-table tbody tr.highlight{color:var(--gold)}
+.record-table tbody td{padding:7px 10px;font-family:Space Mono,monospace;font-size:11px;text-align:right;color:var(--dim);white-space:nowrap}
 .record-table tbody td.l{text-align:left}
-.record-table tbody td.rank-cell{font-size:10px;color:var(–muted);text-align:center}
-.record-table tbody td.rank1-cell{color:var(–gold);font-weight:700}
-.record-table tbody td.total-cell{color:var(–tot);font-weight:700}
-.record-table tbody td.remarks-cell{color:var(–dim);font-size:10px;text-align:left}
-.record-table tbody tr.rank1 td.total-cell{color:var(–gold)}
+.record-table tbody td.rank-cell{font-size:10px;color:var(--muted);text-align:center}
+.record-table tbody td.rank1-cell{color:var(--gold);font-weight:700}
+.record-table tbody td.total-cell{color:var(--tot);font-weight:700}
+.record-table tbody td.remarks-cell{color:var(--dim);font-size:10px;text-align:left}
+.record-table tbody tr.rank1 td.total-cell{color:var(--gold)}
 
 /* GRID for sections */
 .tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(560px,1fr));gap:20px}
 
 @media print{
-:root{–bg:#fff;–surface:#fff;–surface2:#f5f5f5;–surface3:#eee;–border:#ccc;–accent:#007a6a;–gold:#b8860b;–text:#111;–dim:#444;–muted:#777;–res:#1a7a3a;–vis:#8a6a00;–tot:#007a6a;}
-header,.top-bar,.era-tabs,.era-config,.sec-tabs,.add-btn,.hdr-right{display:none!important}
-body,html{background:#fff;color:#111;font-size:10px}
-main{padding:8px;max-width:100%}
-.tables-grid{grid-template-columns:1fr!important}
-.record-table-wrap{border:1px solid #ccc;page-break-inside:avoid}
-.record-table{font-size:9px}
-.record-section{margin-bottom:16px;page-break-inside:avoid}
-.rs-title{color:#111;border-left-color:#007a6a;font-size:9px}
-.as-at{color:#444;font-size:9px}
-.pdf-header{display:block!important}
+  :root{--bg:#fff;--surface:#fff;--surface2:#f5f5f5;--surface3:#eee;--border:#ccc;--accent:#007a6a;--gold:#b8860b;--text:#111;--dim:#444;--muted:#777;--res:#1a7a3a;--vis:#8a6a00;--tot:#007a6a;}
+  header,.top-bar,.era-tabs,.era-config,.sec-tabs,.add-btn,.hdr-right{display:none!important}
+  body,html{background:#fff;color:#111;font-size:10px}
+  main{padding:8px;max-width:100%}
+  .tables-grid{grid-template-columns:1fr!important}
+  .record-table-wrap{border:1px solid #ccc;page-break-inside:avoid}
+  .record-table{font-size:9px}
+  .record-section{margin-bottom:16px;page-break-inside:avoid}
+  .rs-title{color:#111;border-left-color:#007a6a;font-size:9px}
+  .as-at{color:#444;font-size:9px}
+  .pdf-header{display:block!important}
 }
 .pdf-header{display:none;text-align:center;margin-bottom:12px}
 .pdf-header h2{font-size:16px;font-weight:700;color:#111}
 .pdf-header p{font-size:10px;color:#444;margin-top:4px}
-</style>
 
+/* ════════════════════════════════════════════════
+   ANALYSIS & FORECAST
+   ════════════════════════════════════════════════ */
+.af-page-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.af-page-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.kpi-ribbon{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.kpi-card:hover{border-color:var(--accent)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.kpi-card.kc-accent::before{background:var(--accent)}.kpi-card.kc-gold::before{background:var(--gold)}
+.kpi-card.kc-res::before{background:var(--res)}.kpi-card.kc-dep::before{background:var(--departure)}
+.kpi-card.kc-purple::before{background:#7c6af7}
+.kpi-lbl{font-size:9px;font-family:Space Mono,monospace;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-family:Space Mono,monospace;font-size:26px;font-weight:700;line-height:1;color:var(--text)}
+.kpi-sub{font-size:10px;color:var(--dim);margin-top:4px}
+.kpi-trend{font-size:11px;font-weight:600;margin-top:4px}
+.kpi-trend.up{color:var(--res)}.kpi-trend.dn{color:#f87171}
+.af-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:900px){.af-grid{grid-template-columns:1fr}}
+.af-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.af-card-hdr{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.af-card-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.af-card-body{padding:16px 18px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.bar-row:last-child{margin-bottom:0}
+.bar-label{font-size:11px;color:var(--dim);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:7px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.bar-fill.bf-accent{background:linear-gradient(90deg,var(--accent),#00b8a0)}
+.bar-fill.bf-gold{background:linear-gradient(90deg,var(--gold),#e8a800)}
+.bar-fill.bf-arr{background:linear-gradient(90deg,#0097A7,#00bcd4)}
+.bar-fill.bf-dep{background:linear-gradient(90deg,#5B3D9E,#7c6af7)}
+.bar-val{font-family:Space Mono,monospace;font-size:10px;color:var(--text);font-weight:600;width:64px;text-align:right;flex-shrink:0}
+.af-table{width:100%;border-collapse:collapse;font-size:11px}
+.af-table thead th{padding:7px 10px;background:var(--surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.08em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+.af-table thead th:first-child{text-align:left}
+.af-table tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+.af-table tbody tr:hover{background:var(--surface2)}
+.af-table tbody tr:last-child{border-bottom:none}
+.af-table tbody td{padding:8px 10px;text-align:center;color:var(--dim);font-family:Space Mono,monospace;font-size:10px}
+.af-table tbody td:first-child{text-align:left;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text)}
+.af-table .pos{color:var(--res);font-weight:700}.af-table .neg{color:#f87171;font-weight:700}
+.af-table .arr-c{color:var(--arrival)}.af-table .dep-c{color:var(--departure)}
+.af-table .hi{color:var(--gold);font-weight:700}
+.day-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+@media(max-width:700px){.day-cards{grid-template-columns:1fr 1fr}}
+.day-card{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 14px;text-align:center;transition:all .2s;cursor:default;position:relative;overflow:hidden}
+.day-card:hover{border-color:var(--gold);background:var(--surface3)}
+.day-card-tag{position:absolute;top:0;left:0;right:0;height:3px}
+.day-card-date{font-family:Space Mono,monospace;font-size:9px;color:var(--muted);margin-bottom:4px}
+.day-card-occasion{font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.3}
+.day-card-total{font-family:Space Mono,monospace;font-size:24px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:8px}
+.day-card-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-top:1px solid var(--border)}
+.day-card-row:first-of-type{margin-top:8px}
+.day-card-row .dcr-lbl{color:var(--muted)}
+.hourly-wrap{overflow-x:auto}
+.hourly-chart{display:flex;align-items:flex-end;gap:2px;height:72px;min-width:480px}
+.hb-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+.hb-wrap:hover .hb-tip{display:flex}
+.hb-fill{width:100%;border-radius:2px 2px 0 0;min-height:2px;transition:height .5s}
+.hb-lbl{font-size:6px;color:var(--muted);font-family:Space Mono,monospace;transform:rotate(-40deg);white-space:nowrap;line-height:1;margin-top:1px}
+.hb-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:9px;white-space:nowrap;z-index:20;font-family:Space Mono,monospace;flex-direction:column;gap:2px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.hb-tip b{color:var(--gold)}
+.peak-star{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:8px;line-height:1}
+.ctr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:700px){.ctr-grid{grid-template-columns:1fr 1fr}}
+.ctr-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 12px;text-align:center;transition:border-color .2s}
+.ctr-card:hover{border-color:var(--accent)}
+.ctr-val{font-family:Space Mono,monospace;font-size:34px;font-weight:700;line-height:1;margin-bottom:5px}
+.ctr-lbl{font-size:11px;font-weight:600;color:var(--dim);margin-bottom:2px}
+.ctr-sub{font-size:9px;color:var(--muted)}
+.ctr-sub2{font-size:9px;color:var(--muted);margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.param-bar{display:flex;gap:12px;align-items:center;background:var(--surface2);border-radius:6px;padding:10px 14px;margin-bottom:16px;flex-wrap:wrap}
+.param-item{font-size:10px;color:var(--dim)}.param-item b{color:var(--text);font-family:Space Mono,monospace}
+/* ════════════════════════════════════════════════
+   THROUGHPUT ESTIMATOR
+   ════════════════════════════════════════════════ */
+.tp-layout{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+@media(max-width:860px){.tp-layout{grid-template-columns:1fr}}
+.tp-ctrl{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tp-ctrl-hdr{padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.tp-ctrl-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.tp-ctrl-body{padding:14px 16px}
+.dir-tog{display:flex;background:var(--surface3);border-radius:8px;padding:3px;gap:3px;margin-bottom:16px}
+.dir-tog-btn{flex:1;padding:8px;border:none;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700;transition:all .2s;text-align:center}
+.dir-tog-btn.act-arr{background:linear-gradient(135deg,#0097A7,#00bcd4);color:#000}
+.dir-tog-btn.act-dep{background:linear-gradient(135deg,#5B3D9E,#7c6af7);color:#fff}
+.scen-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.scen-pill{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:9px;font-family:Space Mono,monospace;transition:all .15s}
+.scen-pill:hover{border-color:var(--accent);color:var(--accent)}
+.tp-sec-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.tp-sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.sl-row{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.sl-badge{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;letter-spacing:.02em}
+.sl-badge.r{background:rgba(0,151,167,.2);color:#0097A7}
+.sl-badge.v{background:rgba(245,200,66,.2);color:#f5c842}
+.sl-lbl{font-size:10px;color:var(--dim);width:44px;flex-shrink:0}
+input[type=range].tpsl{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:2px;background:var(--border);cursor:pointer;outline:none}
+input[type=range].tpsl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;cursor:pointer;transition:transform .15s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
+.sl-val{font-family:Space Mono,monospace;font-size:12px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
+.sl-hint{font-size:8px;color:var(--muted);margin-left:29px;margin-top:-6px;margin-bottom:4px}
+.tp-kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.tp-kc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 14px;position:relative;overflow:hidden;transition:border-color .2s}
+.tp-kc:hover{border-color:var(--accent)}
+.tp-kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.tp-kc.tc-a::before{background:var(--accent)}.tp-kc.tc-g::before{background:var(--gold)}
+.tp-kc.tc-p::before{background:#7c6af7}.tp-kc.tc-r::before{background:var(--res)}
+.tp-kc-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.08em;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
+.tp-kc-val{font-family:Space Mono,monospace;font-size:22px;font-weight:700;line-height:1}
+.tp-kc-sub{font-size:9px;color:var(--muted);margin-top:3px}
+.stt{width:100%;border-collapse:collapse;font-size:11px}
+.stt thead th{padding:8px 10px;background:var(--surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+.stt thead th:first-child{text-align:left}
+.stt tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+.stt tbody tr:hover{background:var(--surface2)}
+.stt tbody tr:last-child{border-bottom:none}
+.stt tbody tr.stt-total{background:var(--surface2);border-top:1px solid var(--border)}
+.stt tbody td{padding:10px 10px;text-align:center;font-family:Space Mono,monospace;font-size:11px;color:var(--dim)}
+.stt tbody td:first-child{text-align:left;color:var(--text);font-weight:700}
+.util-cell{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
+.util-pct{font-size:11px;font-weight:700}
+.util-bar{width:52px;height:5px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.util-fill{height:100%;border-radius:3px;transition:width .5s}
+.spill{display:inline-block;padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:Space Mono,monospace;letter-spacing:.02em}
+.spill-met{background:rgba(74,222,128,.15);color:#4ade80}
+.spill-warn{background:rgba(245,200,66,.15);color:#f5c842}
+.spill-fail{background:rgba(248,113,113,.15);color:#f87171}
+.wt-ok{color:#4ade80;font-weight:700}.wt-warn{color:#f5c842;font-weight:700}.wt-fail{color:#f87171;font-weight:700}
+.ico-grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:700px){.ico-grid2{grid-template-columns:1fr 1fr}}
+.ico-c{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center;transition:border-color .2s}
+.ico-c:hover{border-color:var(--border)}
+.ico-c-num{font-family:Space Mono,monospace;font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
+.ico-c-lbl{font-size:10px;font-weight:600;color:var(--dim);margin-bottom:2px}
+.ico-c-sub{font-size:9px;color:var(--muted)}
+
+</style>
 </head>
 <body>
 
@@ -164,7 +300,6 @@ main{padding:8px;max-width:100%}
   </div>
 
   <!-- DASHBOARD -->
-
   <div id="dashboard" style="display:none">
     <div class="top-bar">
       <label class="add-btn">
@@ -175,45 +310,44 @@ main{padding:8px;max-width:100%}
       <div class="loading-msg" id="dashLoading" style="display:none">Parsing…</div>
     </div>
 
-```
-<!-- ERA TABS -->
-<div class="era-tabs">
-  <button class="era-tab active" onclick="switchEra('postcovid',this)">Post-COVID</button>
-  <button class="era-tab" onclick="switchEra('commissioning',this)">Since Commissioning</button>
-</div>
+    <!-- ERA TABS -->
+    <div class="era-tabs">
+      <button class="era-tab active" onclick="switchEra('postcovid',this)">Post-COVID</button>
+      <button class="era-tab" onclick="switchEra('commissioning',this)">Since Commissioning</button>
+    </div>
 
-<!-- ERA DATE CONFIG -->
-<div class="era-config" id="eraConfig">
-  <div>
-    <label>Post-COVID start date:</label><br/>
-    <input type="date" id="postCovidDate" value="2023-01-08"/>
-  </div>
-  <div>
-    <label>Since Commissioning start date:</label><br/>
-    <input type="date" id="commDate" value="2003-09-07"/>
-  </div>
-  <button class="era-apply" onclick="applyConfig()">APPLY &amp; REFRESH</button>
-  <span style="font-size:10px;color:var(--muted)">Post-COVID default: 08 Jan 2023 (HK border reopening)</span>
-</div>
+    <!-- ERA DATE CONFIG -->
+    <div class="era-config" id="eraConfig">
+      <div>
+        <label>Post-COVID start date:</label><br/>
+        <input type="date" id="postCovidDate" value="2023-01-08"/>
+      </div>
+      <div>
+        <label>Since Commissioning start date:</label><br/>
+        <input type="date" id="commDate" value="2003-09-07"/>
+      </div>
+      <button class="era-apply" onclick="applyConfig()">APPLY &amp; REFRESH</button>
+      <span style="font-size:10px;color:var(--muted)">Post-COVID default: 08 Jan 2023 (HK border reopening)</span>
+    </div>
 
-<!-- SECTION TABS -->
-<div class="sec-tabs">
-  <button class="sec-tab active" onclick="switchSection('total',this)">Total Traffic</button>
-  <button class="sec-tab" onclick="switchSection('hkr',this)">HKR</button>
-  <button class="sec-tab" onclick="switchSection('visitor',this)">Visitor</button>
-  <button class="sec-tab" onclick="switchSection('hourly',this)">Hourly</button>
-</div>
+    <!-- SECTION TABS -->
+    <div class="sec-tabs">
+      <button class="sec-tab active" onclick="switchSection('total',this)">Total Traffic</button>
+      <button class="sec-tab" onclick="switchSection('hkr',this)">HKR</button>
+      <button class="sec-tab" onclick="switchSection('visitor',this)">Visitor</button>
+      <button class="sec-tab" onclick="switchSection('hourly',this)">Hourly</button>
+      <button class="sec-tab" onclick="switchSection('analysis',this)">📈 Analysis &amp; Forecast</button>
+      <button class="sec-tab" onclick="switchSection('estimator',this)">⚙️ Throughput Estimator</button>
+    </div>
 
-<div class="as-at" id="asAt"></div>
-<div class="pdf-header" id="pdfHeader">
-  <h2>Record High — Passenger Statistics</h2>
-  <p id="pdfSubtitle"></p>
-</div>
+    <div class="as-at" id="asAt"></div>
+    <div class="pdf-header" id="pdfHeader">
+      <h2>Record High — Passenger Statistics</h2>
+      <p id="pdfSubtitle"></p>
+    </div>
 
-<!-- CONTENT -->
-<div id="content"></div>
-```
-
+    <!-- CONTENT -->
+    <div id="content"></div>
   </div>
 </main>
 
@@ -386,6 +520,7 @@ function switchSection(sec,btn){
   document.querySelectorAll('.sec-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderContent();
+  if(sec==='estimator') setTimeout(renderEstimator, 30);
 }
 
 // ─── FILTER BY ERA ────────────────────────────────────────────────────────────
@@ -631,30 +766,587 @@ function getRemarks(dateStr){
   return''; // weekday, no special remark
 }
 
+function buildAnalysisHTML(days){
+  if(!days||days.length===0)
+    return '<div style="padding:60px;text-align:center;color:var(--muted);font-family:Space Mono,monospace;font-size:12px">No data loaded — upload Excel files first</div>';
+
+  const yoy      = yoyAnalysis(days);
+  const latestMMDD = days.length ? days[days.length-1].date.substring(5) : '';
+  const dow      = dowAnalysis(days);
+  const holidays = holidayAnalysis(days);
+  const wdwph    = weekdayWeekendAnalysis(days);
+  const easter   = forecastEaster2026(days);
+  const easterDays = getEasterDays(days);
+
+  const o = [];
+  function push(s){ o.push(s); }
+  function nt(v){ return(v===null||v===undefined)?'—':Number(v).toLocaleString(); }
+  function pct(v,t){ return t?Math.round(v/t*100):0; }
+
+  push('<div class="af-wrap">');
+
+  // ══ KPI RIBBON ═══════════════════════════════════════════════════════════════
+  const lastYoy = yoy.length ? yoy[yoy.length-1] : null;
+  const prevYoy = yoy.length>1 ? yoy[yoy.length-2] : null;
+  const yoyGrowth = lastYoy&&prevYoy&&prevYoy.avgDaily ? ((lastYoy.avgDaily-prevYoy.avgDaily)/prevYoy.avgDaily*100) : null;
+  const totalDays = days.length;
+  const grandTotal = yoy.reduce((s,y)=>s+y.total,0);
+  const peakDay = days.length?days.reduce((a,b)=>((b.dt&&b.dt.ad_tot)||0)>((a.dt&&a.dt.ad_tot)||0)?b:a, days[0]):null;
+  const resRatio = grandTotal>0 ? Math.round(yoy.reduce((s,y)=>s+y.res,0)/grandTotal*100) : 0;
+
+  push('<div class="kpi-ribbon">');
+  const kpis = [
+    {lbl:'Days in Range', val:totalDays.toLocaleString(), sub:days[0].date+' – '+days[days.length-1].date, cls:'kc-accent', color:'var(--accent)'},
+    {lbl:'Total Passengers', val:(grandTotal/1e6).toFixed(1)+'M', sub:'All-time in loaded data', cls:'kc-gold', color:'var(--gold)'},
+    {lbl:'Avg Daily Traffic', val:lastYoy?nt(lastYoy.avgDaily):'—', sub:(lastYoy?lastYoy.year:'')+' average', cls:'kc-res', color:'var(--res)'},
+    {lbl:'YoY Growth', val:(yoyGrowth!==null?(yoyGrowth>=0?'+':'')+yoyGrowth.toFixed(1)+'%':'—'), sub:'vs prior year avg daily', cls:'kc-dep', color:yoyGrowth>=0?'var(--res)':'#f87171', trend:yoyGrowth},
+    {lbl:'Resident Ratio', val:resRatio+'%', sub:'of total traffic', cls:'kc-purple', color:'#7c6af7'},
+    {lbl:'Peak Day Total', val:peakDay?nt(peakDay.dt.ad_tot):'—', sub:peakDay?fDate(peakDay.date)+' · '+getRemarks(peakDay.date):'', cls:'kc-gold', color:'var(--gold)'},
+  ];
+  // Weekday vs Weekend/PH averages (added to ribbon separately below)
+  // wwAnalysis already computed as wdwph above
+  kpis.forEach(k=>{
+    push('<div class="kpi-card '+k.cls+'">');
+    push('<div class="kpi-lbl">'+k.lbl+'</div>');
+    push('<div class="kpi-val" style="color:'+k.color+'">'+k.val+'</div>');
+    push('<div class="kpi-sub">'+k.sub+'</div>');
+    if(k.trend!==null&&k.trend!==undefined){
+      push('<div class="kpi-trend '+(k.trend>=0?'up':'dn')+'">'+(k.trend>=0?'▲ Growth':'▼ Decline')+'</div>');
+    }
+    push('</div>');
+  });
+  // Weekday / Weekend+PH cards
+  const ww=wdwph;
+  [
+    {lbl:'Avg Weekday Traffic',val:nt(ww.weekday.avgTotal),sub:ww.weekday.count+' weekdays (non-PH)',color:'var(--accent)',cls:'kc-accent',
+     arr:ww.weekday.avgArr,dep:ww.weekday.avgDep},
+    {lbl:'Avg Weekend / Public Holiday',val:nt(ww.phwk.avgTotal),sub:ww.phwk.count+' weekend & PH days',color:'var(--gold)',cls:'kc-gold',
+     arr:ww.phwk.avgArr,dep:ww.phwk.avgDep},
+  ].forEach(k=>{
+    push('<div class="kpi-card '+k.cls+'">');
+    push('<div class="kpi-lbl">'+k.lbl+'</div>');
+    push('<div class="kpi-val" style="color:'+k.color+'">'+k.val+'</div>');
+    push('<div class="kpi-sub" style="margin-top:3px">');
+    push('<span style="color:var(--arrival)">▲ '+nt(k.arr)+'</span> &nbsp;');
+    push('<span style="color:var(--departure)">▼ '+nt(k.dep)+'</span>');
+    push('</div>');
+    push('<div class="kpi-sub">'+k.sub+'</div>');
+    push('</div>');
+  });
+  // Weekday vs Weekend/PH averages
+  const wwData = wdwph;
+  push('<div class="kpi-card kc-accent" style="grid-column:span 1">');
+  push('<div class="kpi-lbl">Avg Weekday Traffic</div>');
+  push('<div class="kpi-val" style="color:var(--accent)">'+nt(wwData.weekday.avgTotal)+'</div>');
+  push('<div class="kpi-sub" style="margin-top:6px">');
+  push('<span style="color:var(--arrival)">▲ '+nt(wwData.weekday.avgArr)+'</span>');
+  push(' &nbsp;·&nbsp; ');
+  push('<span style="color:var(--departure)">▼ '+nt(wwData.weekday.avgDep)+'</span>');
+  push('</div>');
+  push('<div class="kpi-sub">'+wwData.weekday.count+' weekdays (non-PH)</div>');
+  push('</div>');
+  push('<div class="kpi-card kc-gold" style="grid-column:span 1">');
+  push('<div class="kpi-lbl">Avg Weekend / Public Holiday</div>');
+  push('<div class="kpi-val" style="color:var(--gold)">'+nt(wwData.phwk.avgTotal)+'</div>');
+  push('<div class="kpi-sub" style="margin-top:6px">');
+  push('<span style="color:var(--arrival)">▲ '+nt(wwData.phwk.avgArr)+'</span>');
+  push(' &nbsp;·&nbsp; ');
+  push('<span style="color:var(--departure)">▼ '+nt(wwData.phwk.avgDep)+'</span>');
+  push('</div>');
+  push('<div class="kpi-sub">'+wwData.phwk.count+' days (Sat/Sun/PH)</div>');
+  push('</div>');
+  push('</div>'); // kpi-ribbon
+
+  // ══ ROW 1: YoY table + Day-of-Week ═══════════════════════════════════════════
+  push('<div class="af-page-title">📊 Year-over-Year Trend</div>');
+  push('<div class="af-grid">');
+
+  // YoY table
+  push('<div class="af-card">');
+  push('<div class="af-card-hdr"><h3>Annual Traffic — Same Period</h3><span class="kpi-sub" title="Only counts Jan 1 to latest date MM-DD each year for fair comparison">'+yoy.length+' yrs · up to '+latestMMDD+'</span></div>');
+  push('<div class="af-card-body" style="padding:0">');
+  push('<table class="af-table"><thead><tr>');
+  ['Year','Days','Avg Daily','Arrival','Departure','HKR','Visitors','YoY Growth','Note'].forEach(h=>push('<th>'+h+'</th>'));
+  push('</tr></thead><tbody>');
+  yoy.forEach((y,i)=>{
+    const prev=i>0?yoy[i-1]:null;
+    const g=prev&&prev.avgDaily?((y.avgDaily-prev.avgDaily)/prev.avgDaily*100):null;
+    push('<tr>');
+    push('<td style="font-family:\'Space Mono\',monospace;font-weight:700;color:var(--accent)">'+y.year+'</td>');
+    push('<td>'+y.count+'</td>');
+    push('<td class="hi">'+nt(y.avgDaily)+'</td>');
+    push('<td class="arr-c">'+nt(y.arr)+'</td>');
+    push('<td class="dep-c">'+nt(y.dep)+'</td>');
+    push('<td style="color:var(--res)">'+nt(y.res)+'</td>');
+    push('<td style="color:var(--vis)">'+nt(y.vis)+'</td>');
+    push('<td class="'+(g===null?'':(g>=0?'pos':'neg'))+'">'+(g===null?'—':(g>=0?'+':'')+g.toFixed(1)+'%')+'</td>');
+    push('<td style="font-size:9px;color:var(--muted)">'+(y.isPartial?'▶ as-at':'Full year')+'</td>');
+    push('</tr>');
+  });
+  push('</tbody></table></div></div>');
+
+  // Day of week
+  const maxDow = Math.max(...dow.map(d=>d.avg))||1;
+  push('<div class="af-card">');
+  push('<div class="af-card-hdr"><h3>Average by Day of Week</h3><span class="kpi-sub">All loaded days</span></div>');
+  push('<div class="af-card-body">');
+  dow.forEach(d=>{
+    const w=pct(d.avg,maxDow);
+    push('<div class="bar-row">');
+    push('<span class="bar-label bold">'+d.day+'</span>');
+    push('<div class="bar-track"><div class="bar-fill bf-accent" style="width:'+w+'%"></div></div>');
+    push('<span class="bar-val">'+nt(d.avg)+'</span>');
+    push('</div>');
+    push('<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:6px;margin-top:-6px">');
+    push('<span style="font-size:9px;color:var(--arrival)">▲ '+nt(d.avgArr)+'</span>');
+    push('<span style="font-size:9px;color:var(--departure)">▼ '+nt(d.avgDep)+'</span>');
+    push('</div>');
+  });
+  push('</div></div>');
+  push('</div>'); // af-grid
+
+  // ══ ROW 2: Holiday type analysis ═════════════════════════════════════════════
+
+  // ══ WEEKDAY vs WEEKEND / PUBLIC HOLIDAY ═══════════════════════════════════════
+  push('<div class="af-page-title">📅 Weekday vs Weekend &amp; Public Holiday</div>');
+  push('<div class="kpi-ribbon" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">');
+  // Weekday card
+  push('<div class="kpi-card kc-accent">');
+  push('<div class="kpi-lbl">Weekday Average</div>');
+  push('<div class="kpi-val" style="color:var(--accent)">'+nt(wdwph.weekday.avg)+'</div>');
+  push('<div class="kpi-sub">'+wdwph.weekday.count+' weekday'+(wdwph.weekday.count!==1?'s':'')+' in range</div>');
+  push('<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">');
+  push('<div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--muted)">Avg Arrival</span><span style="color:var(--arrival);font-weight:600">'+nt(wdwph.weekday.avgArr)+'</span></div>');
+  push('<div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--muted)">Avg Departure</span><span style="color:var(--departure);font-weight:600">'+nt(wdwph.weekday.avgDep)+'</span></div>');
+  push('<div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--muted)">Peak Day</span><span style="color:var(--gold);font-weight:600">'+nt(wdwph.weekday.peak)+'</span></div>');
+  push('</div></div>');
+  // Weekend/PH card
+  push('<div class="kpi-card kc-gold">');
+  push('<div class="kpi-lbl">Weekend / Public Holiday Avg</div>');
+  push('<div class="kpi-val" style="color:var(--gold)">'+nt(wdwph.phwk.avg)+'</div>');
+  push('<div class="kpi-sub">'+wdwph.phwk.count+' day'+(wdwph.phwk.count!==1?'s':'')+' in range</div>');
+  push('<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">');
+  push('<div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--muted)">Avg Arrival</span><span style="color:var(--arrival);font-weight:600">'+nt(wdwph.phwk.avgArr)+'</span></div>');
+  push('<div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px"><span style="color:var(--muted)">Avg Departure</span><span style="color:var(--departure);font-weight:600">'+nt(wdwph.phwk.avgDep)+'</span></div>');
+  push('<div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--gold)">Peak Day</span><span style="color:var(--gold);font-weight:600">'+nt(wdwph.phwk.peak)+'</span></div>');
+  push('</div></div>');
+  // Uplift card
+  const uplift = wdwph.weekday.avg>0 ? ((wdwph.phwk.avg-wdwph.weekday.avg)/wdwph.weekday.avg*100) : 0;
+  push('<div class="kpi-card kc-purple">');
+  push('<div class="kpi-lbl">Weekend/PH Uplift</div>');
+  push('<div class="kpi-val" style="color:#7c6af7">'+(uplift>=0?'+':'')+uplift.toFixed(1)+'%</div>');
+  push('<div class="kpi-sub">vs weekday average</div>');
+  push('<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">');
+  push('<div style="font-size:10px;color:var(--muted);margin-bottom:4px">Weekday avg</div>');
+  push('<div class="bar-row" style="margin-bottom:4px"><div class="bar-track"><div class="bar-fill bf-accent" style="width:100%"></div></div><span class="bar-val" style="font-size:9px">'+nt(wdwph.weekday.avg)+'</span></div>');
+  push('<div style="font-size:10px;color:var(--muted);margin-bottom:4px">Weekend/PH avg</div>');
+  const wpct = wdwph.weekday.avg>0?Math.min(Math.round(wdwph.phwk.avg/wdwph.weekday.avg*100),150):100;
+  push('<div class="bar-row"><div class="bar-track"><div class="bar-fill bf-gold" style="width:'+Math.min(wpct,100)+'%"></div></div><span class="bar-val" style="font-size:9px;color:var(--gold)">'+nt(wdwph.phwk.avg)+'</span></div>');
+  push('</div></div>');
+  push('</div>');
+
+
+  push('<div class="af-page-title">🎌 Holiday & Day-Type Analysis</div>');
+  push('<div class="af-grid">');
+  const holidays2 = holidayAnalysis(days);
+  const maxH = holidays2.length ? holidays2[0].avg : 1;
+
+  push('<div class="af-card">');
+  push('<div class="af-card-hdr"><h3>Top Traffic Day Types</h3><span class="kpi-sub">by avg daily total</span></div>');
+  push('<div class="af-card-body">');
+  holidays2.slice(0,10).forEach((h,i)=>{
+    const w=pct(h.avg,maxH);
+    const isEaster=h.cat.includes('Easter');
+    push('<div class="bar-row">');
+    push('<span class="bar-label'+(isEaster?' bold':'')+'" title="'+h.cat+'">'+h.cat+'</span>');
+    push('<div class="bar-track"><div class="bar-fill '+(isEaster?'bf-gold':'bf-accent')+'" style="width:'+w+'%"></div></div>');
+    push('<span class="bar-val '+(isEaster?'hi':'')+'">'+nt(h.avg)+'</span>');
+    push('</div>');
+  });
+  push('</div></div>');
+
+  push('<div class="af-card">');
+  push('<div class="af-card-hdr"><h3>Holiday Type Detail</h3><span class="kpi-sub">avg / max / count</span></div>');
+  push('<div class="af-card-body" style="padding:0">');
+  push('<table class="af-table"><thead><tr><th>Type</th><th>Days</th><th>Avg Total</th><th>Peak</th><th>Avg Arr</th><th>Avg Dep</th></tr></thead><tbody>');
+  holidays2.slice(0,10).forEach(h=>{
+    const isE=h.cat.includes('Easter');
+    push('<tr>');
+    push('<td style="max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'+(isE?';font-weight:700;color:var(--gold)':'')+'">'+h.cat+'</td>');
+    push('<td>'+h.count+'</td>');
+    push('<td class="'+(isE?'hi':'')+'">'+nt(h.avg)+'</td>');
+    push('<td style="color:var(--gold)">'+nt(h.max)+'</td>');
+    push('<td class="arr-c">'+nt(h.avgArr)+'</td>');
+    push('<td class="dep-c">'+nt(h.avgDep)+'</td>');
+    push('</tr>');
+  });
+  push('</tbody></table></div></div>');
+  push('</div>'); // af-grid
+
+  // ══ SECTION 3: Easter 2026 Forecast ══════════════════════════════════════════
+  push('<div class="af-page-title">🐣 Easter 2026 Forecast</div>');
+
+  if(!easter||easterDays.length===0){
+    push('<div class="af-card"><div class="af-card-body" style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No Easter days found in loaded data.<br>Load data that includes past Easter holidays to generate the forecast.</div></div>');
+  } else {
+    const f=easter;
+    // Use Easter Sunday (offset 0) profile as the primary reference
+    const _refDay = f.dayProfiles['0'] || f.dayProfiles['-2'] || Object.values(f.dayProfiles)[0];
+    const profile = _refDay ? _refDay.profile : [];
+    const peakHr = profile.length ? profile.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a,profile[0]) : {time:'2100-2159',ad_tot:0,arr_res:0,arr_vis:0,arr_tot:0,dep_res:0,dep_vis:0,dep_tot:0};
+
+    // Day cards
+    // Weekday/Weekend baseline comparison
+  const wwF = wdwph;
+  const pctAboveWD = wwF.weekday.avgTotal ? Math.round((f.projectedTotal-wwF.weekday.avgTotal)/wwF.weekday.avgTotal*100) : null;
+  const pctAboveWE = wwF.phwk.avgTotal ? Math.round((f.projectedTotal-wwF.phwk.avgTotal)/wwF.phwk.avgTotal*100) : null;
+  push('<div class="af-card" style="margin-bottom:16px">');
+  push('<div class="af-card-hdr"><h3>Baseline Comparison</h3><span class="kpi-sub">How Easter 2026 compares to your averages</span></div>');
+  push('<div class="af-card-body">');
+  push('<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">');
+  // Weekday avg
+  push('<div style="background:var(--surface2);border-radius:8px;padding:14px;border:1px solid var(--border)">');
+  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase">Avg Weekday</div>');
+  push('<div style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:var(--accent)">'+nt(wwF.weekday.avgTotal)+'</div>');
+  push('<div style="font-size:10px;color:var(--muted);margin-top:3px">'+wwF.weekday.count+' days (non-PH)</div>');
+  push('</div>');
+  // Weekend/PH avg
+  push('<div style="background:var(--surface2);border-radius:8px;padding:14px;border:1px solid var(--border)">');
+  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase">Avg Weekend / PH</div>');
+  push('<div style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:var(--gold)">'+nt(wwF.phwk.avgTotal)+'</div>');
+  push('<div style="font-size:10px;color:var(--muted);margin-top:3px">'+wwF.phwk.count+' days (Sat/Sun/PH)</div>');
+  push('</div>');
+  // Easter 2026 projection
+  push('<div style="background:rgba(245,200,66,.08);border-radius:8px;padding:14px;border:1px solid var(--gold)">');
+  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--gold);letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase">Easter 2026 Proj.</div>');
+  push('<div style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:var(--gold)">'+nt(f.projectedTotal)+'</div>');
+  push('<div style="font-size:10px;margin-top:3px">');
+  if(pctAboveWD!==null) push('<span style="color:var(--res)">+'+pctAboveWD+'% vs weekday</span>');
+  push('</div></div>');
+  push('</div></div></div>');
+
+
+    // ── Day cards using per-day profiles ─────────────────────────────────────
+    push('<div class="day-cards">');
+    Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp])=>{
+      const tot = dp.projTotal||0;
+      const totHist = dp.avgTotal||0;
+      const sumArr = dp.profile.reduce((s,h)=>s+(h.arr_tot||0),0)||0;
+      const sumTot = dp.profile.reduce((s,h)=>s+(h.ad_tot||0),0)||1;
+      const arrFrac = sumArr/sumTot;
+      const pArr = Math.round(dp.projTotal * arrFrac);
+      const pDep = dp.projTotal - pArr;
+      push('<div class="day-card">');
+      push('<div class="day-card-tag" style="background:'+dp.color+'"></div>');
+      push('<div class="day-card-date">'+fDate(dp.date)+'</div>');
+      push('<div class="day-card-occasion">'+dp.label+'</div>');
+      push('<div class="day-card-total">'+nt(dp.projTotal)+'</div>');
+      push('<div class="day-card-row"><span class="dcr-lbl">Arrival</span><span style="color:var(--arrival);font-weight:600">'+nt(pArr)+'</span></div>');
+      push('<div class="day-card-row"><span class="dcr-lbl">Departure</span><span style="color:var(--departure);font-weight:600">'+nt(pDep)+'</span></div>');
+      push('<div class="day-card-row" style="font-size:9px;color:var(--muted)">'+(dp.isEstimated?'⚠ est. (no exact data)':dp.histCount+' yr avg')+'</div>');
+      push('</div>');
+    });
+    push('</div>');
+
+    // ── Day selector buttons ──────────────────────────────────────────────────
+    push('<div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0">');
+    push('<span style="font-size:10px;color:var(--muted);align-self:center;font-family:Space Mono,monospace;letter-spacing:.06em">SELECT DAY:</span>');
+    Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp],idx)=>{
+      const pid = 'dp_'+off.replace('-','m');
+      push('<button onclick="document.querySelectorAll(\'.eday-panel\').forEach(el=>el.style.display=\'none\');document.getElementById(\''+pid+'\').style.display=\'block\';this.parentElement.querySelectorAll(\'button\').forEach(b=>b.style.opacity=\'0.5\');this.style.opacity=\'1\'" style="padding:6px 14px;border-radius:6px;border:2px solid '+dp.color+';background:transparent;color:'+dp.color+';cursor:pointer;font-size:10px;font-family:Space Mono,monospace;opacity:'+(idx===0?'1':'0.5')+'">'+dp.label+'</button>');
+    });
+    push('</div>');
+
+    // ── Per-day hourly panels ─────────────────────────────────────────────────
+    Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp],idx)=>{
+      const pid = 'dp_'+off.replace('-','m');
+      push('<div id="'+pid+'" class="eday-panel" style="display:'+(idx===0?'block':'none')+'">');
+      push('<div class="af-card" style="margin-top:10px">');
+      push('<div class="af-card-hdr">');
+      push('<h3 style="color:'+dp.color+'">'+dp.label+' — '+fDate(dp.date)+' — Hourly Profile</h3>');
+      push('<span class="kpi-sub">'+(dp.isEstimated?'⚠ Estimated (no exact hist. data)':dp.histCount+' historical year(s)')+' · ×'+(f.factor>=1?'+':'')+((f.factor-1)*100).toFixed(1)+'% growth</span>');
+      push('</div><div class="af-card-body">');
+
+      // Mini bar chart
+      const _bars = dp.profile.filter(h=>/\d{4}/.test(h.time));
+      const _maxB = Math.max(..._bars.map(h=>h.ad_tot||0),1);
+      const _peakT = _bars.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a, _bars[0]||{time:'',ad_tot:0});
+      push('<div class="hourly-wrap"><div class="hourly-chart">');
+      _bars.forEach(hr=>{
+        const isPk = hr.time === _peakT.time;
+        const hPct = Math.round((hr.ad_tot||0)/_maxB*100);
+        const proj = Math.round((hr.ad_tot||0)*f.factor);
+        push('<div class="hb-wrap">');
+        if(isPk) push('<div class="peak-star">⭐</div>');
+        push('<div class="hb-fill" style="height:'+hPct+'%;background:'+(isPk?dp.color:'linear-gradient(180deg,var(--accent),#006b60)')+'"></div>');
+        push('<div class="hb-lbl">'+hr.time.substring(0,4)+'</div>');
+        push('<div class="hb-tip"><b>'+hr.time+'</b><span>Hist avg: '+nt(hr.ad_tot||0)+'</span><span style="color:'+dp.color+'">2026 proj: '+nt(proj)+'</span></div>');
+        push('</div>');
+      });
+      push('</div></div>');
+
+      // Hourly table
+      push('<div style="overflow-x:auto;margin-top:12px">');
+      push('<table class="af-table"><thead><tr>');
+      ['Time','Arr R','Arr V','Arr Tot','Dep R','Dep V','Dep Tot','Total','2026 Proj.','Arr Ctr','Arr e-Ch','Dep Ctr','Dep e-Ch'].forEach(h=>push('<th>'+h+'</th>'));
+      push('</tr></thead><tbody>');
+      dp.profile.forEach(hr=>{
+        if(/^CBS$/i.test(hr.time))return;
+        const proj = Math.round((hr.ad_tot||0)*f.factor);
+        const aR = Math.round((hr.arr_res||0)*f.factor), aV = Math.round((hr.arr_vis||0)*f.factor);
+        const dR = Math.round((hr.dep_res||0)*f.factor), dV = Math.round((hr.dep_vis||0)*f.factor);
+        const res = estimateResources(aR,aV,dR,dV);
+        const isPk = hr.time === _peakT.time;
+        push('<tr'+(isPk?' style="background:rgba(245,200,66,.08)"':'')+'>');
+        push('<td style="font-family:Space Mono,monospace;font-size:10px;'+(isPk?'color:'+dp.color+';font-weight:700':'')+'">'+hr.time+(isPk?' ⭐':'')+'</td>');
+        push('<td class="arr-c">'+nt(hr.arr_res||0)+'</td><td>'+nt(hr.arr_vis||0)+'</td><td class="arr-c hi">'+nt(hr.arr_tot||0)+'</td>');
+        push('<td class="dep-c">'+nt(hr.dep_res||0)+'</td><td>'+nt(hr.dep_vis||0)+'</td><td class="dep-c hi">'+nt(hr.dep_tot||0)+'</td>');
+        push('<td style="font-weight:700">'+nt(hr.ad_tot||0)+'</td>');
+        push('<td style="color:'+dp.color+';font-weight:700">'+nt(proj)+'</td>');
+        push('<td style="color:var(--arrival)">'+res.arrCounter+'</td><td style="color:var(--accent)">'+res.arrECh+'</td>');
+        push('<td style="color:var(--departure)">'+res.depCounter+'</td><td style="color:var(--accent)">'+res.depECh+'</td>');
+        push('</tr>');
+      });
+      push('</tbody></table></div></div></div></div>');
+    });
+
+
+    // Peak hour counter recommendation
+    push('<div class="af-card" style="margin-top:16px">');
+    push('<div class="af-card-hdr"><h3>Peak Hour Counter & e-Channel Recommendation</h3>');
+    push('<span class="kpi-sub">Peak: '+peakHr.time+'</span></div>');
+    push('<div class="af-card-body">');
+    const pAR=Math.round(peakHr.arr_res*f.factor),pAV=Math.round(peakHr.arr_vis*f.factor);
+    const pDR=Math.round(peakHr.dep_res*f.factor),pDV=Math.round(peakHr.dep_vis*f.factor);
+    const pkRes=estimateResources(pAR,pAV,pDR,pDV);
+    const ctrs=[
+      {val:pkRes.arrCounter,lbl:'Arrival Counters',sub:'Manned (HKR + Visitor)',sub2:'1 ICO per counter',color:'var(--arrival)'},
+      {val:pkRes.arrECh,    lbl:'Arrival e-Channels',sub:'Residents ('+Math.round(TP.resEChannel*100)+'%)',sub2:'1 ICO per 5 units',color:'var(--accent)'},
+      {val:pkRes.depCounter,lbl:'Departure Counters',sub:'Manned (HKR + Visitor)',sub2:'1 ICO per counter',color:'var(--departure)'},
+      {val:pkRes.depECh,    lbl:'Departure e-Channels',sub:'Residents ('+Math.round(TP.resEChannel*100)+'%)',sub2:'1 ICO per 5 units',color:'var(--accent)'},
+      {val:pkRes.totalCounters,lbl:'Total Counters',sub:'Both directions combined',sub2:'',color:'var(--gold)',big:true},
+      {val:pkRes.totalECh,  lbl:'Total e-Channels',sub:'Both directions combined',sub2:'',color:'#7c6af7',big:true},
+    ];
+    push('<div class="ctr-grid">');
+    ctrs.forEach(ct=>{
+      push('<div class="ctr-card'+(ct.big?' style="border-color:var(--border)"':'')+'">');
+      push('<div class="ctr-val" style="color:'+ct.color+'">'+ct.val+'</div>');
+      push('<div class="ctr-lbl">'+ct.lbl+'</div>');
+      push('<div class="ctr-sub">'+ct.sub+'</div>');
+      if(ct.sub2) push('<div class="ctr-sub2">'+ct.sub2+'</div>');
+      push('</div>');
+    });
+    push('</div></div></div>');
+  }
+
+  push('</div>'); // af-wrap
+  return o.join('');
+}
+
+
+function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDate, fN){
+  const yoy=yoyAnalysis(days);
+  const dow=dowAnalysis(days);
+  const holidays=holidayAnalysis(days);
+  const easter=forecastEaster2026(days);
+  const easterDays=getEasterDays(days);
+
+  const ws={};
+  const merges=[];
+  let R=0;
+  const NC=13; // columns A-M
+  ws['!rows']=[];
+
+  function c(r,col,v,s){ws[XLSX.utils.encode_cell({r,c:col})]={v:v===null||v===undefined?'':v,t:typeof v==='number'?'n':'s',s:s||{}};}
+  function hdr(r,col,v,bg,fg,bold,sz,span){
+    const s={font:{name:'Calibri',sz:sz||10,bold:bold||false,color:{rgb:fg||'FFFFFF'}},
+      fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||'1565C0'}},
+      alignment:{horizontal:'center',vertical:'center'},border:{top:{style:'thin',color:{rgb:'BBCCE0'}},bottom:{style:'thin',color:{rgb:'BBCCE0'}},left:{style:'thin',color:{rgb:'BBCCE0'}},right:{style:'thin',color:{rgb:'BBCCE0'}}}};
+    c(r,col,v,s);
+    if(span>1){for(let i=1;i<span;i++)c(r,col+i,'',s);merges.push({s:{r,c:col},e:{r,c:col+span-1}});}
+  }
+  function dataCell(r,col,v,bg,fg,bold){
+    const s={font:{name:'Calibri',sz:10,bold:bold||false,color:{rgb:fg||'333333'}},
+      fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||'FFFFFF'}},
+      alignment:{horizontal:'center',vertical:'center'},
+      border:{top:{style:'thin',color:{rgb:'DDEEFF'}},bottom:{style:'thin',color:{rgb:'DDEEFF'}},left:{style:'thin',color:{rgb:'DDEEFF'}},right:{style:'thin',color:{rgb:'DDEEFF'}}}};
+    c(r,col,v,s);
+  }
+
+  // ── Title banner ──
+  for(let col=0;col<NC;col++) c(R,col,'',{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'4CAF50'}},font:{name:'Calibri',sz:10},alignment:{horizontal:'center',vertical:'center'},border:{}});
+  c(R,0,'LSC PASSENGER STATISTICS — ANALYSIS & FORECAST',{font:{name:'Calibri',sz:16,bold:true,color:{rgb:isPostCovid?'0D1F4C':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'4CAF50'}},alignment:{horizontal:'center',vertical:'center'},border:{}});
+  merges.push({s:{r:R,c:0},e:{r:R,c:NC-1}});
+  ws['!rows'][R]={hpt:28};R++;
+
+  // ── YoY Section ──
+  R++;
+  hdr(R,0,'YEAR-OVER-YEAR TRAFFIC TREND',isPostCovid?'0D47A1':'1B5E20','FFFFFF',true,11,NC);
+  ws['!rows'][R]={hpt:18};R++;
+  ['Year','Days','Total Traffic','Avg Daily','Arrival','Departure','Residents','Visitors','YoY Growth'].forEach((h,i)=>
+    hdr(R,i,h,isPostCovid?'1E88E5':'2E7D52','FFFFFF',true,9,1));
+  R++;
+  yoy.forEach((y,i)=>{
+    const prev=i>0?yoy[i-1]:null;
+    const growth=prev&&prev.avgDaily>0?((y.avgDaily-prev.avgDaily)/prev.avgDaily*100):null;
+    const bg=i%2===0?'FFFFFF':'F0F8FF';
+    dataCell(R,0,y.year,bg,isPostCovid?'0D47A1':'1B5E20',true);
+    dataCell(R,1,y.count,bg,'333333');
+    dataCell(R,2,y.total,bg,'333333');ws[XLSX.utils.encode_cell({r:R,c:2})].s.numFmt='#,##0';
+    dataCell(R,3,y.avgDaily,bg,'333333');ws[XLSX.utils.encode_cell({r:R,c:3})].s.numFmt='#,##0';
+    dataCell(R,4,y.arr,bg,isPostCovid?'1A6B8A':'1A6B3A');ws[XLSX.utils.encode_cell({r:R,c:4})].s.numFmt='#,##0';
+    dataCell(R,5,y.dep,bg,isPostCovid?'5B3D9E':'3D4E9E');ws[XLSX.utils.encode_cell({r:R,c:5})].s.numFmt='#,##0';
+    dataCell(R,6,y.res,bg,'2E7D52');ws[XLSX.utils.encode_cell({r:R,c:6})].s.numFmt='#,##0';
+    dataCell(R,7,y.vis,bg,'B8860B');ws[XLSX.utils.encode_cell({r:R,c:7})].s.numFmt='#,##0';
+    const gc=growth===null?'333333':growth>=0?'1B5E20':'C62828';
+    dataCell(R,8,growth===null?'—':(growth>=0?'+':'')+growth.toFixed(1)+'%',bg,gc,true);
+    R++;
+  });
+
+  // ── Holiday Analysis ──
+  R+=2;
+  hdr(R,0,'AVERAGE TRAFFIC BY HOLIDAY / DAY TYPE',isPostCovid?'0D47A1':'1B5E20','FFFFFF',true,11,NC);
+  ws['!rows'][R]={hpt:18};R++;
+  ['Category','Count','Avg Total','Avg Arrival','Avg Departure','Max Recorded'].forEach((h,i)=>
+    hdr(R,i,h,isPostCovid?'1E88E5':'2E7D52','FFFFFF',true,9,1));
+  R++;
+  holidays.slice(0,15).forEach((h,i)=>{
+    const bg=i%2===0?'FFFFFF':(isPostCovid?'EBF3FB':'EBF7EE');
+    const isEaster=h.cat.includes('Easter');
+    const fg=isEaster?'B8860B':'333333';
+    dataCell(R,0,h.cat,bg,fg,isEaster);
+    dataCell(R,1,h.count,bg,'555555');
+    dataCell(R,2,h.avg,bg,fg,isEaster);ws[XLSX.utils.encode_cell({r:R,c:2})].s.numFmt='#,##0';
+    dataCell(R,3,h.avgArr,bg,isPostCovid?'1A6B8A':'1A6B3A');ws[XLSX.utils.encode_cell({r:R,c:3})].s.numFmt='#,##0';
+    dataCell(R,4,h.avgDep,bg,isPostCovid?'5B3D9E':'3D4E9E');ws[XLSX.utils.encode_cell({r:R,c:4})].s.numFmt='#,##0';
+    dataCell(R,5,h.max,bg,isEaster?'B8860B':'555555');ws[XLSX.utils.encode_cell({r:R,c:5})].s.numFmt='#,##0';
+    R++;
+  });
+
+  // ── Easter 2026 Forecast ──
+  R+=2;
+  hdr(R,0,'EASTER 2026 FORECAST (Good Friday 3 Apr — Mon 6 Apr)',isPostCovid?'B8860B':'8B6914','FFFFFF',true,11,NC);
+  ws['!rows'][R]={hpt:18};R++;
+
+  if(easter&&easterDays.length>0){
+    const f=easter;
+    dataCell(R,0,'Historical Easter days used:',isPostCovid?'EBF3FB':'EBF7EE','333333',true);
+    merges.push({s:{r:R,c:0},e:{r:R,c:2}});
+    dataCell(R,3,easterDays.length,isPostCovid?'EBF3FB':'EBF7EE',isPostCovid?'0D47A1':'1B5E20',true);
+    dataCell(R,4,'YoY Growth Applied:','FFFFFF','333333',true);merges.push({s:{r:R,c:4},e:{r:R,c:5}});
+    dataCell(R,6,(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'%','FFFFFF',f.growthRate>=0?'1B5E20':'C62828',true);
+    dataCell(R,7,'Avg Easter Total (hist.):','FFFFFF','333333',true);merges.push({s:{r:R,c:7},e:{r:R,c:8}});
+    dataCell(R,9,f.avgEasterTotal,'FFFFFF',isPostCovid?'0D47A1':'1B5E20',true);ws[XLSX.utils.encode_cell({r:R,c:9})].s.numFmt='#,##0';
+    dataCell(R,10,'Projected 2026 Daily:','FFF8DC','B8860B',true);merges.push({s:{r:R,c:10},e:{r:R,c:11}});
+    dataCell(R,12,f.projectedTotal,'FFF8DC','B8860B',true);ws[XLSX.utils.encode_cell({r:R,c:12})].s.numFmt='#,##0';
+    R++;R++;
+
+    // Day-by-day table
+    ['Date','Occasion','Proj. Arrival','Proj. Departure','Proj. Total','Counter Arr','e-Ch Arr','Counter Dep','e-Ch Dep'].forEach((h,i)=>
+      hdr(R,i,h,'B8860B','FFFFFF',true,9,1));
+    R++;
+    Object.entries(f.dayProfiles||{}).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp],i)=>{
+      const sumArr=dp.profile.reduce((s,h)=>s+(h.arr_tot||0),0)||0;
+      const sumTot=dp.profile.reduce((s,h)=>s+(h.ad_tot||0),0)||1;
+      const projArr=Math.round(dp.projTotal*(sumArr/sumTot));
+      const projDep=dp.projTotal-projArr;
+      const arrRes=Math.round(projArr*TP.resEChannel), arrVis=projArr-arrRes;
+      const depRes=Math.round(projDep*TP.resEChannel), depVis=projDep-depRes;
+      const res=estimateResources(arrRes,arrVis,depRes,depVis);
+      const bg=i%2===0?'FFFDE7':'FFF8DC';
+      dataCell(R,0,fDate(dp.date),bg,'B8860B',true);
+      dataCell(R,1,dp.label,bg,'555555');
+      dataCell(R,2,projArr,bg,isPostCovid?'1A6B8A':'1A6B3A',true);ws[XLSX.utils.encode_cell({r:R,c:2})].s.numFmt='#,##0';
+      dataCell(R,3,projDep,bg,isPostCovid?'5B3D9E':'3D4E9E',true);ws[XLSX.utils.encode_cell({r:R,c:3})].s.numFmt='#,##0';
+      dataCell(R,4,dp.projTotal,bg,'B8860B',true);ws[XLSX.utils.encode_cell({r:R,c:4})].s.numFmt='#,##0';
+      dataCell(R,5,res.arrCounter,'E3F2FD',isPostCovid?'0D47A1':'1B5E20',true);
+      dataCell(R,6,res.arrECh,'E0F7FA','00838F',true);
+      dataCell(R,7,res.depCounter,isPostCovid?'EDE7F6':'E8EAF6',isPostCovid?'5B3D9E':'3D4E9E',true);
+      dataCell(R,8,res.depECh,'E0F7FA','00838F',true);
+      R++;
+    });
+
+    // Hourly profile
+    R+=2;
+    hdr(R,0,'EASTER HOURLY PROFILE + COUNTER/e-CHANNEL FORECAST (2026)',isPostCovid?'0097A7':'1A6B3A','FFFFFF',true,11,NC);
+    ws['!rows'][R]={hpt:18};R++;
+    ['Time','Arr R','Arr V','Arr Total','Dep R','Dep V','Dep Total','Total','2026 Forecast','Ctr Arr','e-Ch Arr','Ctr Dep','e-Ch Dep'].forEach((h,i)=>
+      hdr(R,i,h,isPostCovid?'0097A7':'1A6B3A','FFFFFF',true,9,1));
+    R++;
+    const _refDayXL = f.dayProfiles ? (f.dayProfiles['0']||f.dayProfiles['-2']||Object.values(f.dayProfiles)[0]) : null;
+    const _profileXL = _refDayXL ? _refDayXL.profile : [];
+    const peakHour = _profileXL.length ? _profileXL.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a,_profileXL[0]) : {time:'2100-2159',ad_tot:0,arr_res:0,arr_vis:0,arr_tot:0,dep_res:0,dep_vis:0,dep_tot:0};
+    _profileXL.forEach((hr,i)=>{
+      if(/^CBS$/i.test(hr.time))return;
+      const isPeak=hr.time===peakHour.time;
+      const proj=Math.round(hr.ad_tot*f.factor);
+      const arrRes=Math.round(hr.arr_res*f.factor),arrVis=Math.round(hr.arr_vis*f.factor);
+      const depRes=Math.round(hr.dep_res*f.factor),depVis=Math.round(hr.dep_vis*f.factor);
+      const res=estimateResources(arrRes,arrVis,depRes,depVis);
+      const bg=isPeak?'FFF8DC':(i%2===0?'FFFFFF':(isPostCovid?'F0F8FF':'F0FFF4'));
+      const tfg=isPeak?'B8860B':'333333';
+      [hr.time,hr.arr_res,hr.arr_vis,hr.arr_tot,hr.dep_res,hr.dep_vis,hr.dep_tot,hr.ad_tot,proj,
+       res.arrCounter,res.arrECh,res.depCounter,res.depECh].forEach((v,ci)=>{
+        dataCell(R,ci,v,bg,ci===8?'B8860B':ci>=9?'0D47A1':tfg,isPeak||ci>=9);
+        if(typeof v==='number'&&ci>=1&&ci<=8)ws[XLSX.utils.encode_cell({r:R,c:ci})].s.numFmt='#,##0';
+      });
+      R++;
+    });
+  }
+
+  ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R+2,c:NC-1}});
+  ws['!merges']=merges;
+  ws['!cols']=[{wch:14},{wch:8},{wch:8},{wch:10},{wch:8},{wch:8},{wch:10},{wch:10},{wch:12},{wch:9},{wch:8},{wch:9},{wch:8}];
+  XLSX.utils.book_append_sheet(wb,ws,'Analysis & Forecast');
+}
+
 // ─── PDF EXPORT ──────────────────────────────────────────────────────────────
 function exportExcel(){
   const days=eraFilter(allDays);
-  const era=currentEra==='postcovid'?`Post-COVID (from ${POST_COVID_DATE})`:`Since Commissioning (from ${COMM_DATE})`;
+  const era=currentEra==='postcovid'?'Post-COVID':'Since Commissioning';
+  const eraFrom=currentEra==='postcovid'?`from ${POST_COVID_DATE}`:`from ${COMM_DATE}`;
   const latestDate=allDays.length?allDays[allDays.length-1].date:'';
   const wb=XLSX.utils.book_new();
 
-  // ── STYLE PALETTE ──────────────────────────────────────────────────────────
-  const C={
-    navyDark:  {rgb:'1F2D4E'}, // main title bg
-    navy:      {rgb:'2C3E6B'}, // section title bg
-    navyMid:   {rgb:'354F82'}, // col header bg
-    teal:      {rgb:'1A6B8A'}, // arrival group
-    orange:    {rgb:'8B4513'}, // departure group
-    gold:      {rgb:'B8860B'}, // #1 rank text
-    goldBg:    {rgb:'FFF3CD'}, // #1 rank row bg
-    altRow:    {rgb:'EBF3FB'}, // alternate row bg
-    white:     {rgb:'FFFFFF'},
-    black:     {rgb:'000000'},
-    dimText:   {rgb:'444444'},
-    totalBg:   {rgb:'E8F5E9'}, // total col bg light green
-    totalFg:   {rgb:'1B5E20'}, // total col text
-    sectionBg: {rgb:'F0F4FF'}, // section title light
+  // ── STYLE PALETTE — era-aware colour themes ───────────────────────────────
+  // Post-COVID  → Blue/Navy  (cool, modern)
+  // Since Comm. → Forest Green (classic, authoritative)
+  const isPostCovid = currentEra === 'postcovid';
+  const C = isPostCovid ? {
+    // ── BLUE THEME (Post-COVID) ──
+    navyDark:  {rgb:'0D47A1'}, // deep navy title bar
+    navy:      {rgb:'1565C0'}, // section title bar
+    navyMid:   {rgb:'1E88E5'}, // column header
+    grpArr:    {rgb:'0097A7'}, // arrival — teal
+    grpDep:    {rgb:'5B3D9E'}, // departure — deep purple
+    gold:      {rgb:'B8860B'}, // #1 rank text gold
+    goldBg:    {rgb:'FFF8DC'}, // #1 rank row champagne
+    altRow:    {rgb:'E3F2FD'}, // row stripe light blue
+    totalFg:   {rgb:'0D47A1'}, // total col text deep blue
+    totalBg:   {rgb:'BBDEFB'}, // total col bg light blue
+    tagBg:     {rgb:'D0E4F7'}, // era badge bg
+    tagFg:     {rgb:'0D2B6B'}, // era badge text
+    eraLabel:  'Post-COVID',
+  } : {
+    // ── GREEN THEME (Since Commissioning) ──
+    navyDark:  {rgb:'1A3A2A'}, // deep forest title bar
+    navy:      {rgb:'1E5C3A'}, // section title bar
+    navyMid:   {rgb:'2E7D52'}, // column header
+    grpArr:    {rgb:'1E6B3A'}, // arrival — forest green
+    grpDep:    {rgb:'3D4E9E'}, // departure — deep indigo
+    gold:      {rgb:'8B6914'}, // #1 rank text dark gold
+    goldBg:    {rgb:'FEFDE8'}, // #1 rank row pale yellow
+    altRow:    {rgb:'EBF7EE'}, // row stripe light green
+    totalFg:   {rgb:'1A4A2A'}, // total col text forest
+    totalBg:   {rgb:'D4EDDA'}, // total col bg mint
+    tagBg:     {rgb:'C8E6C9'}, // era badge bg
+    tagFg:     {rgb:'1A3A2A'}, // era badge text
+    eraLabel:  'Since Commissioning',
   };
+  // Shared colours
+  C.white =   {rgb:'FFFFFF'};
+  C.black =   {rgb:'000000'};
+  C.dimText = {rgb:'333333'};
 
   const border={
     thin:{style:'thin',color:{rgb:'BBCCE0'}},
@@ -671,24 +1363,31 @@ function exportExcel(){
   const S={
     mainTitle: {font:font({sz:14,bold:true,color:C.white}),    fill:fill(C.navyDark), alignment:align('center'), border:{bottom:border.med}},
     subTitle:  {font:font({sz:10,color:{rgb:'CCDDFF'}}),         fill:fill(C.navyDark), alignment:align('center')},
-    secTitle:  {font:font({sz:11,bold:true,color:C.white}),      fill:fill(C.navy),     alignment:align('left'),   border:{top:border.med,bottom:border.thin,left:border.med,right:border.med}},
+    secTitle:  {font:font({sz:11,bold:true,color:C.white}),      fill:fill(C.navy),     alignment:align('left'),   border:{top:border.med,bottom:border.med,left:border.med,right:border.med}},
     colHdr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('center'), border:allBorders},
-    colHdrL:   {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('left'),   border:allBorders},
-    grpArr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill({rgb:'1A6B8A'}), alignment:align('center'), border:allBorders},
-    grpDep:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill({rgb:'7B3F00'}), alignment:align('center'), border:allBorders},
-    rank1:     {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
-    rank1L:    {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('left'),   border:allBorders},
-    rank1Tot:  {font:font({sz:10,bold:true,color:{rgb:'7B3F00'}}),fill:fill(C.goldBg),  alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
-    rankN:     {font:font({sz:10,color:C.dimText}),              fill:fill(C.white),    alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
-    rankNL:    {font:font({sz:10,color:C.dimText}),              fill:fill(C.white),    alignment:align('left'),   border:allBorders},
-    rankNAlt:  {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
-    rankNAltL: {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('left'),   border:allBorders},
+    colHdrL:   {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('center'), border:allBorders},
+    grpArr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.grpArr),   alignment:align('center'), border:allBorders},
+    grpDep:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.grpDep),   alignment:align('center'), border:allBorders},
+    rank1:     {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:allBorders, numFmt:'#,##0'},
+    rank1L:    {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:allBorders},
+    rank1Tot:  {font:font({sz:10,bold:true,color:C.navyMid}),    fill:fill(C.goldBg),   alignment:align('center'), border:allBorders, numFmt:'#,##0'},
+    rankN:     {font:font({sz:10,color:C.dimText}),              fill:fill(C.white),    alignment:align('center'), border:allBorders, numFmt:'#,##0'},
+    rankNL:    {font:font({sz:10,color:C.dimText}),              fill:fill(C.white),    alignment:align('center'), border:allBorders},
+    rankNAlt:  {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('center'), border:allBorders, numFmt:'#,##0'},
+    rankNAltL: {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('center'), border:allBorders},
     rankNum:   {font:font({sz:10,bold:true,color:C.dimText}),    fill:fill(C.white),    alignment:align('center'), border:allBorders},
     rankNumAlt:{font:font({sz:10,bold:true,color:C.dimText}),    fill:fill(C.altRow),   alignment:align('center'), border:allBorders},
     rankNum1:  {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:allBorders},
-    totalN:    {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.white),    alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
-    totalNAlt: {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.altRow),   alignment:align('right'),  border:allBorders, numFmt:'#,##0'},
+    totalN:    {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.totalBg),  alignment:align('center'), border:allBorders, numFmt:'#,##0'},
+    totalNAlt: {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.totalBg),  alignment:align('center'), border:allBorders, numFmt:'#,##0'},
     blank:     {font:font(),                                     fill:fill(C.white),    border:{left:border.thin,right:border.thin}},
+    // ── SORT KEY HIGHLIGHT ──
+    sortHdr:   {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{top:border.med,bottom:border.med,left:border.med,right:border.med}},
+    sortHdrL:  {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{top:border.med,bottom:border.med,left:border.med,right:border.med}},
+    sort1:     {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{top:border.med,bottom:border.med,left:border.med,right:border.med}, numFmt:'#,##0'},
+    sort1L:    {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{top:border.med,bottom:border.med,left:border.med,right:border.med}},
+    sortN:     {font:font({sz:10,bold:true,color:C.navyDark}),  fill:fill({rgb:isPostCovid?'BBDEFB':'C8F0D8'}), alignment:align('center'), border:{top:border.thin,bottom:border.thin,left:border.med,right:border.med}, numFmt:'#,##0'},
+    sortNAlt:  {font:font({sz:10,bold:true,color:C.navyDark}),  fill:fill({rgb:isPostCovid?'90CAF9':'A8E8C0'}), alignment:align('center'), border:{top:border.thin,bottom:border.thin,left:border.med,right:border.med}, numFmt:'#,##0'},
   };
 
   // ── SHEET BUILDER ─────────────────────────────────────────────────────────
@@ -698,26 +1397,190 @@ function exportExcel(){
     let R=0;
     const maxCols=Math.max(...sections.map(s=>s.headers.length));
 
-    // Main title row
-    ws[XLSX.utils.encode_cell({r:R,c:0})]={v:sheetTitle,t:'s',s:S.mainTitle};
-    for(let c=1;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.mainTitle};
+    ws['!rows'] = ws['!rows'] || [];
+
+    // ════════════════════════════════════════════════════════
+    // HEADER BLOCK — 5 rows, professional report style
+    // ════════════════════════════════════════════════════════
+
+    // helper: solid fill cell
+    function hCell(v,sz,bold,color,bgRgb,halign,italic){
+      return{v,t:'s',s:{
+        font:{name:'Calibri',sz,bold:bold||false,color:{rgb:color||'FFFFFF'},italic:italic||false},
+        fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bgRgb}},
+        alignment:{horizontal:halign||'center',vertical:'center',wrapText:false},
+        border:{}
+      }};
+    }
+    function blank(bgRgb){return hCell('',9,false,'FFFFFF',bgRgb);}
+
+    // ── ROW 0: Era identification bar — clean, professional ─────────────────────
+    ws['!rows'][R]={hpt:7};
+    const eraBannerBg = isPostCovid ? '29B6F6' : '43A047';
+    for(let col=0;col<maxCols;col++)
+      ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',8,false,isPostCovid?'0D2B6B':'0A2218',eraBannerBg,'center');
+    // Label on left third
+    const bannerLabelCols = Math.floor(maxCols/3);
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
+      C.eraLabel.toUpperCase()+'  ●', 8, true, isPostCovid?'0D2B6B':'0A2218', eraBannerBg, 'left'
+    );
     merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
     R++;
 
-    // Subtitle
-    const sub=`[as at ${fDate(latestDate)}]  ·  ${era}  ·  ${days.length} days in range`;
-    ws[XLSX.utils.encode_cell({r:R,c:0})]={v:sub,t:'s',s:S.subTitle};
-    for(let c=1;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.subTitle};
-    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
+    // ── ROW 1: Organisation + Report Title (split left/right) ──────────────────
+    ws['!rows'][R]={hpt:30};
+    // Left 60%: organisation name — small caps feel
+    const orgCols = Math.floor(maxCols*0.55);
+    for(let col=0;col<orgCols;col++) ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',11,false,'FFFFFF',isPostCovid?'0D47A1':'0A2218');
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
+      'LAND BOUNDARY CONTROL POINT (LSC)',
+      13,true,'FFFFFF',isPostCovid?'0D47A1':'0A2218','left'
+    );
+    merges.push({s:{r:R,c:0},e:{r:R,c:orgCols-1}});
+    // Right 40%: report type label — lighter shade
+    for(let col=orgCols;col<maxCols;col++) ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',10,false,isPostCovid?'90CAF9':'A8E6C0',isPostCovid?'0A2F6B':'0A2E1A');
+    ws[XLSX.utils.encode_cell({r:R,c:orgCols})]=hCell(
+      'PASSENGER STATISTICS  |  RECORD HIGH REPORT',
+      10,false,isPostCovid?'90CAF9':'A8E6C0',isPostCovid?'0A2F6B':'0A2E1A','right'
+    );
+    merges.push({s:{r:R,c:orgCols},e:{r:R,c:maxCols-1}});
     R++;
-    R++; // blank gap
 
-    for(const sec of sections){
+    // ── ROW 2: Sheet category row — clean horizontal rule style ─────────────────
+    ws['!rows'][R]={hpt:20};
+    const catBg    = isPostCovid ? '1E88E5' : '2E7D52';
+    const eraPillBg= isPostCovid ? '0D47A1' : '1B5E20';
+    const catCols  = Math.floor(maxCols*0.72);
+
+    // Sheet name — medium weight, white on accent
+    for(let col=0;col<catCols;col++) ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',11,false,'FFFFFF',catBg);
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
+      sheetTitle, 12, true, 'FFFFFF', catBg, 'left'
+    );
+    merges.push({s:{r:R,c:0},e:{r:R,c:catCols-1}});
+
+    // Right panel: meta info (date range only, no era repeat)
+    for(let col=catCols;col<maxCols;col++) ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',10,false,isPostCovid?'90CAF9':'A8E6C0',eraPillBg);
+    ws[XLSX.utils.encode_cell({r:R,c:catCols})]=hCell(
+      'as at '+fDate(latestDate), 10, false, isPostCovid?'90CAF9':'A8E6C0', eraPillBg, 'right'
+    );
+    merges.push({s:{r:R,c:catCols},e:{r:R,c:maxCols-1}});
+    R++;
+
+    // ── ROW 3: Meta info bar ─────────────────────────────────
+    // 3 segments: [Date range] [As at date] [Days count]
+    const metaBg = isPostCovid ? '0A2F6B' : '163D28';
+    const seg = Math.floor(maxCols/3);
+    const seg2 = seg;
+    const seg3 = maxCols - seg - seg2;
+
+    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',9,false,'8BAAD0',metaBg);
+    ws[XLSX.utils.encode_cell({r:R,c:0})]     =hCell('DATE RANGE: '+eraFrom,       9,false,isPostCovid?'B3E5FC':'A8E0B8',metaBg,'center');
+    ws[XLSX.utils.encode_cell({r:R,c:seg})]   =hCell('AS AT: '+fDate(latestDate),  9,false,isPostCovid?'B3E5FC':'A8E0B8',metaBg,'center');
+    ws[XLSX.utils.encode_cell({r:R,c:seg+seg2})]=hCell('TOTAL: '+days.length+' DAYS',  9,false,isPostCovid?'B3E5FC':'A8E0B8',metaBg,'center');
+    merges.push({s:{r:R,c:0},e:{r:R,c:seg-1}});
+    merges.push({s:{r:R,c:seg},e:{r:R,c:seg+seg2-1}});
+    merges.push({s:{r:R,c:seg+seg2},e:{r:R,c:maxCols-1}});
+    ws['!rows'][R]={hpt:15};
+    R++;
+
+    // ── ROW 4: Bottom accent bar (3pt) ──────────────────────
+    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',9,false,'FFFFFF',isPostCovid?'1E88E5':'2E7D52');
+    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
+    ws['!rows'][R]={hpt:5};
+    R++;
+
+    // ── ROW 5: Spacer ────────────────────────────────────────
+    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',9,false,'FFFFFF','FFFFFF');
+    ws['!rows'][R]={hpt:8};
+    R++;
+
+    sections.forEach((sec,secIdx)=>{
       const nc=sec.headers.length;
-      // Section title
-      ws[XLSX.utils.encode_cell({r:R,c:0})]={v:sec.title,t:'s',s:S.secTitle};
-      for(let c=1;c<nc;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:{...S.secTitle,border:{top:border.med,bottom:border.thin,left:border.thin,right:c===nc-1?border.med:border.thin}}};
+      // ── Section title classification ─────────────────────────────────────────
+      const titleIsArrival = sec.title.toLowerCase().includes('arrival') ||
+                             sec.title.toLowerCase().includes('inbound') ||
+                             sec.title.toLowerCase().includes('total passenger') ||
+                             sec.title.toLowerCase().includes('total number') ||
+                             sec.title.toLowerCase().includes('total hkr') ||
+                             sec.title.toLowerCase().includes('total visitor');
+      const titleIsDeparture = sec.title.toLowerCase().includes('departure') ||
+                               sec.title.toLowerCase().includes('outbound');
+
+      // Colour scheme per section type
+      const secAccent = titleIsDeparture
+        ? (isPostCovid ? '5B3D9E' : '3D4E9E')   // purple / indigo
+        : titleIsArrival
+          ? '0097A7'                               // teal
+          : (isPostCovid ? '1565C0' : '1E5C3A');  // era blue/green
+
+      // Light tint for the main title row bg
+      const secTintMap = {
+        '5B3D9E': 'F3F0FF', '3D4E9E': 'ECEEFF',
+        '0097A7': 'E6F7F9',
+        '1565C0': 'E8F0FE', '1E5C3A': 'E6F4EC',
+      };
+      const secTint = secTintMap[secAccent] || 'F5F5F5';
+
+      // Direction label
+      const dirLabel = titleIsDeparture ? 'DEPARTURE' : titleIsArrival ? 'ARRIVAL / TOTAL' : 'SUMMARY';
+
+      // ── SUB-ROW A: Thin top accent bar for this section ──────────────────
+      ws['!rows'][R] = {hpt: 4};
+      for(let col=0; col<nc; col++){
+        ws[XLSX.utils.encode_cell({r:R,c:col})] = {v:'', t:'s', s:{
+          fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secAccent}},
+          border:{}
+        }};
+      }
       merges.push({s:{r:R,c:0},e:{r:R,c:nc-1}});
+      R++;
+
+      // ── SUB-ROW B: Two-column title bar ───────────────────────────────────
+      //   Left cell (col 0):  section number badge  e.g. "01"
+      //   Next cols (1..nc-2): main title text
+      //   Right cell (nc-1):  direction tag  e.g. "ARRIVAL / TOTAL"
+      ws['!rows'][R] = {hpt: 22};
+
+      // Badge cell (col 0) — dark accent bg, white number
+      ws[XLSX.utils.encode_cell({r:R,c:0})] = {v: String(secIdx+1).padStart(2,'0'), t:'s', s:{
+        font:{name:'Calibri',sz:10,bold:true,color:{rgb:'FFFFFF'}},
+        fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secAccent}},
+        alignment:{horizontal:'center',vertical:'center'},
+        border:{top:{style:'medium',color:{rgb:secAccent}},
+                bottom:{style:'medium',color:{rgb:secAccent}},
+                left:{style:'medium',color:{rgb:secAccent}},
+                right:{style:'thin',color:{rgb:'FFFFFF'}}}
+      }};
+
+      // Title cells (col 1 .. nc-2) — light tint bg, dark bold text
+      const titleStyle = {
+        font:{name:'Calibri',sz:11,bold:true,color:{rgb:secAccent}},
+        fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secTint}},
+        alignment:{horizontal:'left',vertical:'center'},
+        border:{top:{style:'medium',color:{rgb:secAccent}},
+                bottom:{style:'medium',color:{rgb:secAccent}},
+                left:{style:'thin',color:{rgb:'FFFFFF'}},
+                right:{style:'thin',color:{rgb:'FFFFFF'}}}
+      };
+      ws[XLSX.utils.encode_cell({r:R,c:1})] = {v: sec.title, t:'s', s:titleStyle};
+      for(let col=2; col<nc-1; col++){
+        ws[XLSX.utils.encode_cell({r:R,c:col})] = {v:'', t:'s', s:titleStyle};
+      }
+      if(nc>2) merges.push({s:{r:R,c:1},e:{r:R,c:nc-2}});
+
+      // Direction tag cell (last col) — accent bg, white italic text
+      if(nc >= 2){
+        ws[XLSX.utils.encode_cell({r:R,c:nc-1})] = {v: dirLabel, t:'s', s:{
+          font:{name:'Calibri',sz:9,bold:false,italic:true,color:{rgb:'FFFFFF'}},
+          fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secAccent}},
+          alignment:{horizontal:'center',vertical:'center'},
+          border:{top:{style:'medium',color:{rgb:secAccent}},
+                  bottom:{style:'medium',color:{rgb:secAccent}},
+                  left:{style:'thin',color:{rgb:'FFFFFF'}},
+                  right:{style:'medium',color:{rgb:secAccent}}}
+        }};
+      }
       R++;
 
       // Group headers (optional)
@@ -736,7 +1599,9 @@ function exportExcel(){
       // Column headers
       for(let c=0;c<nc;c++){
         const isLeft=c<=2||c===nc-1;
-        ws[XLSX.utils.encode_cell({r:R,c})]={v:sec.headers[c],t:'s',s:isLeft?S.colHdrL:S.colHdr};
+        const isSort=sec.sortCol!==undefined&&c===sec.sortCol;
+        let hdrStyle=isSort?(isLeft?S.sortHdrL:S.sortHdr):(isLeft?S.colHdrL:S.colHdr);
+        ws[XLSX.utils.encode_cell({r:R,c})]={v:sec.headers[c]+(isSort?' ▼':''),t:'s',s:hdrStyle};
       }
       R++;
 
@@ -751,8 +1616,12 @@ function exportExcel(){
           const isDate=c===1||c===2||c===3;
           const isTotal=sec.totalCols&&sec.totalCols.includes(c);
           const isRemark=c===nc-1;
+          const isSort=sec.sortCol!==undefined&&c===sec.sortCol;
           let s;
-          if(isFirst){
+          if(isSort){
+            // Sort key column always gets gold highlight regardless of rank
+            s=isFirst?S.sort1:(isAlt?S.sortNAlt:S.sortN);
+          } else if(isFirst){
             if(isRank)s=S.rankNum1;
             else if(isTotal)s=S.rank1Tot;
             else if(isRemark)s=S.rank1L;
@@ -778,7 +1647,7 @@ function exportExcel(){
       for(let c=0;c<nc;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.blank};
       R++;
       R++;
-    }
+    }); // end sections.forEach
 
     ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R,c:maxCols-1}});
     ws['!merges']=merges;
@@ -816,13 +1685,13 @@ function exportExcel(){
       x.value,getRemarks(x.day.date)];
   }
 
-  const grpArr9={label:'ARRIVAL',span:2,style:S.grpArr};
-  const grpDep9={label:'DEPARTURE',span:2,style:S.grpDep};
+  const grpArr9={label:'ARRIVAL (Inbound)',span:2,style:S.grpArr};
+  const grpDep9={label:'DEPARTURE (Outbound)',span:2,style:S.grpDep};
   const grpBlank1={label:'',span:1,style:S.colHdrL};
   const grpBlank2={label:'',span:2,style:S.colHdrL};
   const grpTotal={label:'',span:1,style:S.colHdr};
   const grpRem={label:'',span:1,style:S.colHdrL};
-  const hHdr=['Rank','Date','Day','Time','Arr Res','Arr Vis','Arr Total','Dep Res','Dep Vis','Dep Total','Total','Remarks'];
+  const hHdr=['Rank','Date','Day','Time','Arr R','Arr V','Arr Total','Dep R','Dep V','Dep Total','Total','Remarks'];
 
   // ── SHEET 1: Total Traffic ──
   {
@@ -831,20 +1700,50 @@ function exportExcel(){
       [
         {title:'Record High on Total Passenger Traffic',
          groups:[grpBlank1,grpBlank1,grpBlank1,grpArr9,grpDep9,grpTotal,grpRem],
-         headers:['Rank','Date','Day','Arr HKR','Arr Visitors','Dep HKR','Dep Visitors','Total','Remarks'],
-         totalCols:[7],
+         headers:['Rank','Date','Day','Arr HKR','Arr V','Dep HKR','Dep V','Total','Remarks'],
+         sortCol:7, totalCols:[7],
          rows:topN(days,d=>d.dt.ad_tot).map(daily9col)},
-        {title:'Record High on Inbound Passengers',
+        {title:'Record High on Arrival (Inbound) Passengers',
          headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
-         totalCols:[5],
+         sortCol:5, totalCols:[5],
          rows:topN(days,d=>d.dt.arr_tot).map((x,i)=>daily7col(x,i,true))},
-        {title:'Record High on Outbound Passengers',
+        {title:'Record High on Departure (Outbound) Passengers',
          headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
-         totalCols:[5],
+         sortCol:5, totalCols:[5],
          rows:topN(days,d=>d.dt.dep_tot).map((x,i)=>daily7col(x,i,false))},
       ],
       [6,13,5,14,14,14,14,13,32]
     );
+    // ── Patch: merge col G:H for Inbound & Outbound rows (7-col tables in a 9-col sheet) ──
+    // Layout: row0=accentStripe, row1=eraBadge, row2=subtitle, row3=blank
+    // Sec1(Total Traffic 9-col): row4=secTitle, row5=groupHdr, row6=colHdr, rows7-11=data, row12=blank, row13=blank
+    // Sec2(Inbound 7-col): row14=secTitle, row15=colHdr, rows16-20=data, row21=blank, row22=blank
+    // Sec3(Outbound 7-col): row23=secTitle, row24=colHdr, rows25-29=data
+    // Merge G:H (col6:col7) for all Inbound rows (15-21) and Outbound rows (24-30)
+    const blankCellStyle={font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{right:{style:'medium',color:C.navyDark}}};
+    const blankCellStyleAlt={font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'E3F2FD':'EBF7EE'}},border:{right:{style:'medium',color:C.navyDark}}};
+    // Header = 6 rows (R0-R5). Sec1(9-col with groups): secTitle=R6, grpHdr=R7, colHdr=R8, data=R9-13, blank=R14, spacer=R15
+    // Sec2(Inbound 7-col): secTitle=R16, colHdr=R17, data=R18-22, blank=R23, spacer=R24
+    // Sec3(Outbound 7-col): secTitle=R25, colHdr=R26, data=R27-31, blank=R32
+    for(let r=16;r<=24;r++){  // Inbound: secTitle through spacer
+      const isAlt=(r-18)%2===1;
+      const addr=XLSX.utils.encode_cell({r,c:7});
+      ws[addr]={v:'',t:'s',s:r<=23?(isAlt?blankCellStyleAlt:blankCellStyle):S.blank};
+      ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
+    }
+    for(let r=25;r<=33;r++){  // Outbound: secTitle through end
+      const isAlt=(r-27)%2===1;
+      const addr=XLSX.utils.encode_cell({r,c:7});
+      ws[addr]={v:'',t:'s',s:r<=32?(isAlt?blankCellStyleAlt:blankCellStyle):S.blank};
+      ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
+    }
+    // Extend Inbound/Outbound section title merges from col 6 to col 8
+    ws['!merges']=ws['!merges'].map(m=>{
+      if((m.s.r===16||m.s.r===25)&&m.e.c===6){
+        return{s:m.s,e:{r:m.e.r,c:8}};
+      }
+      return m;
+    });
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
 
@@ -854,16 +1753,16 @@ function exportExcel(){
       `Record High — HKR (Residents)`,
       [
         {title:'Record High on Total Number of HKR',
-         headers:['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
-         totalCols:[5],
+         headers:['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
+         sortCol:5, totalCols:[5],
          rows:topN(days,d=>(d.dt.arr_res||0)+(d.dt.dep_res||0)).map(hkr7col)},
-        {title:'Record High on Inbound HKR',
-         headers:['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
-         totalCols:[5],
+        {title:'Record High on Arrival (Inbound) HKR',
+         headers:['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
+         sortCol:3, totalCols:[5],
          rows:topN(days,d=>d.dt.arr_res).map(hkr7col)},
-        {title:'Record High on Outbound HKR',
-         headers:['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
-         totalCols:[5],
+        {title:'Record High on Departure (Outbound) HKR',
+         headers:['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
+         sortCol:4, totalCols:[5],
          rows:topN(days,d=>d.dt.dep_res).map(hkr7col)},
       ],
       [6,13,5,15,15,13,32]
@@ -877,16 +1776,16 @@ function exportExcel(){
       `Record High — Visitors`,
       [
         {title:'Record High on Total Number of Visitors',
-         headers:['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
-         totalCols:[5],
+         headers:['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
+         sortCol:5, totalCols:[5],
          rows:topN(days,d=>(d.dt.arr_vis||0)+(d.dt.dep_vis||0)).map(vis7col)},
-        {title:'Record High on Inbound Visitors',
-         headers:['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
-         totalCols:[5],
+        {title:'Record High on Arrival (Inbound) Visitors',
+         headers:['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
+         sortCol:3, totalCols:[5],
          rows:topN(days,d=>d.dt.arr_vis).map(vis7col)},
-        {title:'Record High on Outbound Visitors',
-         headers:['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
-         totalCols:[5],
+        {title:'Record High on Departure (Outbound) Visitors',
+         headers:['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
+         sortCol:4, totalCols:[5],
          rows:topN(days,d=>d.dt.dep_vis).map(vis7col)},
       ],
       [6,13,5,16,17,14,32]
@@ -901,32 +1800,308 @@ function exportExcel(){
       `Record High — Hourly`,
       [
         {title:'Hourly Record High on Total Passenger',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,grpArr9,grpBlank1,grpDep9,grpBlank1,grpTotal,grpRem],
-         headers:hHdr,totalCols:[10],rows:hRows(h=>(h.arr_tot||0)+(h.dep_tot||0))},
-        {title:'Hourly Record High on Inbound Passenger',
-         headers:hHdr,totalCols:[10],rows:hRows(h=>h.arr_tot)},
-        {title:'Hourly Record High on Outbound Passenger',
-         headers:hHdr,totalCols:[10],rows:hRows(h=>h.dep_tot)},
-        {title:'Hourly Record High on Inbound Residents',
-         headers:hHdr,totalCols:[10],rows:hRows(h=>h.arr_res)},
-        {title:'Hourly Record High on Outbound Residents',
-         headers:hHdr,totalCols:[10],rows:hRows(h=>h.dep_res)},
-        {title:'Hourly Record High on Inbound Visitors',
-         headers:hHdr,totalCols:[10],rows:hRows(h=>h.arr_vis)},
-        {title:'Hourly Record High on Outbound Visitors',
-         headers:hHdr,totalCols:[10],rows:hRows(h=>h.dep_vis)},
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         headers:hHdr,sortCol:10,totalCols:[10],rows:hRows(h=>(h.arr_tot||0)+(h.dep_tot||0))},
+        {title:'Hourly Record High on Arrival Passenger',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         headers:hHdr,sortCol:6,totalCols:[10],rows:hRows(h=>h.arr_tot)},
+        {title:'Hourly Record High on Departure Passenger',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         headers:hHdr,sortCol:9,totalCols:[10],rows:hRows(h=>h.dep_tot)},
+        {title:'Hourly Record High on Arrival Residents',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         headers:hHdr,sortCol:4,totalCols:[10],rows:hRows(h=>h.arr_res)},
+        {title:'Hourly Record High on Departure Residents',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         headers:hHdr,sortCol:7,totalCols:[10],rows:hRows(h=>h.dep_res)},
+        {title:'Hourly Record High on Arrival Visitors',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         headers:hHdr,sortCol:5,totalCols:[10],rows:hRows(h=>h.arr_vis)},
+        {title:'Hourly Record High on Departure Visitors',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         headers:hHdr,sortCol:8,totalCols:[10],rows:hRows(h=>h.dep_vis)},
       ],
       [6,13,5,12,8,8,11,8,8,11,11,32]
     );
     XLSX.utils.book_append_sheet(wb,ws,'Hourly');
   }
 
+  // Build analysis sheet
+  buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDate, fN);
+
   const eraSlug=currentEra==='postcovid'?'PostCOVID':'SinceCommissioning';
-  const filename=`RecordHigh_${eraSlug}_${latestDate||'export'}.xlsx`;
+  const latestDate2=allDays.length?allDays[allDays.length-1].date:'';
+  const filename=`RecordHigh_${eraSlug}_${latestDate2||'export'}.xlsx`;
   XLSX.writeFile(wb,filename);
 }
 
 
+// ════════════════════════════════════════════════════════════════════════════
+// ANALYSIS & FORECAST ENGINE
+// ════════════════════════════════════════════════════════════════════════════
+
+// ─── Throughput parameters (Immigration control) ───────────────────────────
+const TP = {
+  counterPPH:    180,   // visitors: 3.0 pax/min × 60 (used in estimateResources)
+  eChannelPPH:   600,   // HKR: 10.0 pax/min × 60
+  resEChannel:   0.82,  // 82% of HKR use e-channel
+  visEChannel:   0.10,  // ~10% of visitors use e-channel (ePassport eligible, avg)
+  visCounter:    0.90,  // 90% of visitors use manned counter
+  targetUtil:    0.80,  // target utilisation (20% headroom)
+  serviceFactor: 1.10,  // 10% overhead for ops
+  hallCapacity:  2500,  // arrival hall capacity pax (load baseline)
+};
+
+// ─── Easter date calculator ────────────────────────────────────────────────
+function getEaster(year){
+  const a=year%19,b=Math.floor(year/100),c=year%100;
+  const d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451);
+  const mo=Math.floor((h+l-7*m+114)/31);
+  const dy=((h+l-7*m+114)%31)+1;
+  return new Date(year,mo-1,dy);
+}
+function isoDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+// ─── Identify Easter days in dataset ──────────────────────────────────────
+function getEasterDays(days){
+  const easterDays=[];
+  for(const day of days){
+    const r=getRemarks(day.date);
+    if(r&&(r.toLowerCase().includes('easter')||r.toLowerCase().includes('good friday')))
+      easterDays.push(day);
+  }
+  return easterDays;
+}
+
+// ─── Average hourly profile from a set of days ────────────────────────────
+function avgHourlyProfile(days){
+  const slots={};
+  for(const day of days){
+    for(const hr of day.hrs){
+      if(/^CBS$/i.test(hr.time))continue;
+      if(!slots[hr.time])slots[hr.time]={arr_res:[],arr_vis:[],arr_tot:[],dep_res:[],dep_vis:[],dep_tot:[],ad_tot:[]};
+      const s=slots[hr.time];
+      if(hr.arr_res!==null)s.arr_res.push(hr.arr_res);
+      if(hr.arr_vis!==null)s.arr_vis.push(hr.arr_vis);
+      if(hr.arr_tot!==null)s.arr_tot.push(hr.arr_tot);
+      if(hr.dep_res!==null)s.dep_res.push(hr.dep_res);
+      if(hr.dep_vis!==null)s.dep_vis.push(hr.dep_vis);
+      if(hr.dep_tot!==null)s.dep_tot.push(hr.dep_tot);
+      if(hr.ad_tot!==null)s.ad_tot.push(hr.ad_tot);
+    }
+  }
+  const avg={};
+  for(const [t,v] of Object.entries(slots)){
+    const mean=arr=>arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length):0;
+    avg[t]={time:t,arr_res:mean(v.arr_res),arr_vis:mean(v.arr_vis),arr_tot:mean(v.arr_tot),
+             dep_res:mean(v.dep_res),dep_vis:mean(v.dep_vis),dep_tot:mean(v.dep_tot),ad_tot:mean(v.ad_tot)};
+  }
+  // Sort by time slot
+  return Object.values(avg).sort((a,b)=>a.time.localeCompare(b.time));
+}
+
+// ─── Year-over-year analysis ───────────────────────────────────────────────
+function yoyAnalysis(days){
+  // Compare same calendar period across years (Jan 1 to as-at date MM-DD)
+  // so YoY is apples-to-apples, not affected by how many months are loaded
+  if(!days.length) return [];
+  const latestDate = days[days.length-1].date; // e.g. '2026-03-29'
+  const asAtMMDD = latestDate.substring(5);    // e.g. '03-29'
+  const byYear={};
+  for(const d of days){
+    const y=d.date.substring(0,4);
+    const mmdd=d.date.substring(5);
+    // Only include days up to the same MM-DD as the latest date (same-period comparison)
+    if(mmdd>asAtMMDD) continue;
+    if(!byYear[y])byYear[y]={total:0,arr:0,dep:0,res:0,vis:0,count:0};
+    byYear[y].total+=(d.dt.ad_tot||0);
+    byYear[y].arr+=(d.dt.arr_tot||0);
+    byYear[y].dep+=(d.dt.dep_tot||0);
+    byYear[y].res+=(d.dt.ad_res||0);
+    byYear[y].vis+=(d.dt.ad_vis||0);
+    byYear[y].count++;
+  }
+  return Object.entries(byYear).map(([y,v])=>({year:y,...v,
+    avgDaily:v.count?Math.round(v.total/v.count):0,
+    note:'Jan 1 – '+asAtMMDD  // shown in table tooltip
+  })).sort((a,b)=>a.year.localeCompare(b.year));
+}
+
+// ─── Day-of-week analysis ──────────────────────────────────────────────────
+function dowAnalysis(days){
+  const dow=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const buckets=dow.map(d=>({day:d,totals:[],arr:[],dep:[]}));
+  for(const d of days){
+    const wd=new Date(d.date+'T00:00:00').getDay();
+    buckets[wd].totals.push(d.dt.ad_tot||0);
+    buckets[wd].arr.push(d.dt.arr_tot||0);
+    buckets[wd].dep.push(d.dt.dep_tot||0);
+  }
+  return buckets.map(b=>({
+    day:b.day,
+    avg:b.totals.length?Math.round(b.totals.reduce((a,c)=>a+c,0)/b.totals.length):0,
+    avgArr:b.arr.length?Math.round(b.arr.reduce((a,c)=>a+c,0)/b.arr.length):0,
+    avgDep:b.dep.length?Math.round(b.dep.reduce((a,c)=>a+c,0)/b.dep.length):0,
+  }));
+}
+
+// ─── Holiday-type analysis ─────────────────────────────────────────────────
+
+
+function holidayAnalysis(days){
+  const groups={};
+  for(const d of days){
+    const r=getRemarks(d.date)||'Weekday';
+    // Normalise to category
+    let cat='Weekday';
+    if(r.includes('Easter'))cat='Easter Holiday';
+    else if(r.includes('Lunar New Year'))cat='Lunar New Year';
+    else if(r.includes('National Day Golden Week')||r.includes('National Day'))cat='National Day Golden Week';
+    else if(r.includes('Labour'))cat='Labour Day/Week';
+    else if(r.includes('Christmas'))cat='Christmas';
+    else if(r.includes('Summer Saturday'))cat='Summer Saturday';
+    else if(r.includes('Summer Sunday'))cat='Summer Sunday';
+    else if(r.includes('Summer'))cat='Summer Weekday';
+    else if(r.includes('National Games'))cat='National Games';
+    else if(r.includes('Saturday'))cat='Saturday';
+    else if(r.includes('Sunday'))cat='Sunday';
+    else if(r.includes('Chung Yeung'))cat='Chung Yeung Festival';
+    else if(r.includes('Tuen Ng')||r.includes('Dragon Boat'))cat='Dragon Boat Festival';
+    else if(r.includes('Buddha'))cat="Buddha's Birthday";
+    else if(r.includes('Ching Ming'))cat='Ching Ming Festival';
+    else if(r.includes('HKSAR'))cat='HKSAR Establishment Day';
+    if(!groups[cat])groups[cat]={vals:[],arrVals:[],depVals:[]};
+    groups[cat].vals.push(d.dt.ad_tot||0);
+    groups[cat].arrVals.push(d.dt.arr_tot||0);
+    groups[cat].depVals.push(d.dt.dep_tot||0);
+  }
+  return Object.entries(groups).map(([cat,v])=>({
+    cat,count:v.vals.length,
+    avg:Math.round(v.vals.reduce((a,b)=>a+b,0)/v.vals.length),
+    max:Math.max(...v.vals),
+    avgArr:Math.round(v.arrVals.reduce((a,b)=>a+b,0)/v.arrVals.length),
+    avgDep:Math.round(v.depVals.reduce((a,b)=>a+b,0)/v.depVals.length),
+  })).sort((a,b)=>b.avg-a.avg);
+}
+
+// ─── Counter & e-Channel estimator ────────────────────────────────────────
+function weekdayWeekendAnalysis(days){
+  // Weekday = Mon-Fri AND not a public holiday/special day
+  // Weekend/PH = Sat, Sun, OR any holiday remark
+  const weekdayArr=[], phwkArr=[];
+  for(const d of days){
+    const dow=new Date(d.date+'T00:00:00').getDay();
+    const rem=getRemarks(d.date)||'';
+    const isWknd=dow===0||dow===6;
+    const isPH=rem!==''&&rem!=='Saturday'&&rem!=='Sunday'&&rem!=='Summer Weekday'&&rem!=='Weekday';
+    if(isWknd||isPH){ phwkArr.push(d); } else { weekdayArr.push(d); }
+  }
+  function mean(arr,key){ return arr.length?Math.round(arr.reduce((s,d)=>s+(d.dt[key]||0),0)/arr.length):0; }
+  function pk(arr){ return arr.length?Math.max(...arr.map(d=>d.dt.ad_tot||0)):0; }
+  function build(arr){
+    const avgTotal=mean(arr,'ad_tot');
+    return{ count:arr.length, avg:avgTotal, avgTotal, peak:pk(arr),
+            avgArr:mean(arr,'arr_tot'), avgDep:mean(arr,'dep_tot'),
+            avgRes:mean(arr,'ad_res'), avgVis:mean(arr,'ad_vis') };
+  }
+  const wd=build(weekdayArr), wp=build(phwkArr);
+  // Return with BOTH key names for compatibility
+  return{ weekday:wd, phwk:wp, weekend_ph:wp };
+}
+
+function estimateResources(arrRes, arrVis, depRes, depVis){
+  // Arrival counters (manned): visitor 100% + resident 18%
+  const arrCounter = Math.ceil((arrVis + arrRes*(1-TP.resEChannel)) / (TP.counterPPH*TP.targetUtil) * TP.serviceFactor);
+  // Arrival e-channels: resident 82%
+  const arrECh = Math.ceil((arrRes*TP.resEChannel) / (TP.eChannelPPH*TP.targetUtil));
+  // Departure counters: visitor 100% + resident 18%
+  const depCounter = Math.ceil((depVis + depRes*(1-TP.resEChannel)) / (TP.counterPPH*TP.targetUtil) * TP.serviceFactor);
+  // Departure e-channels: resident 82%
+  const depECh = Math.ceil((depRes*TP.resEChannel) / (TP.eChannelPPH*TP.targetUtil));
+  return{arrCounter,arrECh,depCounter,depECh,
+    totalCounters:arrCounter+depCounter, totalECh:arrECh+depECh};
+}
+
+// ─── Forecast Easter 2026 ──────────────────────────────────────────────────
+function forecastEaster2026(days){
+  const easterDays=getEasterDays(days);
+  if(easterDays.length===0)return null;
+
+  // ── Classify each historical Easter day by its position in the Easter period ──
+  // Position: -2=Good Friday, -1=Easter Sat, 0=Easter Sun, 1=Easter Mon, 2=Day After etc.
+  function easterOffset(dateStr){
+    const year=parseInt(dateStr.substring(0,4));
+    const easter=getEaster(year);
+    const d=new Date(dateStr+'T00:00:00');
+    return Math.round((d-easter)/86400000); // days relative to Easter Sunday
+  }
+
+  // Group historical days by offset
+  const byOffset={}; // offset -> [day, ...]
+  for(const d of easterDays){
+    const off=easterOffset(d.date);
+    if(!byOffset[off]) byOffset[off]=[];
+    byOffset[off].push(d);
+  }
+
+  // YoY growth (same-period comparison)
+  const yoy=yoyAnalysis(days);
+  let growthRate=0.05;
+  if(yoy.length>=2){
+    const last=yoy[yoy.length-1],prev=yoy[yoy.length-2];
+    if(prev.avgDaily>0)growthRate=(last.avgDaily-prev.avgDaily)/prev.avgDaily;
+    growthRate=Math.max(-0.1,Math.min(0.2,growthRate));
+  }
+  const factor=1+growthRate;
+
+  // ── Build per-day profiles for Easter 2026 ──
+  // Easter 2026: Easter Sunday = Apr 5
+  // Good Friday=-2 (Apr 3), Sat=-1 (Apr 4), Sun=0 (Apr 5), Mon=+1 (Apr 6), Tue=+2 (Apr 7)
+  const easter2026Dates={
+    '-2': {date:'2026-04-03', label:'Good Friday',    color:'#f59e0b'},
+    '-1': {date:'2026-04-04', label:'Easter Saturday', color:'#a78bfa'},
+     '0': {date:'2026-04-05', label:'Easter Sunday',   color:'var(--accent)'},
+     '1': {date:'2026-04-06', label:'Easter Monday',   color:'var(--res)'},
+     '2': {date:'2026-04-07', label:'Day After',       color:'var(--vis)'},
+  };
+
+  // Build per-day hourly profile and projected total
+  const dayProfiles={};
+  for(const [off,conf] of Object.entries(easter2026Dates)){
+    const histDays=byOffset[parseInt(off)]||[];
+    // If no data for this offset, fall back to overall Easter average
+    const sourceDays=histDays.length>0?histDays:easterDays;
+    const profile=avgHourlyProfile(sourceDays);
+    const avgTotal=sourceDays.length?
+      Math.round(sourceDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/sourceDays.length):0;
+    dayProfiles[off]={
+      ...conf,
+      profile,
+      avgTotal,
+      projTotal:Math.round(avgTotal*factor),
+      histCount:histDays.length,
+      isEstimated:histDays.length===0,
+    };
+  }
+
+  // Overall Easter average (for summary)
+  const avgEasterTotal=Math.round(easterDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/easterDays.length);
+
+  return{
+    dayProfiles,           // per-day profiles keyed by offset (-2 to +2)
+    avgEasterTotal,
+    growthRate,
+    factor,
+    easterDays,
+    byOffset,
+    projectedTotal:Math.round(avgEasterTotal*factor),
+  };
+}
+
+// ─── BUILD ANALYSIS HTML ───────────────────────────────────────────────────
 function buildSectionHTML(days,sec){
   if(sec==='total'){
     return`<div class="tables-grid">
@@ -943,18 +2118,22 @@ function buildSectionHTML(days,sec){
       <div>${buildVisTotalTable(days)}</div>
       <div>${buildVisInboundTable(days)}${buildVisOutboundTable(days)}</div>
     </div>`;
+  }else if(sec==='analysis'){
+    return buildAnalysisHTML(days);
+  }else if(sec==='estimator'){
+    return buildEstimatorHTML();
   }else{
     return`<div class="tables-grid">
       <div>
         ${buildHourlyTable(days,'Hourly Record High on Total Passenger',h=>(h.arr_tot||0)+(h.dep_tot||0))}
-        ${buildHourlyTable(days,'Hourly Record High on Inbound Passenger',h=>h.arr_tot)}
-        ${buildHourlyTable(days,'Hourly Record High on Outbound Passenger',h=>h.dep_tot)}
+        ${buildHourlyTable(days,'Hourly Record High on Arrival Passenger',h=>h.arr_tot)}
+        ${buildHourlyTable(days,'Hourly Record High on Departure Passenger',h=>h.dep_tot)}
       </div>
       <div>
-        ${buildHourlyTable(days,'Hourly Record High on Inbound Residents',h=>h.arr_res)}
-        ${buildHourlyTable(days,'Hourly Record High on Outbound Residents',h=>h.dep_res)}
-        ${buildHourlyTable(days,'Hourly Record High on Inbound Visitors',h=>h.arr_vis)}
-        ${buildHourlyTable(days,'Hourly Record High on Outbound Visitors',h=>h.dep_vis)}
+        ${buildHourlyTable(days,'Hourly Record High on Arrival Residents',h=>h.arr_res)}
+        ${buildHourlyTable(days,'Hourly Record High on Departure Residents',h=>h.dep_res)}
+        ${buildHourlyTable(days,'Hourly Record High on Arrival Visitors',h=>h.arr_vis)}
+        ${buildHourlyTable(days,'Hourly Record High on Departure Visitors',h=>h.dep_vis)}
       </div>
     </div>`;
   }
@@ -972,7 +2151,7 @@ function buildTotalTrafficTable(days){
 }
 function buildInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_tot);
-  return buildTable('Record High on Inbound Passengers',
+  return buildTable('Record High on Arrival (Inbound) Passengers',
     ['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.arr_vis),fN(x.day.dt.arr_tot),getRemarks(x.day.date)]),
@@ -980,7 +2159,7 @@ function buildInboundTable(days){
 }
 function buildOutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_tot);
-  return buildTable('Record High on Outbound Passengers',
+  return buildTable('Record High on Departure (Outbound) Passengers',
     ['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.dep_res),fN(x.day.dt.dep_vis),fN(x.day.dt.dep_tot),getRemarks(x.day.date)]),
@@ -989,23 +2168,23 @@ function buildOutboundTable(days){
 function buildHKRTotalTable(days){
   const rows=topN(days,d=>(d.dt.arr_res||0)+(d.dt.dep_res||0));
   return buildTable('Record High on Total Number of HKR',
-    ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+    ['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.dep_res),fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)),getRemarks(x.day.date)]),
     [5],[],'var(--res)');
 }
 function buildHKRInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_res);
-  return buildTable('Record High on Inbound HKR',
-    ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+  return buildTable('Record High on Arrival (Inbound) HKR',
+    ['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.dep_res),fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)),getRemarks(x.day.date)]),
     [5],[],'var(--res)');
 }
 function buildHKROutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_res);
-  return buildTable('Record High on Outbound HKR',
-    ['Rank','Date','Day','Arriving HKR','Departing HKR','Total HKR','Remarks'],
+  return buildTable('Record High on Departure (Outbound) HKR',
+    ['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.dep_res),fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)),getRemarks(x.day.date)]),
     [5],[],'var(--res)');
@@ -1013,23 +2192,23 @@ function buildHKROutboundTable(days){
 function buildVisTotalTable(days){
   const rows=topN(days,d=>(d.dt.arr_vis||0)+(d.dt.dep_vis||0));
   return buildTable('Record High on Total Number of Visitors',
-    ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+    ['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_vis),fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)),getRemarks(x.day.date)]),
     [5],[],'var(--vis)');
 }
 function buildVisInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_vis);
-  return buildTable('Record High on Inbound Visitors',
-    ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+  return buildTable('Record High on Arrival (Inbound) Visitors',
+    ['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_vis),fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)),getRemarks(x.day.date)]),
     [5],[],'var(--vis)');
 }
 function buildVisOutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_vis);
-  return buildTable('Record High on Outbound Visitors',
-    ['Rank','Date','Day','Arriving Visitors','Departing Visitors','Total Visitors','Remarks'],
+  return buildTable('Record High on Departure (Outbound) Visitors',
+    ['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_vis),fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)),getRemarks(x.day.date)]),
     [5],[],'var(--vis)');
@@ -1107,7 +2286,436 @@ function renderContent(){
     `Record High (${eraLabel}) [as at ${fDate(latestDate)}] — ${days.length} days in range`;
   document.getElementById('content').innerHTML=buildSectionHTML(days,currentSection);
 }
-</script>
 
+// ════════════════════════════════════════════════════════════════════════
+// THROUGHPUT ESTIMATOR
+// ════════════════════════════════════════════════════════════════════════
+
+// Service rates pax/unit/hour
+// ── Service rates based on operational data ──────────────────────────────────
+// HKR:     5.0 pax/min = 300 pax/hr per counter  |  600 pax/hr per e-channel
+// Visitor: 3.0 pax/min = 180 pax/hr per counter  |  360 pax/hr per e-channel
+// Hall capacity baseline: ~2,500 pax (arrival hall capacity for load reference)
+const SR = {
+  ctrR:  300,  // HKR manned counter:  5.0 pax/min × 60
+  ctrV:  180,  // Visitor counter:     3.0 pax/min × 60
+  echR:  600,  // HKR e-channel:      10.0 pax/min × 60
+  echV:  360,  // Visitor e-channel:   6.0 pax/min × 60 (less familiar with system)
+};
+const HALL_CAPACITY = 2500; // arrival hall capacity pax — load baseline
+// Service pledge (minutes)
+const PLEDGE = { R: 15, V: 30 };
+// Manpower ratios
+const ICO_PER_CTR = 1;
+const ICO_PER_ECH = 4.77;  // Staff Required: ⌈e-channels / 4.77⌉
+
+// Erlang-C: probability that arriving customer has to wait
+function erlangC(c, rho){
+  if(rho <= 0) return 0;
+  if(rho >= 1) return 1; // overloaded
+  const a = c * rho; // total offered load
+  // compute P0
+  let sum = 0;
+  let factK = 1;
+  for(let k=0; k<c; k++){
+    if(k>0) factK *= k;
+    sum += Math.pow(a, k) / factK;
+  }
+  let factC = factK * c;
+  const last = Math.pow(a, c) / factC / (1 - rho);
+  const P0 = 1 / (sum + last);
+  const Ec = last * P0;
+  return Ec;
+}
+
+// Mean wait time in queue (minutes) for M/M/c queue
+function waitTime(lambda, c, mu){
+  if(lambda <= 0 || c <= 0) return 0;
+  const rho = lambda / (c * mu);
+  if(rho >= 0.99) return 999; // overloaded
+  const Ec = erlangC(c, rho);
+  const Wq = Ec / (c * mu * (1 - rho)); // hours
+  return Math.round(Wq * 60 * 10) / 10;  // minutes, 1dp
+}
+
+// Throughput capacity pax/hr for a stream
+function capacity(ctrCount, echCount, ctrRate, echRate){
+  return ctrCount * ctrRate + echCount * echRate;
+}
+
+// Utilisation % (0-100)
+function utilPct(lambda, cap){ return cap > 0 ? Math.min(Math.round(lambda / cap * 100), 999) : 0; }
+
+// ICO manpower
+function icoCount(ctrR, ctrV, echR, echV){
+  // SIA (Staff Required) = Counters + ⌈e-Channels / 4.77⌉
+  const counterStaff = (ctrR + ctrV) * ICO_PER_CTR;
+  const echStaff = Math.ceil((echR + echV) / ICO_PER_ECH);
+  return counterStaff + echStaff;
+}
+
+// State for estimator
+// Total physical units: Arr: 28 counters, 47 e-channels | Dep: 28 counters, 53 e-channels
+// Default split: 80% R / 20% V for counters; e-channels all R by default
+var UNITS = {
+  arr: { ctrTotal: 28, echTotal: 47 },
+  dep: { ctrTotal: 28, echTotal: 53 },
+};
+var EST = {
+  dir: 'arr',
+  arrR: 10000, arrV: 4000,
+  depR: 9000,  depV: 4000,
+  ctrR: 22, ctrV: 6,      // arr counters (R+V must ≤ 28)
+  echR: 47, echV: 0,      // arr e-channels (R+V must ≤ 47)
+  // dep resources stored separately, toggled by dir
+  depCtrR: 22, depCtrV: 6,
+  depEchR: 53, depEchV: 0,
+};
+
+function buildEstimatorHTML(){
+  return '<div id="estimatorRoot"></div>';
+}
+
+function renderEstimator(){
+  const root=document.getElementById('estimatorRoot');
+  if(!root)return;
+  const d=EST;
+  const isArr=d.dir==='arr';
+  const volR=isArr?d.arrR:d.depR;
+  const volV=isArr?d.arrV:d.depV;
+  const total=volR+volV;
+  // Use direction-specific resource counts
+  const ctrR=isArr?d.ctrR:d.depCtrR, ctrV=isArr?d.ctrV:d.depCtrV;
+  const echR=isArr?d.echR:d.depEchR, echV=isArr?d.echV:d.depEchV;
+  const capR=ctrR*SR.ctrR+echR*SR.echR;
+  const capV=ctrV*SR.ctrV+echV*SR.echV;
+  const capTotal=capR+capV;
+  const sR=ctrR+echR, sV=ctrV+echV;
+  const muR=sR>0?capR/sR:SR.ctrR, muV=sV>0?capV/sV:SR.ctrV;
+  const wtR=sR>0?waitTime(volR,sR,muR):999;
+  const wtV=sV>0?waitTime(volV,sV,muV):999;
+  const uR=capR>0?Math.min(Math.round(volR/capR*100),999):0;
+  const uV=capV>0?Math.min(Math.round(volV/capV*100),999):0;
+  const uT=capTotal>0?Math.min(Math.round(total/capTotal*100),999):0;
+  const pR=wtR<=PLEDGE.R, pV=wtV<=PLEDGE.V;
+  const allMet=pR&&pV;
+  // Simple Average Wait = (HKR Wait + Visitor Wait) / 2
+  const avgWait = (wtR>=999||wtV>=999) ? 999 : Math.round((wtR+wtV)/2*10)/10;
+  const avgWaitMet = avgWait <= (PLEDGE.R+PLEDGE.V)/2; // avg target = (15+30)/2 = 22.5 min
+  const ico=icoCount(ctrR,ctrV,echR,echV);
+  const eff=ico>0?Math.round(capTotal/ico):0;  // Efficiency = Total Capacity / SIA Staff
+  function nt(v){return Number(v).toLocaleString();}
+  function uc(u){return u<70?'#4ade80':u<90?'#f5c842':'#f87171';}
+  function wc(w,p){return w>=999?'wt-fail':w>p?'wt-warn':'wt-ok';}
+  function sc(met){return met?'spill-met':'spill-fail';}
+
+  const html=[];
+  const p=s=>html.push(s);
+
+  p('<div class="tp-layout">');
+
+  // ── LEFT: Controls ────────────────────────────────────────────────────────
+  p('<div>');
+  p('<div class="tp-ctrl">');
+  p('<div class="tp-ctrl-hdr"><h3>⚙ Parameter Control</h3></div>');
+  p('<div class="tp-ctrl-body">');
+
+  // Direction
+  p('<div class="dir-tog">');
+  p('<button class="dir-tog-btn'+(isArr?' act-arr':'')+'" onclick="EST.dir=\'arr\';renderEstimator()">▲ ARRIVAL</button>');
+  p('<button class="dir-tog-btn'+(!isArr?' act-dep':'')+'" onclick="EST.dir=\'dep\';renderEstimator()">▼ DEPARTURE</button>');
+  p('</div>');
+
+  // Presets
+  p('<div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:7px;text-transform:uppercase">Quick Scenarios</div>');
+  p('<div class="scen-row">');
+  [{k:'normal',l:'Normal'},{k:'summer',l:'Summer Sat'},{k:'easter',l:'Easter'},{k:'golden',l:'Golden Week'}].forEach(s=>{
+    p('<button class="scen-pill" onclick="applyScenario(\''+s.k+'\')">'+s.l+'</button>');
+  });
+  p('</div>');
+
+  // Volume sliders
+  const vKey=isArr?'arrR':'depR', vKeyV=isArr?'arrV':'depV';
+  p('<div class="tp-sec-lbl">Passenger Volume (pax/hr)</div>');
+  p('<div class="sl-row">');
+  p('<div class="sl-badge r">R</div>');
+  p('<span class="sl-lbl">HKR</span>');
+  p('<input type="range" class="tpsl" min="0" max="25000" step="200" value="'+volR+'" style="accent-color:#0097A7" oninput="EST.'+vKey+'=+this.value;document.getElementById(\'vRv\').textContent=Number(this.value).toLocaleString();renderEstimator()">');
+  p('<span class="sl-val" id="vRv" style="color:#0097A7">'+nt(volR)+'</span>');
+  p('</div>');
+  p('<div class="sl-row">');
+  p('<div class="sl-badge v">V</div>');
+  p('<span class="sl-lbl">Visitor</span>');
+  p('<input type="range" class="tpsl" min="0" max="12000" step="100" value="'+volV+'" style="accent-color:#f5c842" oninput="EST.'+vKeyV+'=+this.value;document.getElementById(\'vVv\').textContent=Number(this.value).toLocaleString();renderEstimator()">');
+  p('<span class="sl-val" id="vVv" style="color:#f5c842">'+nt(volV)+'</span>');
+  p('</div>');
+
+  // Counters: total capped at 28. When R moves, V auto-adjusts.
+  const maxCtr=28, maxEch=isArr?47:53;
+  const ctrRk=isArr?'ctrR':'depCtrR', ctrVk=isArr?'ctrV':'depCtrV';
+  const echRk=isArr?'echR':'depEchR', echVk=isArr?'echV':'depEchV';
+  const ctrUsed=ctrR+ctrV, echUsed=echR+echV;
+
+  p('<div class="tp-sec-lbl">Manned Counters <span style="font-size:8px;color:var(--muted);font-weight:400;letter-spacing:0">(total max 28 · '+ctrUsed+'/28 used)</span></div>');
+  p('<div class="sl-row">');
+  p('<div class="sl-badge r">R</div>');
+  p('<span class="sl-lbl">HKR</span>');
+  p('<input type="range" class="tpsl" min="0" max="28" step="1" value="'+ctrR+'" style="accent-color:#0097A7" id="slCtrR" oninput="linkedSlider(this,\''+ctrRk+'\',\''+ctrVk+'\',28,\'cRv\',\'cVv\')">');
+  p('<span class="sl-val" id="cRv" style="color:#0097A7">'+ctrR+'</span>');
+  p('</div>');
+  p('<div class="sl-hint">'+SR.ctrR+' pax/hr · 1 ICO · V auto-adjusts ↕</div>');
+  p('<div class="sl-row">');
+  p('<div class="sl-badge v">V</div>');
+  p('<span class="sl-lbl">Visitor</span>');
+  p('<input type="range" class="tpsl" min="0" max="28" step="1" value="'+ctrV+'" style="accent-color:#f5c842" id="slCtrV" oninput="linkedSlider(this,\''+ctrVk+'\',\''+ctrRk+'\',28,\'cVv\',\'cRv\')">');
+  p('<span class="sl-val" id="cVv" style="color:#f5c842">'+ctrV+'</span>');
+  p('</div>');
+  p('<div class="sl-hint">'+SR.ctrV+' pax/hr (3 pax/min) · 1 ICO · R auto-adjusts ↕</div>');
+
+  p('<div class="tp-sec-lbl">e-Channels <span style="font-size:8px;color:var(--muted);font-weight:400;letter-spacing:0">(max '+maxEch+' · '+echUsed+'/'+maxEch+' used)</span></div>');
+  p('<div class="sl-row">');
+  p('<div class="sl-badge r">R</div>');
+  p('<span class="sl-lbl">HKR</span>');
+  p('<input type="range" class="tpsl" min="0" max="'+maxEch+'" step="1" value="'+echR+'" style="accent-color:var(--accent)" id="slEchR" oninput="linkedSlider(this,\''+echRk+'\',\''+echVk+'\','+maxEch+',\'eRv\',\'eVv\')">');
+  p('<span class="sl-val" id="eRv" style="color:var(--accent)">'+echR+'</span>');
+  p('</div>');
+  p('<div class="sl-hint">'+SR.echR+' pax/hr · SIA: ⌈units÷4.77⌉ · V auto-adjusts ↕</div>');
+  p('<div class="sl-row">');
+  p('<div class="sl-badge v">V</div>');
+  p('<span class="sl-lbl">Visitor</span>');
+  p('<input type="range" class="tpsl" min="0" max="'+maxEch+'" step="1" value="'+echV+'" style="accent-color:#f5c842" id="slEchV" oninput="linkedSlider(this,\''+echVk+'\',\''+echRk+'\','+maxEch+',\'eVv\',\'eRv\')">');
+  p('<span class="sl-val" id="eVv" style="color:#f5c842">'+echV+'</span>');
+  p('</div>');
+  p('<div class="sl-hint">'+SR.echV+' pax/hr · SIA: ⌈units÷4.77⌉ · R auto-adjusts ↕</div>');
+  // Resource summary bar
+  const arrCtrTotal=d.ctrR+d.ctrV, arrEchTotal=d.echR+d.echV;
+  const ctrCap=isArr?28:28, echCap=isArr?47:53;
+  const ctrPct=Math.round(arrCtrTotal/ctrCap*100), echPct=Math.round(arrEchTotal/echCap*100);
+  var ctrColor=ctrPct>100?'#f87171':ctrPct>80?'#f5c842':'var(--res)';
+  var echColor=echPct>100?'#f87171':echPct>80?'#f5c842':'var(--accent)';
+  var ctrBarColor=ctrPct>100?'#f87171':ctrPct>80?'#f5c842':'#0097A7';
+  var echBarColor=echPct>100?'#f87171':echPct>80?'#f5c842':'var(--accent)';
+  p('<div style="background:var(--surface3);border-radius:6px;padding:10px 12px;margin-top:6px">');
+  p('<div style="font-size:9px;color:var(--muted);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">Resource Usage</div>');
+  p('<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-bottom:4px">');
+  p('<span>Counters</span>');
+  p('<span style="font-weight:700;color:'+ctrColor+'">'+arrCtrTotal+'/'+ctrCap+'</span>');
+  p('</div>');
+  p('<div class="util-bar" style="margin-bottom:8px"><div class="util-fill" style="width:'+Math.min(ctrPct,100)+'%;background:'+ctrBarColor+'"></div></div>');
+  p('<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-bottom:4px">');
+  p('<span>e-Channels</span>');
+  p('<span style="font-weight:700;color:'+echColor+'">'+arrEchTotal+'/'+echCap+'</span>');
+  p('</div>');
+  p('<div class="util-bar"><div class="util-fill" style="width:'+Math.min(echPct,100)+'%;background:'+echBarColor+'"></div></div>');
+  p('</div>');
+  p('</div></div>'); // ctrl-body, tp-ctrl
+
+  p('</div>'); // left col
+
+  // ── RIGHT: Results ────────────────────────────────────────────────────────
+  p('<div>');
+
+  // KPI cards
+  p('<div class="tp-kpi-grid">');
+  [
+    {lbl:'Total Capacity',val:nt(capTotal)+' pax/hr',sub:'Combined all streams',cls:'tc-a',color:'var(--accent)'},
+    {lbl:'Pledge Compliance',val:allMet?'100%':(!pR&&!pV?'0%':'50%'),sub:allMet?'✓ Both met':'✗ Check streams',cls:'tc-g',color:allMet?'#4ade80':'#f87171'},
+    {lbl:'Avg Wait Time',val:(avgWait>=999?'∞':avgWait)+' min',sub:'Simple avg (HKR+Vis)÷2 · target 22.5min',cls:'tc-a',color:avgWait<=22.5?'#4ade80':avgWait<=30?'#f5c842':'#f87171'},
+    {lbl:'ICO Manpower',val:ico+' staff',sub:'Total deployed',cls:'tc-p',color:'#7c6af7'},
+    {lbl:'Efficiency Index',val:eff+' pax/staff/hr',sub:'Throughput per officer',cls:'tc-r',color:'var(--res)'},
+  ].forEach(k=>{
+    p('<div class="tp-kc '+k.cls+'"><div class="tp-kc-lbl">'+k.lbl+'</div>');
+    p('<div class="tp-kc-val" style="color:'+k.color+'">'+k.val+'</div>');
+    p('<div class="tp-kc-sub">'+k.sub+'</div></div>');
+  });
+  p('</div>');
+
+  // Stream table
+  p('<div class="af-card" style="margin-bottom:14px">');
+  p('<div class="af-card-hdr"><h3>Dual-Stream Flow Model</h3>');
+  p('<span class="kpi-sub">M/M/c Erlang-C · HKR ≤'+PLEDGE.R+'min · Visitor ≤'+PLEDGE.V+'min · Avg target ≤22.5min · SIA = Counters + ⌈e-Ch÷4.77⌉</span></div>');
+  p('<div style="overflow-x:auto">');
+  p('<table class="stt"><thead><tr>');
+  ['Stream','Volume','Counters','e-Ch','Capacity','Load','Est. Wait','Pledge','Status'].forEach(h=>p('<th>'+h+'</th>'));
+  p('</tr></thead><tbody>');
+
+  // HKR row
+  p('<tr>');
+  p('<td style="color:#0097A7">HKR <span style="font-size:9px;color:var(--muted);font-weight:400">(Resident)</span></td>');
+  p('<td>'+nt(volR)+'</td><td style="color:#0097A7">'+ctrR+'</td><td style="color:var(--accent)">'+echR+'</td>');
+  p('<td>'+nt(capR)+'</td>');
+  p('<td><div class="util-cell"><span class="util-pct" style="color:'+uc(uR)+'">'+uR+'%</span><div class="util-bar"><div class="util-fill" style="width:'+Math.min(uR,100)+'%;background:'+uc(uR)+'"></div></div></div></td>');
+  p('<td><span class="'+(wtR>=999?'wt-fail':wc(wtR,PLEDGE.R))+'">'+(wtR>=999?'∞':wtR)+' min</span></td>');
+  p('<td style="color:var(--muted);font-size:9px">≤'+PLEDGE.R+' min</td>');
+  p('<td><span class="spill '+sc(pR)+'">'+(pR?'MET':'FAIL')+'</span></td>');
+  p('</tr>');
+
+  // Visitor row
+  p('<tr>');
+  p('<td style="color:var(--gold)">Visitor</td>');
+  p('<td>'+nt(volV)+'</td><td style="color:var(--gold)">'+ctrV+'</td><td style="color:var(--gold)">'+echV+'</td>');
+  p('<td>'+nt(capV)+'</td>');
+  p('<td><div class="util-cell"><span class="util-pct" style="color:'+uc(uV)+'">'+uV+'%</span><div class="util-bar"><div class="util-fill" style="width:'+Math.min(uV,100)+'%;background:'+uc(uV)+'"></div></div></div></td>');
+  p('<td><span class="'+(wtV>=999?'wt-fail':wc(wtV,PLEDGE.V))+'">'+(wtV>=999?'∞':wtV)+' min</span></td>');
+  p('<td style="color:var(--muted);font-size:9px">≤'+PLEDGE.V+' min</td>');
+  p('<td><span class="spill '+sc(pV)+'">'+(pV?'MET':'FAIL')+'</span></td>');
+  p('</tr>');
+
+  // Total row
+  p('<tr class="stt-total">');
+  p('<td>TOTAL</td><td>'+nt(total)+'</td><td>'+(d.ctrR+d.ctrV)+'</td><td>'+(d.echR+d.echV)+'</td>');
+  p('<td>'+nt(capTotal)+'</td>');
+  p('<td><div class="util-cell"><span class="util-pct" style="color:'+uc(uT)+'">'+uT+'%</span><div class="util-bar"><div class="util-fill" style="width:'+Math.min(uT,100)+'%;background:'+uc(uT)+'"></div></div></div></td>');
+  p('<td>—</td><td>—</td>');
+  p('<td><span class="spill '+(allMet?'spill-met':'spill-fail')+'">'+(allMet?'ALL MET':'ACTION')+'</span></td>');
+  p('</tr>');
+  // Simple average wait row
+  p('<tr style="background:var(--surface3)">');
+  p('<td colspan="6" style="text-align:right;color:var(--muted);font-size:10px">Simple Average Wait (HKR + Visitor) ÷ 2</td>');
+  p('<td colspan="2" style="font-weight:700;font-size:13px;color:'+(avgWait<=22.5?'#4ade80':avgWait<=30?'#f5c842':'#f87171')+'">'+(avgWait>=999?'∞':avgWait)+' min</td>');
+  p('<td colspan="1" style="color:var(--muted);font-size:9px">target ≤22.5</td>');
+  p('<td><span class="spill '+(avgWait<=22.5?'spill-met':avgWait<=30?'spill-warn':'spill-fail')+'">'+(avgWait<=22.5?'MET':avgWait<=30?'NEAR':'FAIL')+'</span></td>');
+  p('</tr>');
+  p('</tbody></table></div></div>');
+
+  // ICO breakdown
+  p('<div class="af-card">');
+  p('<div class="af-card-hdr"><h3>ICO Manpower Breakdown</h3>');
+  p('<span class="kpi-sub">Total: <b style="color:#7c6af7">'+ico+'</b> staff · Efficiency: <b style="color:var(--res)">'+eff+'</b> pax/staff/hr</span></div>');
+  p('<div class="af-card-body">');
+  p('<div class="ico-grid2">');
+  [
+    {val:ctrR,lbl:'HKR Counters',sub:'Manned counter',detail:'1 ICO per counter',color:'#0097A7'},
+    {val:ctrV,lbl:'Visitor Counters',sub:'Manned counter',detail:'1 ICO per counter',color:'var(--gold)'},
+    {val:Math.ceil(echR/ICO_PER_ECH),lbl:'HKR e-Ch Staff',sub:'⌈'+echR+' ÷ 4.77⌉',detail:'SIA formula',color:'var(--accent)'},
+    {val:Math.ceil(echV/ICO_PER_ECH),lbl:'Visitor e-Ch Staff',sub:'⌈'+echV+' ÷ 4.77⌉',detail:'SIA formula',color:'var(--gold)'},
+    {val:ico,lbl:'Total Deployed',sub:'All streams',detail:'',color:'#7c6af7',big:true},
+    {val:eff,lbl:'Pax / Staff / Hr',sub:'Efficiency index',detail:'',color:'var(--res)',big:true},
+  ].forEach(c=>{
+    p('<div class="ico-c" style="'+(c.big?'background:var(--surface2)':'')+'">');
+    p('<div class="ico-c-num" style="color:'+c.color+'">'+c.val+'</div>');
+    p('<div class="ico-c-lbl">'+c.lbl+'</div>');
+    p('<div class="ico-c-sub">'+c.sub+'</div>');
+    if(c.detail) p('<div class="ico-c-sub" style="margin-top:3px">'+c.detail+'</div>');
+    p('</div>');
+  });
+  p('</div></div></div>');
+
+  p('</div>'); // right col
+  p('</div>'); // tp-layout
+
+  root.innerHTML=html.join('');
+}
+
+// Linked slider: when key moves, otherKey = max - key (total stays ≤ max)
+// Also updates the other slider's display value without full re-render
+function linkedSlider(el, key, otherKey, max, myDisplayId, otherDisplayId){
+  const val = Math.min(+el.value, max);
+  EST[key] = val;
+  EST[otherKey] = Math.max(0, max - val);
+  // Update display spans immediately (feels snappy)
+  var mySpan = document.getElementById(myDisplayId);
+  var otherSpan = document.getElementById(otherDisplayId);
+  if(mySpan) mySpan.textContent = val;
+  if(otherSpan) otherSpan.textContent = EST[otherKey];
+  // Update the other slider position too
+  var otherSliders = {'cRv':'slCtrR','cVv':'slCtrV','eRv':'slEchR','eVv':'slEchV'};
+  var otherSliderId = otherSliders[otherDisplayId];
+  if(otherSliderId){
+    var otherSlider = document.getElementById(otherSliderId);
+    if(otherSlider) otherSlider.value = EST[otherKey];
+  }
+  renderEstimator();
+}
+
+
+// ── R/V ratio profiles per scenario ──────────────────────────────────────────
+// resRatio = fraction of total passengers who are HKR residents
+// ── Scenario profiles with realistic R/V mix ─────────────────────────────────
+// resRatio: fraction of pax who are HKR residents
+// totalArr/Dep: typical peak-hour volumes for that scenario
+const SCENARIO_PROFILES = {
+  normal:  { resRatio: 0.77, totalArr: 10500, totalDep:  9500 },
+  // Summer Saturday: more outbound leisure trips, slight visitor uptick
+  summer:  { resRatio: 0.72, totalArr: 18000, totalDep: 16500 },
+  // Easter: departure-heavy (Fri), visitor share rises (overseas tourists)
+  easter:  { resRatio: 0.68, totalArr: 21000, totalDep: 23000 },
+  // Golden Week: Mainland visitor surge — visitor-dominant
+  golden:  { resRatio: 0.45, totalArr: 22000, totalDep: 20000 },
+};
+
+// ── Optimal resource split — always uses ALL units ───────────────────────────
+// Methodology:
+//   Counters: allocated proportional to effective demand (pax ÷ rate per unit)
+//   e-Channels: HKR 82% eligible; Visitors ~8-15% eligible (ePassport holders)
+//     Visitor e-ch eligibility scales up when visitor volume is high
+//   Rule: V e-channels never below 3 (always maintain a visitor e-ch bank)
+function optimalSplit(totalVol, resRatio, maxCtr, maxEch){
+  const volR = Math.round(totalVol * resRatio);
+  const volV = totalVol - volR;
+
+  // ── Counter split ──────────────────────────────────────────────────────────
+  // HKR counter demand: 18% of HKR use manned counter
+  // Visitor counter demand: ~92% of visitors use manned counter
+  const demandCtrR = volR * (1 - TP.resEChannel) / SR.ctrR;   // lanes needed
+  const demandCtrV = volV * 0.92                 / SR.ctrV;
+  const totalCtrDemand = demandCtrR + demandCtrV || 1;
+  let ctrV = Math.max(2, Math.round(maxCtr * demandCtrV / totalCtrDemand));
+  let ctrR = maxCtr - ctrV;
+  ctrR = Math.max(2, ctrR);
+  ctrV = maxCtr - ctrR; // guarantee R + V = maxCtr
+
+  // ── e-Channel split ────────────────────────────────────────────────────────
+  // Visitor e-ch eligibility: base 8%, scales to 15% when visitor-heavy
+  // (more tourists with ePassports during Golden Week / peak holiday)
+  const visEChPct = resRatio < 0.5 ? 0.15          // visitor-heavy: Golden Week
+                  : resRatio < 0.65 ? 0.12          // mixed: Easter
+                  : resRatio < 0.75 ? 0.10          // normal peak
+                  : 0.08;                            // resident-heavy: normal day
+  const demandEchR = volR * TP.resEChannel  / SR.echR;
+  const demandEchV = volV * visEChPct       / SR.echV;
+  const totalEchDemand = demandEchR + demandEchV || 1;
+  // Minimum 3 visitor e-channels always — never zero
+  let echV = Math.max(3, Math.round(maxEch * demandEchV / totalEchDemand));
+  echV = Math.min(echV, Math.floor(maxEch * 0.15)); // cap at 15% of total
+  let echR = maxEch - echV; // HKR gets the rest (always majority)
+
+  return { volR, volV, ctrR, ctrV, echR, echV };
+}
+
+function applyScenario(name){
+  const prof = SCENARIO_PROFILES[name];
+  if(!prof) return;
+  // Calculate optimal splits for arrival and departure
+  const arr = optimalSplit(prof.totalArr, prof.resRatio, 28, 47);
+  const dep = optimalSplit(prof.totalDep, prof.resRatio, 28, 53);
+  Object.assign(EST, {
+    arrR: arr.volR, arrV: arr.volV,
+    depR: dep.volR, depV: dep.volV,
+    ctrR: arr.ctrR, ctrV: arr.ctrV,
+    echR: arr.echR, echV: arr.echV,
+    depCtrR: dep.ctrR, depCtrV: dep.ctrV,
+    depEchR: dep.echR, depEchV: dep.echV,
+  });
+  renderEstimator();
+}
+
+// ── Render hourly profile for selected Easter day ──────────────────────────
+
+function selectEasterDay(dayKey, btn){
+  // Update button styles
+  document.querySelectorAll('.dsc-btn').forEach(function(b){ b.classList.remove('dsc-active'); b.style.cssText=''; });
+  if(btn){
+    var colors={goodFriday:'#f59e0b',saturday:'#a78bfa',easterSun:'var(--accent)',easterMon:'var(--res)',dayAfter:'var(--vis)'};
+    btn.classList.add('dsc-active');
+    btn.style.borderColor=colors[dayKey]||'var(--accent)';
+    btn.style.color=colors[dayKey]||'var(--accent)';
+    btn.style.background='rgba(255,255,255,.05)';
+  }
+}
+
+
+// estimator render triggered from switchSection directly
+</script>
 </body>
 </html>
