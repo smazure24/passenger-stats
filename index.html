@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Record High — Passenger Statistics</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -274,6 +275,7 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
       <div class="hdr-label">date range</div>
     </div>
     <button class="btn-sm" onclick="exportExcel()" style="border-color:#4ade80;color:#4ade80">⬇ EXPORT EXCEL</button>
+    <button class="btn-sm" onclick="exportPPTX()" style="border-color:#f59e0b;color:#f59e0b">▶ EXPORT PPTX</button>
     <button class="btn-sm" onclick="resetAll()">RESET</button>
   </div>
 </header>
@@ -479,7 +481,16 @@ async function handleFiles(files){
       showErr(`No data found. First rows of "${sn}":\n\n${preview}\n\nSend this screenshot to fix the parser.`);
       showLoad(false);return;
     }
-    allDays=[...allDays,...newDays].sort((a,b)=>a.date.localeCompare(b.date));
+    // Merge + deduplicate by date — if same date appears in multiple files,
+    // keep the one with the highest total pax (most complete data)
+    const mergedMap = {};
+    for(const d of [...allDays, ...newDays]){
+      const existing = mergedMap[d.date];
+      if(!existing || (d.dt.ad_tot||0) > (existing.dt.ad_tot||0)){
+        mergedMap[d.date] = d;
+      }
+    }
+    allDays = Object.values(mergedMap).sort((a,b)=>a.date.localeCompare(b.date));
     allFileNames=[...allFileNames,...Array.from(files).map(f=>f.name)];
     showDashboard();
   }catch(e){showErr('Error: '+e.message);}
@@ -817,6 +828,7 @@ function buildAnalysisHTML(days){
     return '<div style="padding:60px;text-align:center;color:var(--muted);font-family:Space Mono,monospace;font-size:12px">No data loaded — upload Excel files first</div>';
 
   const yoy      = yoyAnalysis(days);
+  const fullYoy  = fullYearAnalysis(days);
   const latestMMDD = days.length ? days[days.length-1].date.substring(5) : '';
   const dow      = dowAnalysis(days);
   const holidays = holidayAnalysis(days);
@@ -846,7 +858,7 @@ function buildAnalysisHTML(days){
     {lbl:'Days in Range', val:totalDays.toLocaleString(), sub:days[0].date+' – '+days[days.length-1].date, cls:'kc-accent', color:'var(--accent)'},
     {lbl:'Total Passengers', val:(grandTotal/1e6).toFixed(1)+'M', sub:'All-time in loaded data', cls:'kc-gold', color:'var(--gold)'},
     {lbl:'Avg Daily Traffic', val:lastYoy?nt(lastYoy.avgDaily):'—', sub:(lastYoy?lastYoy.year:'')+' average', cls:'kc-res', color:'var(--res)'},
-    {lbl:'YoY Growth', val:(yoyGrowth!==null?(yoyGrowth>=0?'+':'')+yoyGrowth.toFixed(1)+'%':'—'), sub:'vs prior year avg daily', cls:'kc-dep', color:yoyGrowth>=0?'var(--res)':'#f87171', trend:yoyGrowth},
+    {lbl:'YoY Growth (Same Period)', val:(yoyGrowth!==null?(yoyGrowth>=0?'+':'')+yoyGrowth.toFixed(1)+'%':'—'), sub:'Jan 1–'+latestMMDD+' this yr vs last yr · short-term comparison only', cls:'kc-dep', color:yoyGrowth>=0?'var(--res)':'#f87171', trend:yoyGrowth},
     {lbl:'Resident Ratio', val:resRatio+'%', sub:'of total traffic', cls:'kc-purple', color:'#7c6af7'},
     {lbl:'Peak Day Total', val:peakDay?nt(peakDay.dt.ad_tot):'—', sub:peakDay?fDate(peakDay.date)+' · '+getRemarks(peakDay.date):'', cls:'kc-gold', color:'var(--gold)'},
   ];
@@ -858,7 +870,7 @@ function buildAnalysisHTML(days){
     push('<div class="kpi-val" style="color:'+k.color+'">'+k.val+'</div>');
     push('<div class="kpi-sub">'+k.sub+'</div>');
     if(k.trend!==null&&k.trend!==undefined){
-      push('<div class="kpi-trend '+(k.trend>=0?'up':'dn')+'">'+(k.trend>=0?'▲ Growth':'▼ Decline')+'</div>');
+      push('<div class="kpi-trend '+(k.trend>=0?'up':'dn')+'">'+(k.trend>=0?'▲ Short-term growth':'▼ Short-term dip')+'</div>');
     }
     push('</div>');
   });
@@ -909,30 +921,54 @@ function buildAnalysisHTML(days){
   push('<div class="af-grid">');
 
   // YoY table
+  var _mo2=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var _mmdd2=latestMMDD.split('-');
+  var _periodLabel2=parseInt(_mmdd2[1])+' '+_mo2[parseInt(_mmdd2[0])-1];
   push('<div class="af-card" style="grid-column:1/-1">');
-  push('<div class="af-card-hdr"><h3>Annual Traffic — Same Period</h3><span class="kpi-sub" title="Only counts Jan 1 to latest date MM-DD each year for fair comparison">'+yoy.length+' yrs · up to '+latestMMDD+'</span></div>');
+  push('<div class="af-card-hdr"><h3>Annual Traffic — Same Period: 1 Jan – '+_periodLabel2+' each year</h3><span class="kpi-sub">'+yoy.length+' years compared · <b style="color:var(--accent)">NOT full year</b> — only counts days from 1 Jan to '+_periodLabel2+' in each year to ensure fair YoY comparison</span></div>');
   push('<div class="af-card-body" style="padding:0">');
   push('<div style="overflow-x:auto">');
   push('<table class="af-table" style="min-width:700px"><thead><tr>');
-  ['Year','Op. Days','Closed/Excl.','Avg Daily','Arrival','Departure','HKR','Visitors','YoY Growth'].forEach(h=>push('<th>'+h+'</th>'));
+  push('<th>Year</th><th>Period</th><th>Op. Days</th><th>Closed/Excl.</th><th>Avg Daily</th><th>Arrival</th><th>Departure</th><th>HKR</th><th>Visitors</th><th>YoY Growth</th>');
   push('</tr></thead><tbody>');
-  yoy.forEach((y,i)=>{
-    const prev=i>0?yoy[i-1]:null;
+  function renderYoyRow(y, i, arr, showPeriod){
+    const prev=i>0?arr[i-1]:null;
     const g=prev&&prev.avgDaily?((y.avgDaily-prev.avgDaily)/prev.avgDaily*100):null;
-    push('<tr>');
-    push('<td style="font-family:\'Space Mono\',monospace;font-weight:700;color:var(--accent)">'+y.year+'</td>');
+    const is2023caveat = y.caveat==='early-reopen';
+    const rowStyle = is2023caveat ? 'background:rgba(251,191,36,.04)' : '';
+    push('<tr style="'+rowStyle+'">');
+    push('<td style="font-family:\'Space Mono\',monospace;font-weight:700;color:var(--accent)">'+y.year+(is2023caveat?' <span title="Early-reopening year — first months after COVID border closure. Public cautious; figures understate true demand trajectory." style="cursor:help;font-size:10px">⚠</span>':'')+'</td>');
+    if(showPeriod) push('<td style="font-size:9px;color:var(--muted);font-family:\'Space Mono\',monospace;white-space:nowrap">1 Jan – '+y.asAt+'</td>');
+    else push('<td style="font-size:9px;color:var(--muted)">'+(y.isPartial?'Partial (in progress)':'Full year')+'</td>');
     push('<td>'+y.count+'</td>');
+    push('<td style="font-size:9px;color:'+(y.closedDays>0?'#f87171':'var(--muted)')+'">'+(y.closedDays>0?y.closedDays+' excl.':'—')+'</td>');
     push('<td class="hi">'+nt(y.avgDaily)+'</td>');
     push('<td class="arr-c">'+nt(y.arr)+'</td>');
     push('<td class="dep-c">'+nt(y.dep)+'</td>');
     push('<td style="color:var(--res)">'+nt(y.res)+'</td>');
     push('<td style="color:var(--vis)">'+nt(y.vis)+'</td>');
     push('<td class="'+(g===null?'':(g>=0?'pos':'neg'))+'">'+(g===null?'—':(g>=0?'+':'')+g.toFixed(1)+'%')+'</td>');
-    push('<td style="font-size:9px;color:var(--muted)">'+(y.isPartial?'▶ as-at':'Full year')+'</td>');
     push('</tr>');
-  });
+    if(is2023caveat){
+      const cols = showPeriod ? 10 : 10;
+      push('<tr style="background:rgba(251,191,36,.06)"><td colspan="'+cols+'" style="font-size:9px;color:#f59e0b;padding:4px 12px">⚠ 2023: Border reopened 8 Jan 2023 after COVID closure. Public remained cautious in early months — traffic ramped up gradually. 2023 figures understate the true demand trajectory and should be interpreted with care.</td></tr>');
+    }
+  }
+  yoy.forEach((y,i)=>renderYoyRow(y,i,yoy,true));
   push('</tbody></table></div>');
-  push('<div style="font-size:9px;color:var(--muted);padding:8px 16px;border-top:1px solid var(--border)">⚠ "Closed/Excl." = days with fewer than '+MIN_OPERATIONAL_PAX.toLocaleString()+' pax excluded from averages (border closures, inc. COVID 2020–2023). Op. Days = operational days only. Avg Daily reflects only open days.</div></div></div>');
+  push('<div style="font-size:9px;color:var(--muted);padding:8px 16px;border-top:1px solid var(--border)">⚠ "Closed/Excl." = days within the border closure period (2020-02-04 to 2023-01-07) excluded from averages. ⚠ 2023 = early-reopening year, public cautious; treat as lower-bound reference.</div></div></div>');
+
+  // ── Full-year table ─────────────────────────────────────────────────────────
+  push('<div class="af-card" style="grid-column:1/-1;margin-top:16px">');
+  push('<div class="af-card-hdr"><h3>Annual Traffic — Full Year</h3><span class="kpi-sub">'+fullYoy.length+' years · complete calendar year totals · current year marked as partial · ⚠ 2023 early-reopen caveat applies</span></div>');
+  push('<div class="af-card-body" style="padding:0"><div style="overflow-x:auto">');
+  push('<table class="af-table" style="min-width:700px"><thead><tr>');
+  push('<th>Year</th><th>Type</th><th>Op. Days</th><th>Closed/Excl.</th><th>Avg Daily</th><th>Arrival</th><th>Departure</th><th>HKR</th><th>Visitors</th><th>YoY Growth</th>');
+  push('</tr></thead><tbody>');
+  fullYoy.forEach((y,i)=>renderYoyRow(y,i,fullYoy,false));
+  push('</tbody></table></div>');
+  push('<div style="font-size:9px;color:var(--muted);padding:8px 16px;border-top:1px solid var(--border)">Full-year avg daily includes all operational days in that calendar year (border closure days excluded). Current year is partial — based on loaded data only.</div>');
+  push('</div></div>');
 
   // Day of week
   const maxDow = Math.max(...dow.map(d=>d.avg))||1;
@@ -1053,7 +1089,16 @@ function buildAnalysisHTML(days){
   // ── Baseline + Historical Easter Table ─────────────────────────────────────
   push('<div class="af-card" style="margin-bottom:16px">');
   push('<div class="af-card-hdr"><h3>Baseline & Historical Easter Reference</h3>');
-  push('<span class="kpi-sub">Actual past data · '+f.easterDays.length+' Easter days loaded · proj. uses ×'+(f.factor>=1?'+':'')+((f.factor-1)*100).toFixed(1)+'% growth</span></div>');
+  push('<span class="kpi-sub">'+f.easterDays.length+' historical Easter days loaded · projection baseline: <b>post-COVID '+f.postCovidEasterCount+' days</b> '+f.baselineNote+' · growth: '+(f.factor>=1?'+':'')+((f.factor-1)*100).toFixed(1)+'% ('+f.growthMethod+')</span></div>');
+  push('<div style="font-size:10px;color:#f5c842;background:rgba(245,200,66,.07);border-left:3px solid #f5c842;border-radius:0 6px 6px 0;padding:10px 14px;margin:0 0 14px">');
+  push('<b>How the +'+((f.factor-1)*100).toFixed(1)+'% projection factor is derived:</b>');
+  push('<ul style="margin:6px 0 4px 16px;line-height:2">');
+  (f.growthCalcSteps||[]).forEach(step=>push('<li style="color:var(--dim)">'+step+'</li>'));
+  push('</ul>');
+  push('<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(245,200,66,.2);font-size:9px;color:var(--muted)">');
+  push('⚠ Note: The <b>YoY % in the KPI ribbon above</b> compares the same calendar slice (1 Jan – '+latestMMDD+') this year vs last year only — a short-term snapshot. ');
+  push('The forecast uses the <b>long-term trend</b> across all post-COVID years because traffic here has been consistently breaking records during major holiday periods.</div>');
+  push('</div>');
   push('<div class="af-card-body">');
 
   // 3 summary tiles
@@ -1095,7 +1140,7 @@ function buildAnalysisHTML(days){
     push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Historical Easter Data — Actual Figures</div>');
     push('<div style="overflow-x:auto">');
     push('<table class="af-table"><thead><tr>');
-    push('<th>Year</th><th>Day</th><th>Date</th><th>Occasion</th><th>Arr HKR</th><th>Arr Vis</th><th>▲ Arrival</th><th>Dep HKR</th><th>Dep Vis</th><th>▼ Departure</th><th>Total</th></tr></thead><tbody>');
+    push('<th>Year</th><th>Day</th><th>Date</th><th>Occasion</th><th>PH?</th><th>Arr HKR</th><th>Arr Vis</th><th>▲ Arrival</th><th>Dep HKR</th><th>Dep Vis</th><th>▼ Departure</th><th>Total</th></tr></thead><tbody>');
     // Sort all Easter days by date
     const sortedEaster=[...f.easterDays].sort((a,b)=>a.date.localeCompare(b.date));
     var _prevEY='';
@@ -1109,6 +1154,13 @@ function buildAnalysisHTML(days){
       push('<td>'+dayOfWeek(d.date)+'</td>');
       push('<td>'+fDate(d.date)+'</td>');
       push('<td style="font-size:10px">'+getRemarks(d.date)+'</td>');
+      var _rem=getRemarks(d.date)||'';
+      var _dow2=new Date(d.date+'T00:00:00').getDay();
+      var _isPH=HK_GAZETTE_PH[d.date]||(_rem!==''&&_rem!=='Saturday'&&_rem!=='Sunday');
+      var _isWknd=_dow2===0||_dow2===6;
+      var _phLabel=_isPH?'PH':(_isWknd?'Wknd':'—');
+      var _phColor=_isPH?'var(--gold)':(_isWknd?'var(--accent)':'var(--muted)');
+      push('<td style="font-size:10px;font-weight:700;color:'+_phColor+'">'+_phLabel+'</td>');
       push('<td class="arr-c">'+nt(d.dt.arr_res||0)+'</td>');
       push('<td>'+nt(d.dt.arr_vis||0)+'</td>');
       push('<td class="arr-c hi">'+nt(d.dt.arr_tot||0)+'</td>');
@@ -1144,6 +1196,88 @@ function buildAnalysisHTML(days){
       push('</div>');
     });
     push('</div>');
+
+    // ── Auto-generated narrative ─────────────────────────────────────────────
+    (function(){
+      // Find peak departure day and peak arrival day
+      const profiles = Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]);
+      let peakDepDay=null, peakArrDay=null, peakTotDay=null;
+      let peakDepVol=0, peakArrVol=0, peakTotVol=0;
+      profiles.forEach(([off,dp])=>{
+        const sumArr=dp.profile.reduce((s,h)=>s+(h.arr_tot||0),0)||0;
+        const sumDep=dp.profile.reduce((s,h)=>s+(h.dep_tot||0),0)||0;
+        const sumTot=dp.profile.reduce((s,h)=>s+(h.ad_tot||0),0)||0;
+        const proj=dp.projTotal;
+        const projArr=Math.round(proj*(sumArr/(sumTot||1)));
+        const projDep=proj-projArr;
+        if(projDep>peakDepVol){peakDepVol=projDep;peakDepDay=dp;}
+        if(projArr>peakArrVol){peakArrVol=projArr;peakArrDay=dp;}
+        if(proj>peakTotVol){peakTotVol=proj;peakTotDay=dp;}
+      });
+      // Find peak hour from Good Friday profile (most departure-heavy)
+      const gfDay = f.dayProfiles['-2'];
+      const peakHourObj = gfDay ? gfDay.profile.reduce((a,b)=>(b.dep_tot||0)>(a.dep_tot||0)?b:a, gfDay.profile[0]||{time:'N/A'}) : {time:'N/A'};
+      // Find most resident-heavy hour
+      const resHourObj = gfDay ? gfDay.profile.reduce((a,b)=>(b.dep_res||0)>(a.dep_res||0)?b:a, gfDay.profile[0]||{time:'N/A'}) : {time:'N/A'};
+
+      // Historical record: find top departure day across all Easter history
+      const histDep = f.easterDays.length ?
+        f.easterDays.reduce((a,b)=>(b.dt.dep_tot||0)>(a.dt.dep_tot||0)?b:a, f.easterDays[0]) : null;
+      const isHistTopDep = histDep && getRemarks(histDep.date).includes('Good Friday');
+
+      const tLabel = f.targetEasterLabel||'Easter';
+      const growthStr = (f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'%';
+
+      push('<div class="af-card" style="margin-top:20px">');
+      push('<div class="af-card-hdr"><h3>📝 '+tLabel+' Traffic Narrative</h3>');
+      push('<span class="kpi-sub">Auto-generated from '+f.easterDays.length+' historical Easter days · '+growthStr+' YoY growth applied</span></div>');
+      push('<div class="af-card-body" style="line-height:1.8;color:var(--dim);font-size:12px">');
+
+      push('<p style="margin-bottom:12px">');
+      push('<b style="color:var(--text)">'+tLabel+'</b> is one of the busiest cross-boundary travel periods, '
+        +'characterised by a distinct <b style="color:var(--departure)">outbound surge before the holiday</b> and a '
+        +'<b style="color:var(--arrival)">return wave afterwards</b>. ');
+      if(peakDepDay) push('Based on historical data, <b style="color:var(--gold)">'+peakDepDay.label+'</b> is typically '
+        +'the peak departure day, with an estimated <b>'+Number(peakDepVol).toLocaleString()+' departures</b> projected for '+tLabel+'.');
+      push('</p>');
+
+      push('<p style="margin-bottom:12px">');
+      if(histDep){
+        const rem=getRemarks(histDep.date);
+        push('Historically, the single highest departure day recorded during Easter was on '
+          +'<b style="color:var(--gold)">'+fDate(histDep.date)+'</b> ('+rem+')'
+          +', with <b>'+Number(histDep.dt.dep_tot||0).toLocaleString()+' departures</b>. ');
+        // Resident share on that day
+        const resShare = histDep.dt.dep_res&&histDep.dt.dep_tot ?
+          Math.round(histDep.dt.dep_res/histDep.dt.dep_tot*100) : null;
+        if(resShare) push('Of these, approximately <b>'+resShare+'%</b> were Hong Kong Residents (HKR), '
+          +'reflecting the strong outbound leisure travel by local residents during the long weekend.');
+      }
+      push('</p>');
+
+      push('<p style="margin-bottom:12px">');
+      push('The passenger mix during Easter tends to be <b>'+( f.easterDays.length ?
+        (function(){
+          const avgRes=f.easterDays.reduce((s,d)=>s+(d.dt.ad_res||0),0)/f.easterDays.length;
+          const avgTot=f.easterDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/f.easterDays.length;
+          const pct=avgTot>0?Math.round(avgRes/avgTot*100):0;
+          return pct+'% HKR / '+(100-pct)+'% Visitor';
+        })() : 'N/A')+'</b> on average across historical Easter days. ');
+      push('The \'Visitor\' category at this control point is overwhelmingly Mainland Chinese travellers (≈99.8% of visitors), predominantly crossing via Home Return Permit (回鄉證) or Two Way Permit (雙程證). '
+        +'Inbound visitor traffic typically peaks on Easter Sunday and Monday as Mainland visitors cross for the extended holiday.');
+      push('</p>');
+
+      if(gfDay && peakHourObj.time!=='N/A'){
+        push('<p style="margin-bottom:0">');
+        push('On <b>Good Friday</b> (historically the most departure-heavy day), the peak departure hour is typically '
+          +'<b style="color:var(--gold)">'+peakHourObj.time+'</b>, dominated by <b>HKR departures</b> '
+          +'(peak HKR dep hour: <b>'+resHourObj.time+'</b>). Operations planning should focus additional '
+          +'departure counter capacity during this window, with e-channels at maximum deployment '
+          +'to absorb the resident outbound surge.');
+        push('</p>');
+      }
+      push('</div></div>');
+    })();
 
     // ── Day selector buttons ──────────────────────────────────────────────────
     push('<div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0">');
@@ -1185,14 +1319,11 @@ function buildAnalysisHTML(days){
       // Hourly table
       push('<div style="overflow-x:auto;margin-top:12px">');
       push('<table class="af-table"><thead><tr>');
-      ['Time','Arr R','Arr V','Arr Tot','Dep R','Dep V','Dep Tot','Total','2026 Proj.','Arr Ctr','Arr e-Ch','Dep Ctr','Dep e-Ch'].forEach(h=>push('<th>'+h+'</th>'));
+      ['Time','Arr R','Arr V','Arr Tot','Dep R','Dep V','Dep Tot','Total','Proj.'].forEach(h=>push('<th>'+h+'</th>'));
       push('</tr></thead><tbody>');
       dp.profile.forEach(hr=>{
         if(/^CBS$/i.test(hr.time))return;
         const proj = Math.round((hr.ad_tot||0)*f.factor);
-        const aR = Math.round((hr.arr_res||0)*f.factor), aV = Math.round((hr.arr_vis||0)*f.factor);
-        const dR = Math.round((hr.dep_res||0)*f.factor), dV = Math.round((hr.dep_vis||0)*f.factor);
-        const res = estimateResources(aR,aV,dR,dV);
         const isPk = hr.time === _peakT.time;
         push('<tr'+(isPk?' style="background:rgba(245,200,66,.08)"':'')+'>');
         push('<td style="font-family:Space Mono,monospace;font-size:10px;'+(isPk?'color:'+dp.color+';font-weight:700':'')+'">'+hr.time+(isPk?' ⭐':'')+'</td>');
@@ -1200,10 +1331,26 @@ function buildAnalysisHTML(days){
         push('<td class="dep-c">'+nt(hr.dep_res||0)+'</td><td>'+nt(hr.dep_vis||0)+'</td><td class="dep-c hi">'+nt(hr.dep_tot||0)+'</td>');
         push('<td style="font-weight:700">'+nt(hr.ad_tot||0)+'</td>');
         push('<td style="color:'+dp.color+';font-weight:700">'+nt(proj)+'</td>');
-        push('<td style="color:var(--arrival)">'+res.arrCounter+'</td><td style="color:var(--accent)">'+res.arrECh+'</td>');
-        push('<td style="color:var(--departure)">'+res.depCounter+'</td><td style="color:var(--accent)">'+res.depECh+'</td>');
         push('</tr>');
       });
+      // ── Day-end totals row ──────────────────────────────────────────────
+      const _rows = dp.profile.filter(hr=>/\d{4}/.test(hr.time));
+      const _totArrRes=_rows.reduce((s,h)=>s+(h.arr_res||0),0);
+      const _totArrVis=_rows.reduce((s,h)=>s+(h.arr_vis||0),0);
+      const _totArrTot=_rows.reduce((s,h)=>s+(h.arr_tot||0),0);
+      const _totDepRes=_rows.reduce((s,h)=>s+(h.dep_res||0),0);
+      const _totDepVis=_rows.reduce((s,h)=>s+(h.dep_vis||0),0);
+      const _totDepTot=_rows.reduce((s,h)=>s+(h.dep_tot||0),0);
+      const _totHist=_rows.reduce((s,h)=>s+(h.ad_tot||0),0);
+      const _totProj=Math.round(_totHist*f.factor);
+      push('<tr style="background:var(--surface2);border-top:2px solid var(--border);font-weight:700">');
+      push('<td style="font-family:Space Mono,monospace;font-size:10px;color:var(--gold);font-weight:700">DAY TOTAL</td>');
+      push('<td class="arr-c">'+nt(_totArrRes)+'</td><td>'+nt(_totArrVis)+'</td><td class="arr-c hi">'+nt(_totArrTot)+'</td>');
+      push('<td class="dep-c">'+nt(_totDepRes)+'</td><td>'+nt(_totDepVis)+'</td><td class="dep-c hi">'+nt(_totDepTot)+'</td>');
+      push('<td style="font-weight:700">'+nt(_totHist)+'</td>');
+      push('<td style="color:'+dp.color+';font-weight:700;font-size:12px">'+nt(_totProj)+'</td>');
+      push('<td style="font-size:9px;color:var(--muted)">⭐ '+_peakT.time+'</td>');
+      push('</tr>');
       push('</tbody></table></div></div></div></div>');
     });
 
@@ -1246,7 +1393,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
   // ── Title banner ──
   for(let col=0;col<NC;col++) c(R,col,'',{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'4CAF50'}},font:{name:'Calibri',sz:10},alignment:{horizontal:'center',vertical:'center'},border:{}});
-  c(R,0,'LSC PASSENGER STATISTICS — ANALYSIS & FORECAST',{font:{name:'Calibri',sz:16,bold:true,color:{rgb:isPostCovid?'0D1F4C':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'4CAF50'}},alignment:{horizontal:'center',vertical:'center'},border:{}});
+  c(R,0,'PASSENGER STATISTICS — ANALYSIS & FORECAST',{font:{name:'Calibri',sz:16,bold:true,color:{rgb:isPostCovid?'0D1F4C':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'4CAF50'}},alignment:{horizontal:'center',vertical:'center'},border:{}});
   merges.push({s:{r:R,c:0},e:{r:R,c:NC-1}});
   ws['!rows'][R]={hpt:28};R++;
 
@@ -1503,7 +1650,7 @@ function exportExcel(){
     const orgCols = Math.floor(maxCols*0.55);
     for(let col=0;col<orgCols;col++) ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',11,false,'FFFFFF',isPostCovid?'0D47A1':'0A2218');
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
-      'LAND BOUNDARY CONTROL POINT (LSC)',
+      'LAND BOUNDARY CONTROL POINT',
       13,true,'FFFFFF',isPostCovid?'0D47A1':'0A2218','left'
     );
     merges.push({s:{r:R,c:0},e:{r:R,c:orgCols-1}});
@@ -1965,16 +2112,18 @@ function avgHourlyProfile(days){
 }
 
 // ─── Year-over-year analysis ───────────────────────────────────────────────
-// Border closure threshold: days with fewer than this many passengers
-// are considered "operationally closed" and excluded from averages.
-// LSC was closed 2020-02-04 to 2023-01-07 during COVID.
-const MIN_OPERATIONAL_PAX = 5000;
+// border closure period (COVID):
+// 2020-02-04 to 2023-01-07 — no passenger traffic during these dates
+const BORDER_CLOSED_FROM = '2020-02-04';
+const BORDER_CLOSED_TO   = '2023-01-07';
+function isBorderClosed(dateStr){
+  return dateStr >= BORDER_CLOSED_FROM && dateStr <= BORDER_CLOSED_TO;
+}
 
 function yoyAnalysis(days){
   // Compare same calendar period across years (Jan 1 → as-at MM-DD)
-  // so YoY is apples-to-apples.
-  // IMPORTANT: Exclude operationally-closed days (ad_tot < MIN_OPERATIONAL_PAX)
-  // so COVID closure (2020-02 to 2023-01) doesn't drag down "Since Commissioning" averages.
+  // IMPORTANT: Exclude days within the border closure period (COVID 2020-02-04 to 2023-01-07)
+  // so "Since Commissioning" averages are not dragged down by zero-traffic closure days.
   if(!days.length) return [];
 
   // Use actual max date (sort guarantees last element, but be explicit)
@@ -1992,8 +2141,8 @@ function yoyAnalysis(days){
     // (keeps 'Since Commissioning' stats meaningful despite COVID closure)
     const pax = d.dt.ad_tot||0;
     if(!byYear[y]) byYear[y]={total:0,arr:0,dep:0,res:0,vis:0,count:0,closedDays:0};
-    if(pax < MIN_OPERATIONAL_PAX){
-      byYear[y].closedDays++;   // count but exclude from avg
+    if(isBorderClosed(d.date)){
+      byYear[y].closedDays++;   // count but exclude from avg (border closure period)
       continue;
     }
     byYear[y].total += pax;
@@ -2007,8 +2156,41 @@ function yoyAnalysis(days){
     year:y, ...v,
     avgDaily: v.count ? Math.round(v.total/v.count) : 0,
     asAt: asAtMMDD,
+    caveat: y==='2023' ? 'early-reopen' : null,
   })).sort((a,b)=>a.year.localeCompare(b.year));
 }
+
+// Full-year analysis — all days in each calendar year (no same-period cap)
+// Excludes border closure days. Marks incomplete years (current year = partial).
+function fullYearAnalysis(days){
+  if(!days.length) return [];
+  const currentYear = days[days.length-1].date.substring(0,4);
+  const byYear={};
+  for(const d of days){
+    const y = d.date.substring(0,4);
+    if(isBorderClosed(d.date)){ // skip closure days
+      if(!byYear[y]) byYear[y]={total:0,arr:0,dep:0,res:0,vis:0,count:0,closedDays:0};
+      byYear[y].closedDays++;
+      continue;
+    }
+    if(!byYear[y]) byYear[y]={total:0,arr:0,dep:0,res:0,vis:0,count:0,closedDays:0};
+    byYear[y].total += (d.dt.ad_tot||0);
+    byYear[y].arr   += (d.dt.arr_tot||0);
+    byYear[y].dep   += (d.dt.dep_tot||0);
+    byYear[y].res   += (d.dt.ad_res||0);
+    byYear[y].vis   += (d.dt.ad_vis||0);
+    byYear[y].count++;
+  }
+  return Object.entries(byYear).map(([y,v])=>({
+    year:y, ...v,
+    avgDaily: v.count ? Math.round(v.total/v.count) : 0,
+    isPartial: y===currentYear,
+    // Early-2023 reopening caveat: reopened 2023-01-08, public cautious for ~3 months
+    // Flag 2023 as needing interpretation context
+    caveat: y==='2023' ? 'early-reopen' : null,
+  })).sort((a,b)=>a.year.localeCompare(b.year));
+}
+
 
 // ─── Day-of-week analysis ──────────────────────────────────────────────────
 function dowAnalysis(days){
@@ -2141,6 +2323,7 @@ function detectUpcomingHoliday(days){
 
 
 function forecastEaster2026(days){
+  const POST_COVID_REOPEN='2023-01-08'; // traffic regime changed after reopening
   const easterDays=getEasterDays(days);
   if(easterDays.length===0)return null;
 
@@ -2161,14 +2344,64 @@ function forecastEaster2026(days){
     byOffset[off].push(d);
   }
 
-  // YoY growth (same-period comparison)
+  // ── Growth rate: use multi-year linear regression for stable trend estimate ──
+  // Single YoY is too volatile. LSC traffic has consistently hit record highs
+  // so we use a linear trend fitted to all operational post-COVID years.
   const yoy=yoyAnalysis(days);
   let growthRate=0.05;
-  if(yoy.length>=2){
+  let growthMethod='default 5%';
+
+  // Always use post-COVID years for growth regression regardless of era.
+  // Pre-COVID (2003-2019) was a different traffic regime entirely — much lower volumes.
+  // Including those years would massively distort the trend used for projection.
+  // For Since Commissioning era with many pre-COVID years, this is the critical fix.
+  const postCovidYears = yoy.filter(y=>y.year>='2023'&&y.count>=30&&y.avgDaily>0);
+  const opYears = postCovidYears.length>0 ? postCovidYears :
+    yoy.filter(y=>y.count>=30&&y.avgDaily>0&&!isBorderClosed(y.year+'-06-01'));
+
+  let growthCalcSteps=[];
+  if(opYears.length>=3){
+    const n=opYears.length;
+    const xs=opYears.map((_,i)=>i);
+    const ys=opYears.map(y=>y.avgDaily);
+    const xMean=xs.reduce((a,b)=>a+b,0)/n;
+    const yMean=ys.reduce((a,b)=>a+b,0)/n;
+    const ssxy=xs.reduce((s,x,i)=>s+(x-xMean)*(ys[i]-yMean),0);
+    const ssxx=xs.reduce((s,x)=>s+(x-xMean)**2,0);
+    const slope=ssxx>0?ssxy/ssxx:0;
+    growthRate=yMean>0?slope/yMean:0.05;
+    growthMethod='linear regression ('+n+' operational years)';
+    growthCalcSteps=[
+      'Method: Linear regression (OLS) on avg daily traffic across '+n+' post-COVID operational years',
+      'Years used: '+opYears.map(y=>y.year+' ('+Number(y.avgDaily).toLocaleString()+' pax/day)').join(', '),
+      'Mean avg daily (ȳ): '+Math.round(yMean).toLocaleString()+' pax/day',
+      'Trend slope (β): +'+Math.round(slope).toLocaleString()+' pax/day per year',
+      'Growth rate = slope ÷ mean = '+Math.round(slope).toLocaleString()+' ÷ '+Math.round(yMean).toLocaleString()+' = '+(growthRate*100).toFixed(1)+'% per year',
+      'Cap applied: max −10% / +25% → final rate: '+(Math.max(-0.10,Math.min(0.25,growthRate))*100).toFixed(1)+'%',
+    ];
+  } else if(opYears.length===2){
+    const r=(opYears[1].avgDaily/opYears[0].avgDaily)-1;
+    growthRate=r;
+    growthMethod='CAGR (2 years)';
+    growthCalcSteps=[
+      'Method: Compound Annual Growth Rate (CAGR) — only 2 operational years available',
+      opYears[0].year+' avg daily: '+Number(opYears[0].avgDaily).toLocaleString()+' pax/day',
+      opYears[1].year+' avg daily: '+Number(opYears[1].avgDaily).toLocaleString()+' pax/day',
+      'CAGR = ('+Number(opYears[1].avgDaily).toLocaleString()+' ÷ '+Number(opYears[0].avgDaily).toLocaleString()+') − 1 = '+(r*100).toFixed(1)+'%',
+      'Cap applied: max −10% / +25% → final rate: '+(Math.max(-0.10,Math.min(0.25,r))*100).toFixed(1)+'%',
+    ];
+  } else if(yoy.length>=2){
     const last=yoy[yoy.length-1],prev=yoy[yoy.length-2];
-    if(prev.avgDaily>0)growthRate=(last.avgDaily-prev.avgDaily)/prev.avgDaily;
-    growthRate=Math.max(-0.1,Math.min(0.2,growthRate));
+    if(prev.avgDaily>0) growthRate=(last.avgDaily-prev.avgDaily)/prev.avgDaily;
+    growthMethod='single YoY (limited data)';
+    growthCalcSteps=[
+      'Method: Single year-over-year change (limited data — fewer than 2 post-COVID operational years)',
+      'Prior year ('+prev.year+') avg daily: '+Number(prev.avgDaily).toLocaleString()+' pax/day',
+      'Latest year ('+last.year+') avg daily: '+Number(last.avgDaily).toLocaleString()+' pax/day',
+      'Growth = ('+Number(last.avgDaily).toLocaleString()+' − '+Number(prev.avgDaily).toLocaleString()+') ÷ '+Number(prev.avgDaily).toLocaleString()+' = '+(growthRate*100).toFixed(1)+'%',
+    ];
   }
+  growthRate=Math.max(-0.10,Math.min(0.25,growthRate));
   const factor=1+growthRate;
 
   // ── Dynamically compute target Easter year from latest loaded date ──────────
@@ -2202,37 +2435,60 @@ function forecastEaster2026(days){
      '2':{date:_eDate( 2),label:_eLabel( 2),color:'var(--vis)'},
   };
 
-  // Build per-day hourly profile and projected total
+  // Post-COVID Easter days only — for projection baseline.
+  // Pre-COVID Easter had much lower volumes (different traffic regime).
+  // Always project from current-era data, even when Since Commissioning era is selected.
+  const postCovidEasterDays = easterDays.filter(d=>d.date>=POST_COVID_REOPEN);
+  const projectionBase = postCovidEasterDays.length>0 ? postCovidEasterDays : easterDays;
+  const baseLabel = postCovidEasterDays.length>0 ?
+    '(post-COVID, '+postCovidEasterDays.length+' days)' : '(all historical, '+easterDays.length+' days)';
+
+  // Group post-COVID Easter days by offset too
+  const byOffsetPostCovid={};
+  for(const d of projectionBase){
+    const off=easterOffset(d.date);
+    if(!byOffsetPostCovid[off]) byOffsetPostCovid[off]=[];
+    byOffsetPostCovid[off].push(d);
+  }
+
+  // Build per-day hourly profile and projected total — always from post-COVID baseline
   const dayProfiles={};
   for(const [off,conf] of Object.entries(easter2026Dates)){
-    const histDays=byOffset[parseInt(off)]||[];
-    // If no data for this offset, fall back to overall Easter average
-    const sourceDays=histDays.length>0?histDays:easterDays;
+    const histDays=byOffsetPostCovid[parseInt(off)]||[];
+    const sourceDays=histDays.length>0?histDays:projectionBase;
     const profile=avgHourlyProfile(sourceDays);
     const avgTotal=sourceDays.length?
       Math.round(sourceDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/sourceDays.length):0;
+    // histCount shows post-COVID years available for this specific day slot
+    const allHistDays=byOffset[parseInt(off)]||[];
     dayProfiles[off]={
       ...conf,
       profile,
       avgTotal,
       projTotal:Math.round(avgTotal*factor),
       histCount:histDays.length,
+      allHistCount:allHistDays.length,
       isEstimated:histDays.length===0,
     };
   }
 
-  // Overall Easter average (for summary)
-  const avgEasterTotal=Math.round(easterDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/easterDays.length);
+  // Overall Easter average — from post-COVID base for projection
+  const avgEasterTotal=Math.round(projectionBase.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/projectionBase.length);
+  const baselineNote = baseLabel;
 
   return{
     dayProfiles,
     avgEasterTotal,
     growthRate,
+    growthMethod,
+    growthCalcSteps,
     factor,
     easterDays,
     byOffset,
     targetEasterLabel: (typeof targetEasterLabel!=='undefined'?targetEasterLabel:'Easter'),
     projectedTotal:Math.round(avgEasterTotal*factor),
+    baselineNote: typeof baselineNote!=='undefined'?baselineNote:'',
+    postCovidEasterCount: typeof postCovidEasterDays!=='undefined'?postCovidEasterDays.length:0,
   };
 }
 
@@ -2550,15 +2806,85 @@ function buildEstimatorHTML(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// THROUGHPUT ESTIMATOR — REDESIGN v3
+// THROUGHPUT ESTIMATOR — COMPLETE REDESIGN
 //
-// Purpose: Given a scenario volume + resource config, answer:
-//   1. Will immigration service pledges be met?
-//   2. How many staff (SIA) are needed?
-//   3. What is the optimal R/V resource split?
-//   4. Is the hall likely to be congested?
-//   5. Can we save staff vs full deployment?
+// Three modes unified in one view:
+//  A. AUTO-OPTIMISER  → Given volume, find minimum staff to meet pledges
+//  B. SENSITIVITY     → At what volume does each pledge break?
+//  C. DEPLOYMENT CHECK → Given current resources, what are passengers experiencing?
 // ══════════════════════════════════════════════════════════════════════════
+
+// ── Find minimum deployment that meets pledges ─────────────────────────────
+// Binary searches counter + e-channel combinations, returns optimal split
+function findMinDeployment(volR, volV, maxCtr, maxEch){
+  // Total volume for reference
+  const totalVol = volR + volV;
+  if(totalVol === 0) return null;
+
+  let bestSIA = 9999, bestConfig = null;
+
+  // Search space: iterate plausible counter totals (1→28) and e-ch totals (1→maxEch)
+  // For each total, use proportional split weighted by demand load
+  for(let tc = 1; tc <= maxCtr; tc++){
+    for(let te = 3; te <= maxEch; te += 2){ // step 2 for speed
+      // Proportional split by demand
+      const demR_ctr = volR * (1 - TP.resEChannel) / SR.ctrR;
+      const demV_ctr = volV * 0.92 / SR.ctrV;
+      const totDemCtr = demR_ctr + demV_ctr || 1;
+      let cv = Math.max(1, Math.min(tc - 1, Math.round(tc * demV_ctr / totDemCtr)));
+      let cr = tc - cv;
+
+      const visEChPct = (volV / totalVol) > 0.5 ? 0.15 : (volV / totalVol) > 0.35 ? 0.12 : 0.10;
+      const demR_ech = volR * TP.resEChannel / SR.echR;
+      const demV_ech = volV * visEChPct / SR.echV;
+      const totDemEch = demR_ech + demV_ech || 1;
+      let ev = Math.max(3, Math.min(Math.floor(te * 0.15), Math.round(te * demV_ech / totDemEch)));
+      let er = te - ev;
+
+      const capR = cr * SR.ctrR + er * SR.echR;
+      const capV = cv * SR.ctrV + ev * SR.echV;
+      const sR = cr + er, sV = cv + ev;
+      const muR = sR > 0 ? capR / sR : SR.ctrR;
+      const muV = sV > 0 ? capV / sV : SR.ctrV;
+
+      const compR = sR > 0 ? pledgeCompliance(volR, sR, muR, PLEDGE.R) : 0;
+      const compV = sV > 0 ? pledgeCompliance(volV, sV, muV, PLEDGE.V) : 0;
+
+      if(compR >= PLEDGE.pctR && compV >= PLEDGE.pctV){
+        const sia = tc + Math.ceil(te / ICO_PER_ECH);
+        if(sia < bestSIA){
+          bestSIA = sia;
+          bestConfig = { ctrR: cr, ctrV: cv, echR: er, echV: ev,
+            sia, tc, te, compR, compV,
+            wtR: waitTime(volR, sR, muR), wtV: waitTime(volV, sV, muV) };
+        }
+      }
+    }
+  }
+  return bestConfig;
+}
+
+// ── Build sensitivity curve: wait time at different volume levels ──────────
+function buildSensitivityCurve(hkrRatio, maxCtr, maxEch, steps){
+  const pts = [];
+  const maxVol = maxCtr * Math.max(SR.ctrR, SR.ctrV) * 0.85 + maxEch * Math.max(SR.echR, SR.echV) * 0.85;
+  const stepSize = Math.round(maxVol / steps / 100) * 100 || 500;
+  for(let vol = 500; vol <= maxVol + stepSize; vol += stepSize){
+    const volR = Math.round(vol * hkrRatio);
+    const volV = vol - volR;
+    // Use full deployment for the sensitivity curve
+    const opt = optimalSplit(vol, hkrRatio, maxCtr, maxEch);
+    const capR = opt.ctrR * SR.ctrR + opt.echR * SR.echR;
+    const capV = opt.ctrV * SR.ctrV + opt.echV * SR.echV;
+    const sR = opt.ctrR + opt.echR, sV = opt.ctrV + opt.echV;
+    const muR = sR > 0 ? capR / sR : SR.ctrR;
+    const muV = sV > 0 ? capV / sV : SR.ctrV;
+    const wtR = sR > 0 ? waitTime(volR, sR, muR) : 0;
+    const wtV = sV > 0 ? waitTime(volV, sV, muV) : 0;
+    pts.push({ vol, volR, volV, wtR: Math.min(wtR, 90), wtV: Math.min(wtV, 90) });
+  }
+  return pts;
+}
 
 function renderEstimator(){
   const root = document.getElementById('estimatorRoot');
@@ -2572,281 +2898,340 @@ function renderEstimator(){
   const echRk=isArr?'echR':'depEchR', echVk=isArr?'echV':'depEchV';
   const volR=isArr?d.arrR:d.depR, volV=isArr?d.arrV:d.depV;
   const totalVol=volR+volV;
+  const hkrRatio = totalVol > 0 ? volR/totalVol : 0.77;
   const maxCtr=28, maxEch=isArr?47:53;
-  const visRatio = totalVol>0 ? Math.round(volV/totalVol*100) : 0;
-  const hkrRatio = 100-visRatio;
 
-  // Capacities
+  // Current deployment metrics
   const capR = ctrR*SR.ctrR + echR*SR.echR;
   const capV = ctrV*SR.ctrV + echV*SR.echV;
-  const capTotal = capR+capV;
   const sR=ctrR+echR, sV=ctrV+echV;
   const muR=sR>0?capR/sR:SR.ctrR, muV=sV>0?capV/sV:SR.ctrV;
+  const wtR = sR>0 ? waitTime(volR,sR,muR) : 999;
+  const wtV = sV>0 ? waitTime(volV,sV,muV) : 999;
+  const compR = sR>0 ? pledgeCompliance(volR,sR,muR,PLEDGE.R) : 0;
+  const compV = sV>0 ? pledgeCompliance(volV,sV,muV,PLEDGE.V) : 0;
+  const pR=compR>=PLEDGE.pctR, pV=compV>=PLEDGE.pctV;
+  const LqR = sR>0 ? queueLength(volR,sR,muR) : 0;
+  const LqV = sV>0 ? queueLength(volV,sV,muV) : 0;
+  const uR = capR>0?Math.min(Math.round(volR/capR*100),999):0;
+  const uV = capV>0?Math.min(Math.round(volV/capV*100),999):0;
+  const curSIA = (ctrR+ctrV) + Math.ceil((echR+echV)/ICO_PER_ECH);
 
-  // Wait times & pledge compliance
-  const wtR = sR>0?waitTime(volR,sR,muR):999;
-  const wtV = sV>0?waitTime(volV,sV,muV):999;
-  const avgWait = (wtR<999&&wtV<999)?Math.round((wtR+wtV)/2*10)/10:999;
-  const compR = sR>0?pledgeCompliance(volR,sR,muR,PLEDGE.R):0;
-  const compV = sV>0?pledgeCompliance(volV,sV,muV,PLEDGE.V):0;
-  const pR=compR>=PLEDGE.pctR, pV=compV>=PLEDGE.pctV, allMet=pR&&pV;
+  // Auto-optimiser
+  const minDep = findMinDeployment(volR, volV, maxCtr, maxEch);
 
-  // Queue depths (Erlang-C Lq)
-  const LqR = sR>0?queueLength(volR,sR,muR):0;
-  const LqV = sV>0?queueLength(volV,sV,muV):0;
-  const echQCap=(echR+echV)*ECH_QUEUE_DEPTH, ctrQCap=(ctrR+ctrV)*CTR_QUEUE_DEPTH;
-  const hallFillPct = (echQCap+ctrQCap)>0?Math.min(Math.round((LqR+LqV)/(echQCap+ctrQCap)*100),100):0;
-  const hallFillColor = hallFillPct>80?'#f87171':hallFillPct>50?'#f5c842':'#4ade80';
+  // Sensitivity curve (25 points for speed)
+  const curve = buildSensitivityCurve(hkrRatio, maxCtr, maxEch, 25);
+  // Find pledge-break volumes
+  const rBreak = curve.find(p=>p.wtR > PLEDGE.R);
+  const vBreak = curve.find(p=>p.wtV > PLEDGE.V);
 
-  // Utilisation
-  const uR=capR>0?Math.min(Math.round(volR/capR*100),999):0;
-  const uV=capV>0?Math.min(Math.round(volV/capV*100),999):0;
-  const uT=capTotal>0?Math.min(Math.round(totalVol/capTotal*100),999):0;
+  const nt = v => Number(v).toLocaleString();
+  const fmt = v => v >= 999 ? '∞' : v.toFixed(1);
+  const cc = v => v >= 98 ? '#4ade80' : v >= 90 ? '#f5c842' : '#f87171';
+  const wc = (w,t) => w >= 999 ? '#f87171' : w > t ? '#f5c842' : '#4ade80';
+  const fullSIA = maxCtr + Math.ceil(maxEch/ICO_PER_ECH);
 
-  // SIA
-  const echStaff=Math.ceil((echR+echV)/ICO_PER_ECH);
-  const ctrStaff=ctrR+ctrV;
-  const siaStaff=ctrStaff+echStaff;
-  const efficiency=siaStaff>0?Math.round(capTotal/siaStaff):0;
+  const p = [];
 
-  // Min staff needed to meet pledges (binary search)
-  function minStaffForPledge(){
-    // Try to find minimum split that meets both pledges
-    let bestSIA = siaStaff, found = false;
-    for(let tc=1; tc<=maxCtr; tc++){
-      for(let te=1; te<=maxEch; te++){
-        // Distribute R/V proportional to volume
-        const cR2=Math.max(1,Math.round(tc*volR/(totalVol||1)));
-        const cV2=Math.max(1,tc-cR2);
-        const eR2=Math.max(1,Math.round(te*volR/(totalVol||1)));
-        const eV2=Math.max(0,te-eR2);
-        const cap2R=cR2*SR.ctrR+eR2*SR.echR, cap2V=cV2*SR.ctrV+eV2*SR.echV;
-        const s2R=cR2+eR2, s2V=cV2+eV2;
-        const mu2R=s2R>0?cap2R/s2R:SR.ctrR, mu2V=s2V>0?cap2V/s2V:SR.ctrV;
-        const c2R=s2R>0?pledgeCompliance(volR,s2R,mu2R,PLEDGE.R):0;
-        const c2V=s2V>0?pledgeCompliance(volV,s2V,mu2V,PLEDGE.V):0;
-        if(c2R>=PLEDGE.pctR&&c2V>=PLEDGE.pctV){
-          const sia2=tc+Math.ceil(te/ICO_PER_ECH);
-          if(sia2<bestSIA){bestSIA=sia2;found=true;}
-        }
-      }
-    }
-    return{sia:bestSIA,possible:found||(siaStaff<=bestSIA)};
-  }
-
-  const nt=v=>Number(v).toLocaleString();
-  const cc=v=>v>=98?'#4ade80':v>=90?'#f5c842':'#f87171';
-  const uc=u=>u<70?'#4ade80':u<90?'#f5c842':'#f87171';
-  const ts=new Date().toLocaleTimeString('en-HK',{hour12:false});
-
-  const p=[];
-
-  // ── Terminal header ──────────────────────────────────────────────────────────
+  // ── HEADER ───────────────────────────────────────────────────────────────────
   p.push('<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">');
-  p.push('<div style="display:flex;align-items:center;gap:14px">');
-  p.push('<div><div style="font-family:Space Mono,monospace;font-size:14px;font-weight:700;letter-spacing:.04em">LSC Operations Terminal</div>');
-  p.push('<div style="font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:1px">Arrival Hall Throughput Simulation</div></div>');
-  p.push('<div style="display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);border-radius:20px;padding:3px 12px">');
-  p.push('<div style="width:6px;height:6px;border-radius:50%;background:#4ade80"></div>');
-  p.push('<span style="font-size:10px;font-family:Space Mono,monospace;color:#4ade80">OPERATIONAL</span></div></div>');
+  p.push('<div>');
+  p.push('<div style="font-family:Space Mono,monospace;font-size:14px;font-weight:700">Throughput & Wait Time Estimator</div>');
+  p.push('<div style="font-size:10px;color:var(--muted);margin-top:2px">Erlang-C M/M/c queueing model · HKR pledge '+PLEDGE.pctR+'%@'+PLEDGE.R+'min · Visitor pledge '+PLEDGE.pctV+'%@'+PLEDGE.V+'min</div>');
+  p.push('</div>');
   p.push('<div style="display:flex;gap:8px">');
-  p.push('<button onclick="EST.dir=\'arr\';renderEstimator()" style="padding:7px 16px;border-radius:6px;border:1px solid '+(isArr?'var(--accent)':'var(--border)')+';background:'+(isArr?'rgba(0,212,184,.15)':'transparent')+';color:'+(isArr?'var(--accent)':'var(--muted)')+';cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700">▲ ARRIVAL</button>');
-  p.push('<button onclick="EST.dir=\'dep\';renderEstimator()" style="padding:7px 16px;border-radius:6px;border:1px solid '+(!isArr?'#7c6af7':'var(--border)')+';background:'+(!isArr?'rgba(124,106,247,.15)':'transparent')+';color:'+(!isArr?'#7c6af7':'var(--muted)')+';cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700">▼ DEPARTURE</button>');
+  p.push('<button onclick="EST.dir=\'arr\';renderEstimator()" style="padding:7px 16px;border-radius:6px;border:1px solid '+(isArr?'var(--accent)':'var(--border)')+';background:'+(isArr?'rgba(0,212,184,.12)':'transparent')+';color:'+(isArr?'var(--accent)':'var(--muted)')+';cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700">▲ ARRIVAL</button>');
+  p.push('<button onclick="EST.dir=\'dep\';renderEstimator()" style="padding:7px 16px;border-radius:6px;border:1px solid '+(!isArr?'#7c6af7':'var(--border)')+';background:'+(!isArr?'rgba(124,106,247,.12)':'transparent')+';color:'+(!isArr?'#7c6af7':'var(--muted)')+';cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700">▼ DEPARTURE</button>');
   p.push('</div></div>');
 
-  // ── MAIN GRID ────────────────────────────────────────────────────────────────
-  p.push('<div style="display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start">');
+  // ── MAIN GRID: 3 columns ──────────────────────────────────────────────────────
+  p.push('<div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:14px;align-items:start">');
 
-  // ── LEFT: PARAMETER CONTROL ──────────────────────────────────────────────────
+  // ────────────────────────────────────────────────────────────────────────────
+  // COL 1: INPUT PANEL
+  // ────────────────────────────────────────────────────────────────────────────
   p.push('<div>');
-  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px">');
-  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px">');
-  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">⚙ Parameter Control</span></div>');
-  p.push('<div style="padding:14px">');
 
-  // Presets
-  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Operational Presets</div>');
-  p.push('<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">');
-  [{k:'normal',l:'Normal Day'},{k:'summer',l:'Summer Sat'},{k:'easter',l:'Easter'},{k:'golden',l:'Visitor Heavy'}].forEach(s=>{
-    p.push('<button onclick="applyScenario(\''+s.k+'\')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:9px;font-family:Space Mono,monospace;transition:all .15s" onmouseover="this.style.borderColor=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\'">'+s.l+'</button>');
+  // Volume input
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)"><span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">① Volume</span></div>');
+  p.push('<div style="padding:14px">');
+  // Quick-load scenarios
+  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Scenario presets</div>');
+  p.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:14px">');
+  [{k:'normal',l:'Normal',sub:'10.5k pax'},{k:'summer',l:'Summer',sub:'18k pax'},{k:'easter',l:'Easter',sub:'21k pax'},{k:'golden',l:'Golden Wk',sub:'22k pax'}].forEach(s=>{
+    p.push('<button onclick="applyScenario(\''+s.k+'\')" style="padding:6px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:9px;font-family:Space Mono,monospace;transition:all .15s;text-align:left;line-height:1.4" onmouseover="this.style.borderColor=\'var(--accent)\';this.style.color=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.color=\'var(--dim)\'"><b>'+s.l+'</b><br><span style="color:var(--muted)">'+s.sub+'</span></button>');
   });
   p.push('</div>');
 
-  // Slider helper — big value on right like reference terminal
-  function SL(lbl, val, dispId, slId, oninput, ac, maxV, step, sub){
-    return '<div style="margin-bottom:14px">'
-      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">'
-      +'<span style="font-size:10px;font-family:Space Mono,monospace;color:var(--dim);letter-spacing:.06em;text-transform:uppercase">'+lbl+'</span>'
-      +'<span style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:'+ac+'" id="'+dispId+'">'+(typeof val==='number'&&maxV>100?nt(val):val)+'</span>'
+  // Total volume slider
+  function sldr(lbl, val, dispId, slId, oninput, ac, maxV, lo, hi){
+    return '<div style="margin-bottom:12px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">'
+      +'<span style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">'+lbl+'</span>'
+      +'<span style="font-family:Space Mono,monospace;font-size:16px;font-weight:700;color:'+ac+'" id="'+dispId+'">'+(maxV>100?nt(val):val)+'</span>'
       +'</div>'
-      +'<input type="range" class="tpsl" min="0" max="'+maxV+'" step="'+step+'" value="'+val+'" style="width:100%;accent-color:'+ac+'" id="'+slId+'" oninput="'+oninput+'">'
-      +(sub?'<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:3px">'+sub+'</div>':'')
+      +'<input type="range" class="tpsl" min="0" max="'+maxV+'" step="'+(maxV>1000?200:maxV>100?1000:1)+'" value="'+val+'" style="width:100%;accent-color:'+ac+'" id="'+slId+'" oninput="'+oninput+'">'
+      +(lo?'<div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-top:2px"><span>'+lo+'</span><span>'+hi+'</span></div>':'')
       +'</div>';
   }
 
-  // Volume + HKR ratio
-  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">↗ Arrival Volume</div>');
   const vRk=isArr?'arrR':'depR', vVk=isArr?'arrV':'depV';
-  p.push(SL('Total Volume', totalVol, 'volTv', 'slVolT',
-    'var _t=+this.value,_r='+(hkrRatio/100).toFixed(2)+',_vR=Math.round(_t*_r),_vV=_t-_vR;if(EST.dir===\'arr\'){EST.arrR=_vR;EST.arrV=_vV;}else{EST.depR=_vR;EST.depV=_vV;}document.getElementById(\'volTv\').textContent=Number(this.value).toLocaleString();renderEstimator()',
-    'var(--text)', 45000, 500,
-    '<span>LOW</span><span>PEAK SURGE</span>'
+  p.push(sldr('Total pax / hr', totalVol, 'volTv', 'slVolT',
+    'var _t=+this.value,_r='+hkrRatio.toFixed(3)+',_vR=Math.round(_t*_r),_vV=_t-_vR;if(EST.dir===\'arr\'){EST.arrR=_vR;EST.arrV=_vV;}else{EST.depR=_vR;EST.depV=_vV;}document.getElementById(\'volTv\').textContent=Number(this.value).toLocaleString();renderEstimator()',
+    'var(--text)', 40000, 'Low', 'Peak surge', 1
   ));
-  p.push(SL('HKR Ratio', hkrRatio+'%', 'ratioV', 'slRatio',
-    'var _r=+this.value/100,_t='+totalVol+';var _vR=Math.round(_t*_r),_vV=_t-_vR;if(EST.dir===\'arr\'){EST.arrR=_vR;EST.arrV=_vV;}else{EST.depR=_vR;EST.depV=_vV;}document.getElementById(\'ratioV\').textContent=this.value+\'%\';renderEstimator()',
-    '#7c6af7', 100, 1,
-    '<span style="color:#0097A7">R: '+nt(volR)+'</span><span style="color:var(--gold)">V: '+nt(volV)+'</span>'
+  p.push(sldr('HKR ratio %', Math.round(hkrRatio*100), 'ratV', 'slRat',
+    'var _r=+this.value/100,_t='+totalVol+';var _vR=Math.round(_t*_r),_vV=_t-_vR;if(EST.dir===\'arr\'){EST.arrR=_vR;EST.arrV=_vV;}else{EST.depR=_vR;EST.depV=_vV;}document.getElementById(\'ratV\').textContent=this.value;renderEstimator()',
+    '#7c6af7', 100, 'Visitor-heavy', 'Resident-heavy', 1
   ));
-
-  // Counters (linked, max 28)
-  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Counters (max 28 · '+(ctrR+ctrV)+'/28 used)</div>');
-  p.push(SL('HKR Counters (R)', ctrR, 'cRv', 'slCtrR',
-    'linkedSlider(this,\''+ctrRk+'\',\''+ctrVk+'\',28,\'cRv\',\'cVv\')',
-    '#0097A7', 28, 1,
-    '<span style="color:#0097A7">R: <b>'+ctrR+'</b></span><span style="color:var(--gold)">V: <b>'+ctrV+'</b></span><span style="color:var(--muted)">V auto-adjusts ↕</span>'
-  ));
-  p.push(SL('Visitor Counters (V)', ctrV, 'cVv', 'slCtrV',
-    'linkedSlider(this,\''+ctrVk+'\',\''+ctrRk+'\',28,\'cVv\',\'cRv\')',
-    'var(--gold)', 28, 1, ''));
-
-  // e-Channels (linked, max 47/53)
-  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">e-Channels (max '+maxEch+' · '+(echR+echV)+'/'+maxEch+' used)</div>');
-  p.push(SL('HKR e-Ch (R)', echR, 'eRv', 'slEchR',
-    'linkedSlider(this,\''+echRk+'\',\''+echVk+'\','+maxEch+',\'eRv\',\'eVv\')',
-    'var(--accent)', maxEch, 1,
-    '<span style="color:var(--accent)">R: <b>'+echR+'</b></span><span style="color:var(--gold)">V: <b>'+echV+'</b></span><span style="color:var(--muted)">V auto-adjusts ↕</span>'
-  ));
-  p.push(SL('Visitor e-Ch (V)', echV, 'eVv', 'slEchV',
-    'linkedSlider(this,\''+echVk+'\',\''+echRk+'\','+maxEch+',\'eVv\',\'eRv\')',
-    'var(--gold)', maxEch, 1, ''));
-
-  p.push('</div></div>'); // ctrl-body, ctrl
-
-  // Active units summary
-  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">');
-  p.push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Active Units</div>');
-  p.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">');
-  p.push('<div><div style="font-size:9px;color:var(--muted);margin-bottom:2px">COUNTERS</div><div style="font-family:Space Mono,monospace;font-size:30px;font-weight:700;line-height:1">'+(ctrR+ctrV)+'</div><div style="font-size:10px;color:var(--muted)">'+ctrR+'R / '+ctrV+'V</div></div>');
-  p.push('<div><div style="font-size:9px;color:var(--muted);margin-bottom:2px">E-CHANNELS</div><div style="font-family:Space Mono,monospace;font-size:30px;font-weight:700;line-height:1">'+(echR+echV)+'</div><div style="font-size:10px;color:var(--muted)">'+echR+'R / '+echV+'V</div></div>');
+  p.push('<div style="display:flex;gap:10px;font-size:10px;margin-top:4px">');
+  p.push('<span style="color:#0097A7">▲ HKR: <b>'+nt(volR)+'</b></span>');
+  p.push('<span style="color:var(--gold)">▲ Vis: <b>'+nt(volV)+'</b></span>');
   p.push('</div>');
-  p.push('<div style="border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;align-items:center">');
-  p.push('<div><div style="font-size:9px;color:var(--muted)">SIA STAFF</div><div style="font-family:Space Mono,monospace;font-size:22px;font-weight:700;color:#7c6af7">'+siaStaff+'</div><div style="font-size:9px;color:var(--muted)">'+ctrStaff+' ctr + '+echStaff+' e-ch</div></div>');
-  const fullDeploy = 28 + Math.ceil(maxEch/ICO_PER_ECH);
-  const saving = fullDeploy - siaStaff;
-  p.push('<div style="text-align:right"><div style="font-size:9px;color:var(--muted)">vs Full Deploy</div>');
-  if(saving>0) p.push('<div style="font-size:14px;font-weight:700;color:#4ade80">✂ −'+saving+' staff</div>');
-  else if(saving<0) p.push('<div style="font-size:14px;font-weight:700;color:#f87171">+'+(-saving)+' staff</div>');
-  else p.push('<div style="font-size:11px;color:var(--muted)">Full deploy</div>');
-  p.push('</div></div></div>');
+  p.push('</div></div>'); // vol panel
 
-  p.push('</div>'); // end left col
+  // Current resources panel (compact)
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">');
+  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">② Current Deployment</span>');
+  p.push('<span style="font-size:9px;font-family:Space Mono,monospace;color:#7c6af7;font-weight:700">'+curSIA+' SIA</span>');
+  p.push('</div><div style="padding:12px 14px">');
 
-  // ── RIGHT: DASHBOARD ─────────────────────────────────────────────────────────
+  // Counters
+  p.push('<div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Counters (max 28 · '+(ctrR+ctrV)+' used)</div>');
+  p.push(sldr('HKR', ctrR,'cRv','slCtrR','linkedSlider(this,\''+ctrRk+'\',\''+ctrVk+'\',28,\'cRv\',\'cVv\')','#0097A7',28,'','',1));
+  p.push(sldr('Vis', ctrV,'cVv','slCtrV','linkedSlider(this,\''+ctrVk+'\',\''+ctrRk+'\',28,\'cVv\',\'cRv\')','var(--gold)',28,'','',1));
+
+  p.push('<div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;margin-top:6px">e-Channels (max '+maxEch+' · '+(echR+echV)+' used)</div>');
+  p.push(sldr('HKR', echR,'eRv','slEchR','linkedSlider(this,\''+echRk+'\',\''+echVk+'\','+maxEch+',\'eRv\',\'eVv\')','var(--accent)',maxEch,'','',1));
+  p.push(sldr('Vis', echV,'eVv','slEchV','linkedSlider(this,\''+echVk+'\',\''+echRk+'\','+maxEch+',\'eVv\',\'eRv\')','var(--gold)',maxEch,'','',1));
+
+  p.push('</div></div>'); // resources panel
+  p.push('</div>'); // col1
+
+  // ────────────────────────────────────────────────────────────────────────────
+  // COL 2: WAIT TIME & PLEDGE STATUS (current deployment vs this volume)
+  // ────────────────────────────────────────────────────────────────────────────
   p.push('<div>');
 
-  // ── 5 KPI cards ──────────────────────────────────────────────────────────────
-  p.push('<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px">');
-  [
-    {l:'Total Capacity',v:nt(capTotal)+' pax/hr',c:'var(--accent)',s:'All streams'},
-    {l:'HKR Pledge',v:compR.toFixed(1)+'%',c:cc(compR),s:(pR?'✓ ':'✗ ')+PLEDGE.pctR+'% target @'+PLEDGE.R+'min'},
-    {l:'Visitor Pledge',v:compV.toFixed(1)+'%',c:cc(compV),s:(pV?'✓ ':'✗ ')+PLEDGE.pctV+'% target @'+PLEDGE.V+'min'},
-    {l:'Avg Mean Wait',v:(avgWait>=999?'∞':avgWait)+' min',c:avgWait<=22.5?'#4ade80':avgWait<=30?'#f5c842':'#f87171',s:'(HKR+Vis)÷2 · tgt ≤22.5'},
-    {l:'Hall Fill',v:hallFillPct+'%',c:hallFillColor,s:nt(Math.round(LqR+LqV))+' pax queuing'},
-  ].forEach(k=>{
-    p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;border-top:2px solid '+k.c+'">');
-    p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">'+k.l+'</div>');
-    p.push('<div style="font-family:Space Mono,monospace;font-size:18px;font-weight:700;color:'+k.c+'">'+k.v+'</div>');
-    p.push('<div style="font-size:9px;color:var(--muted);margin-top:2px">'+k.s+'</div></div>');
-  });
-  p.push('</div>');
+  // Stream results
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">');
+  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">③ Estimated Wait Time</span>');
+  p.push('<span style="font-size:9px;color:var(--muted)">Current deployment · '+curSIA+' SIA staff</span>');
+  p.push('</div><div style="padding:14px">');
 
-  // ── Dual-stream table ────────────────────────────────────────────────────────
-  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px">');
-  p.push('<div style="padding:11px 16px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">');
-  p.push('<div><div style="font-family:Space Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--accent)">DUAL-STREAM FLOW MODEL</div>');
-  p.push('<div style="font-size:10px;color:var(--muted);margin-top:2px">HKR: '+PLEDGE.pctR+'%@'+PLEDGE.R+'min · Visitor: '+PLEDGE.pctV+'%@'+PLEDGE.V+'min · SIA = Counters + ⌈e-ch÷4.77⌉</div></div>');
-  p.push('<div style="background:'+(allMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)')+';border:1px solid '+(allMet?'rgba(74,222,128,.3)':'rgba(248,113,113,.3)')+';border-radius:20px;padding:4px 12px;font-size:9px;font-family:Space Mono,monospace;font-weight:700;color:'+(allMet?'#4ade80':'#f87171')+'">'+(allMet?'ALL PLEDGES MET':'PLEDGE BREACH')+'</div>');
-  p.push('</div><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:var(--surface2)">');
-  ['CATEGORY','VOLUME','CTRS','E-CH','CAPACITY','UTIL','COMPLIANCE','MEAN WAIT','PLEDGE','STATUS'].forEach(h=>{
-    p.push('<th style="padding:8px 10px;font-family:Space Mono,monospace;font-size:8px;letter-spacing:.08em;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap">'+h+'</th>');
+  // HKR stream
+  function streamBlock(lbl, lc, vol, wt, comp, tWt, tComp, lq, util){
+    const pledgeMet = comp >= tComp;
+    const wtColor = wc(wt, tWt);
+    const compColor = cc(comp);
+    const p2 = [];
+    p2.push('<div style="border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px;border-left:3px solid '+lc+'">');
+    p2.push('<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">');
+    p2.push('<div><span style="font-size:11px;font-weight:700;color:'+lc+'">'+lbl+'</span><span style="font-size:9px;color:var(--muted);margin-left:8px">'+nt(vol)+' pax/hr · '+util+'% util</span></div>');
+    p2.push('<span style="padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:Space Mono,monospace;background:'+(pledgeMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)')+';color:'+(pledgeMet?'#4ade80':'#f87171')+'">'+(pledgeMet?'✓ PLEDGE MET':'✗ BREACH')+'</span>');
+    p2.push('</div>');
+    // Big wait time
+    p2.push('<div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:8px">');
+    p2.push('<div><div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Mean Wait</div>');
+    p2.push('<div style="font-family:Space Mono,monospace;font-size:36px;font-weight:700;color:'+wtColor+';line-height:1">'+fmt(wt)+'</div>');
+    p2.push('<div style="font-size:9px;color:var(--muted)">min (target ≤'+tWt+')</div></div>');
+    // Compliance bar
+    p2.push('<div style="flex:1"><div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Pledge Compliance</div>');
+    p2.push('<div style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:'+compColor+'">'+comp.toFixed(1)+'%</div>');
+    p2.push('<div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:4px"><div style="height:100%;width:'+Math.min(comp,100)+'%;background:'+compColor+';border-radius:3px;transition:width .3s"></div></div>');
+    p2.push('<div style="font-size:9px;color:var(--muted);margin-top:2px">target '+tComp+'%</div></div>');
+    p2.push('</div>');
+    // Queue depth
+    p2.push('<div style="font-size:9px;color:var(--muted)">Expected queue: <b style="color:'+lc+'">'+nt(Math.round(lq))+' pax</b> waiting</div>');
+    p2.push('</div>');
+    return p2.join('');
+  }
+
+  p.push(streamBlock('HKR (Resident)','#0097A7',volR,wtR,compR,PLEDGE.R,PLEDGE.pctR,LqR,uR));
+  p.push(streamBlock('Visitor (Mainland)','var(--gold)',volV,wtV,compV,PLEDGE.V,PLEDGE.pctV,LqV,uV));
+  p.push('</div></div>'); // wait time panel
+
+  // ── Minimum staff optimiser ───────────────────────────────────────────────
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)">');
+  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">④ Minimum Deployment to Meet Pledges</span>');
+  p.push('</div><div style="padding:14px">');
+
+  if(minDep){
+    const saving = curSIA - minDep.sia;
+    const fullSaving = fullSIA - minDep.sia;
+    p.push('<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">');
+    [{lbl:'Min SIA (pledge-safe)',val:minDep.sia,c:'#4ade80',s:'minimum to meet all pledges'},
+     {lbl:'Current SIA',val:curSIA,c:'#7c6af7',s:saving>0?'↓ '+saving+' above minimum':saving<0?'⚠ '+(-saving)+' below minimum':'= at minimum'},
+     {lbl:'Full Deployment',val:fullSIA,c:'var(--muted)',s:'↓ '+fullSaving+' saveable'},
+    ].forEach(k=>{
+      p.push('<div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center">');
+      p.push('<div style="font-size:8px;color:var(--muted);margin-bottom:4px">'+k.lbl+'</div>');
+      p.push('<div style="font-family:Space Mono,monospace;font-size:26px;font-weight:700;color:'+k.c+'">'+k.val+'</div>');
+      p.push('<div style="font-size:9px;color:var(--muted);margin-top:2px">'+k.s+'</div>');
+      p.push('</div>');
+    });
+    p.push('</div>');
+
+    // Min deployment breakdown
+    p.push('<div style="font-size:10px;color:var(--dim);line-height:2">');
+    p.push('<b>Minimum config:</b> '+minDep.ctrR+'R + '+minDep.ctrV+'V counters &nbsp;·&nbsp; '+minDep.echR+'R + '+minDep.echV+'V e-channels<br>');
+    p.push('→ Wait times: HKR <span style="color:'+wc(minDep.wtR,PLEDGE.R)+'"><b>'+fmt(minDep.wtR)+'</b> min</span> · Visitor <span style="color:'+wc(minDep.wtV,PLEDGE.V)+'"><b>'+fmt(minDep.wtV)+'</b> min</span><br>');
+    p.push('→ Compliance: HKR <span style="color:'+cc(minDep.compR)+'"><b>'+minDep.compR.toFixed(1)+'%</b></span> · Visitor <span style="color:'+cc(minDep.compV)+'"><b>'+minDep.compV.toFixed(1)+'%</b></span><br>');
+    if(saving > 0) p.push('<span style="color:#4ade80">✂ Potential saving: <b>'+saving+' staff</b> vs current · <b>'+fullSaving+' staff</b> vs full deployment</span>');
+    if(saving < 0) p.push('<span style="color:#f87171">⚠ Current deployment is '+(-saving)+' staff SHORT of minimum. Pledges may be at risk.</span>');
+    if(saving === 0) p.push('<span style="color:#4ade80">✓ Current deployment is exactly at minimum required.</span>');
+    p.push('</div>');
+  } else {
+    p.push('<div style="padding:20px;text-align:center;color:var(--muted);font-size:11px">Unable to find a pledge-compliant deployment for this volume with '+maxCtr+' counters and '+maxEch+' e-channels.<br>Volume may exceed facility capacity.</div>');
+  }
+  p.push('</div></div>');
+  p.push('</div>'); // col 2
+
+  // ────────────────────────────────────────────────────────────────────────────
+  // COL 3: SENSITIVITY CHART — "At what volume does each pledge break?"
+  // ────────────────────────────────────────────────────────────────────────────
+  p.push('<div>');
+
+  // SVG sensitivity chart
+  const svgW=380, svgH=220, pad={l:42,r:14,t:18,b:36};
+  const chartW = svgW-pad.l-pad.r, chartH = svgH-pad.t-pad.b;
+  const maxChartVol = curve.length ? curve[curve.length-1].vol : 40000;
+  const vScale = v => pad.l + (v/maxChartVol)*chartW;
+  const wScale = w => pad.t + (1 - Math.min(w,90)/90)*chartH;
+
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)">');
+  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">⑤ Pledge Break-even Chart</span>');
+  p.push('<div style="font-size:9px;color:var(--muted);margin-top:2px">At what volume does wait time exceed the pledge threshold? (full deployment '+maxCtr+' ctr + '+maxEch+' e-ch)</div>');
+  p.push('</div><div style="padding:12px 14px">');
+
+  let svg = '<svg width="'+svgW+'" height="'+svgH+'" viewBox="0 0 '+svgW+' '+svgH+'" style="width:100%;font-family:Space Mono,monospace">';
+
+  // Grid lines
+  [0,15,30,45,60,75,90].forEach(wVal=>{
+    const y = wScale(wVal);
+    svg += '<line x1="'+pad.l+'" y1="'+y+'" x2="'+(svgW-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>';
+    svg += '<text x="'+(pad.l-4)+'" y="'+(y+3)+'" text-anchor="end" font-size="8" fill="rgba(170,176,200,0.6)">'+wVal+'</text>';
+  });
+
+  // Pledge threshold lines
+  const yPledgeR = wScale(PLEDGE.R);
+  const yPledgeV = wScale(PLEDGE.V);
+  svg += '<line x1="'+pad.l+'" y1="'+yPledgeR+'" x2="'+(svgW-pad.r)+'" y2="'+yPledgeR+'" stroke="#0097A7" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.8"/>';
+  svg += '<text x="'+(svgW-pad.r-2)+'" y="'+(yPledgeR-3)+'" text-anchor="end" font-size="8" fill="#0097A7">HKR target '+PLEDGE.R+'min</text>';
+  svg += '<line x1="'+pad.l+'" y1="'+yPledgeV+'" x2="'+(svgW-pad.r)+'" y2="'+yPledgeV+'" stroke="#f5c842" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.8"/>';
+  svg += '<text x="'+(svgW-pad.r-2)+'" y="'+(yPledgeV-3)+'" text-anchor="end" font-size="8" fill="#f5c842">Vis target '+PLEDGE.V+'min</text>';
+
+  // Wait time lines
+  const ptsR = curve.map(pt=>[vScale(pt.vol), wScale(pt.wtR)]);
+  const ptsV = curve.map(pt=>[vScale(pt.vol), wScale(pt.wtV)]);
+  const toPath = pts => 'M'+pts.map(p=>`${p[0].toFixed(1)},${p[1].toFixed(1)}`).join('L');
+  svg += '<path d="'+toPath(ptsR)+'" fill="none" stroke="#0097A7" stroke-width="2" opacity="0.9"/>';
+  svg += '<path d="'+toPath(ptsV)+'" fill="none" stroke="#f5c842" stroke-width="2" opacity="0.9"/>';
+
+  // Current volume line
+  if(totalVol > 0 && totalVol <= maxChartVol){
+    const xCur = vScale(totalVol);
+    svg += '<line x1="'+xCur+'" y1="'+pad.t+'" x2="'+xCur+'" y2="'+(svgH-pad.b)+'" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="3,2"/>';
+    svg += '<text x="'+xCur+'" y="'+(pad.t-4)+'" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.7)">▼ now</text>';
+    // Dots at current volume on each line
+    const curPtR = ptsR[Math.round((totalVol/maxChartVol)*(ptsR.length-1))]||ptsR[ptsR.length-1];
+    const curPtV = ptsV[Math.round((totalVol/maxChartVol)*(ptsV.length-1))]||ptsV[ptsV.length-1];
+    if(curPtR) svg += '<circle cx="'+curPtR[0]+'" cy="'+curPtR[1]+'" r="4" fill="#0097A7"/>';
+    if(curPtV) svg += '<circle cx="'+curPtV[0]+'" cy="'+curPtV[1]+'" r="4" fill="#f5c842"/>';
+  }
+
+  // Pledge-break vertical markers
+  if(rBreak){
+    const xB = vScale(rBreak.vol);
+    svg += '<line x1="'+xB+'" y1="'+wScale(PLEDGE.R)+'" x2="'+xB+'" y2="'+(svgH-pad.b)+'" stroke="#0097A7" stroke-width="1" stroke-dasharray="2,3" opacity="0.5"/>';
+  }
+  if(vBreak){
+    const xB = vScale(vBreak.vol);
+    svg += '<line x1="'+xB+'" y1="'+wScale(PLEDGE.V)+'" x2="'+xB+'" y2="'+(svgH-pad.b)+'" stroke="#f5c842" stroke-width="1" stroke-dasharray="2,3" opacity="0.5"/>';
+  }
+
+  // X-axis labels
+  const xTicks = [0, Math.round(maxChartVol*0.25), Math.round(maxChartVol*0.5), Math.round(maxChartVol*0.75), maxChartVol];
+  xTicks.forEach(v=>{
+    const x = vScale(v);
+    svg += '<text x="'+x+'" y="'+(svgH-pad.b+12)+'" text-anchor="middle" font-size="8" fill="rgba(170,176,200,0.6)">'+(v/1000).toFixed(0)+'k</text>';
+  });
+  svg += '<text x="'+(svgW/2)+'" y="'+svgH+'" text-anchor="middle" font-size="8" fill="rgba(170,176,200,0.5)">pax/hr</text>';
+  svg += '<text x="10" y="'+(svgH/2)+'" text-anchor="middle" font-size="8" fill="rgba(170,176,200,0.5)" transform="rotate(-90,10,'+(svgH/2)+')">wait (min)</text>';
+  svg += '</svg>';
+
+  p.push(svg);
+
+  // Pledge break volumes summary
+  p.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">');
+  if(rBreak){
+    p.push('<div style="background:rgba(0,151,167,.08);border-radius:6px;padding:8px 10px;border:1px solid rgba(0,151,167,.2)">');
+    p.push('<div style="font-size:9px;color:var(--muted);margin-bottom:2px">HKR pledge breaks at</div>');
+    p.push('<div style="font-family:Space Mono,monospace;font-size:14px;font-weight:700;color:#0097A7">'+nt(rBreak.vol)+' pax/hr</div>');
+    p.push('<div style="font-size:9px;color:var(--muted)">'+PLEDGE.R+' min target exceeded</div></div>');
+  }
+  if(vBreak){
+    p.push('<div style="background:rgba(245,200,66,.08);border-radius:6px;padding:8px 10px;border:1px solid rgba(245,200,66,.2)">');
+    p.push('<div style="font-size:9px;color:var(--muted);margin-bottom:2px">Visitor pledge breaks at</div>');
+    p.push('<div style="font-family:Space Mono,monospace;font-size:14px;font-weight:700;color:#f5c842">'+nt(vBreak.vol)+' pax/hr</div>');
+    p.push('<div style="font-size:9px;color:var(--muted)">'+PLEDGE.V+' min target exceeded</div></div>');
+  }
+  if(!rBreak) p.push('<div style="background:rgba(74,222,128,.08);border-radius:6px;padding:8px 10px;border:1px solid rgba(74,222,128,.2)"><div style="font-size:9px;color:#4ade80">HKR pledge: ✓ holds across all volumes</div></div>');
+  if(!vBreak) p.push('<div style="background:rgba(74,222,128,.08);border-radius:6px;padding:8px 10px;border:1px solid rgba(74,222,128,.2)"><div style="font-size:9px;color:#4ade80">Visitor pledge: ✓ holds across all volumes</div></div>');
+  p.push('</div></div></div>'); // chart card
+
+  // ── Deployment comparison table ────────────────────────────────────────────
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)">');
+  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">⑥ Deployment Comparison</span>');
+  p.push('</div><table style="width:100%;border-collapse:collapse;font-size:10px">');
+  p.push('<thead><tr style="background:var(--surface2)">');
+  ['Scenario','Counters','e-Ch','SIA','HKR Wait','Vis Wait','HKR %','Vis %','Status'].forEach(h=>{
+    p.push('<th style="padding:7px 10px;font-family:Space Mono,monospace;font-size:8px;letter-spacing:.08em;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap">'+h+'</th>');
   });
   p.push('</tr></thead><tbody>');
 
-  function streamRow(lbl, lc, vol, ctr, ech, cap, util, wt, comp, tComp, tWait, bot){
-    const wc2=wt>=999?'#f87171':wt>tWait?'#f5c842':'#4ade80';
-    const pledgeMet=comp>=tComp;
-    p.push('<tr'+(bot?' style="background:var(--surface2);border-top:1px solid var(--border)"':'')+'>');
-    p.push('<td style="padding:11px 10px;font-weight:700;color:'+lc+'">'+lbl+'</td>');
-    p.push('<td style="padding:11px 10px;font-family:Space Mono,monospace">'+nt(vol)+'</td>');
-    p.push('<td style="padding:11px 10px;color:#0097A7">'+ctr+'</td>');
-    p.push('<td style="padding:11px 10px;color:var(--accent)">'+ech+'</td>');
-    p.push('<td style="padding:11px 10px;font-family:Space Mono,monospace">'+nt(cap)+'</td>');
-    p.push('<td style="padding:11px 10px"><div style="font-family:Space Mono,monospace;font-size:11px;font-weight:700;color:'+( bot?'var(--text)':''+(util>90?'#f87171':util>70?'#f5c842':'#4ade80'))+'">'+util+'%</div><div style="width:50px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:3px"><div style="height:100%;width:'+Math.min(util,100)+'%;background:'+(util>90?'#f87171':util>70?'#f5c842':'#4ade80')+'"></div></div></td>');
-    if(bot){
-      p.push('<td style="padding:11px 10px;font-family:Space Mono,monospace;font-size:13px;font-weight:700;color:'+(avgWait<=22.5?'#4ade80':avgWait<=30?'#f5c842':'#f87171')+'">'+(avgWait>=999?'∞':avgWait)+'<span style="font-size:9px;color:var(--muted)"> avg</span></td>');
-      p.push('<td style="padding:11px 10px" colspan="2" style="color:var(--muted);font-size:9px">⌈'+(echR+echV)+'÷4.77⌉='+echStaff+' e-ch staff</td>');
-    } else {
-      p.push('<td style="padding:11px 10px"><div style="font-family:Space Mono,monospace;font-size:12px;font-weight:700;color:'+(cc(comp))+'">'+comp.toFixed(1)+'%</div><div style="width:50px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:3px"><div style="height:100%;width:'+Math.min(comp,100)+'%;background:'+cc(comp)+'"></div></div><div style="font-size:8px;color:var(--muted);margin-top:2px">tgt '+tComp+'%</div></td>');
-      p.push('<td style="padding:11px 10px;font-family:Space Mono,monospace;font-size:14px;font-weight:700;color:'+wc2+'">'+(wt>=999?'∞':wt)+'<span style="font-size:9px;color:var(--muted)"> min</span></td>');
-      p.push('<td style="padding:11px 10px;font-size:9px;color:var(--muted)">≤'+tWait+' min</td>');
-    }
-    p.push('<td style="padding:11px 10px"><span style="padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:Space Mono,monospace;background:'+(bot?(allMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)'):(pledgeMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)'))+';color:'+(bot?(allMet?'#4ade80':'#f87171'):(pledgeMet?'#4ade80':'#f87171'))+'">'+( bot?(allMet?'ALL MET':'ACTION'):(pledgeMet?'MET':'FAIL'))+'</span></td>');
+  // Build comparison rows
+  const scenarios=[
+    {lbl:'Minimum (pledge-safe)', dep:minDep, style:''},
+    {lbl:'Current deployment', dep:{ctrR,ctrV,echR,echV,sia:curSIA,wtR,wtV,compR,compV}, style:'background:rgba(124,106,247,.05)'},
+  ];
+  // Full deployment
+  const fOpt = optimalSplit(totalVol, hkrRatio, maxCtr, maxEch);
+  const fCapR=fOpt.ctrR*SR.ctrR+fOpt.echR*SR.echR, fCapV=fOpt.ctrV*SR.ctrV+fOpt.echV*SR.echV;
+  const fSR=fOpt.ctrR+fOpt.echR, fSV=fOpt.ctrV+fOpt.echV;
+  const fMuR=fSR>0?fCapR/fSR:SR.ctrR, fMuV=fSV>0?fCapV/fSV:SR.ctrV;
+  const fWtR=waitTime(fOpt.volR,fSR,fMuR), fWtV=waitTime(fOpt.volV,fSV,fMuV);
+  const fCompR=pledgeCompliance(fOpt.volR,fSR,fMuR,PLEDGE.R), fCompV=pledgeCompliance(fOpt.volV,fSV,fMuV,PLEDGE.V);
+  const fSIA=maxCtr+Math.ceil(maxEch/ICO_PER_ECH);
+  scenarios.push({lbl:'Full deployment ('+maxCtr+'/'+maxEch+')', dep:{ctrR:fOpt.ctrR,ctrV:fOpt.ctrV,echR:fOpt.echR,echV:fOpt.echV,sia:fSIA,wtR:fWtR,wtV:fWtV,compR:fCompR,compV:fCompV}, style:''});
+
+  scenarios.forEach(sc=>{
+    if(!sc.dep){p.push('<tr style="'+sc.style+'"><td colspan="9" style="padding:8px 10px;color:var(--muted);font-size:9px">'+sc.lbl+': Unable to compute</td></tr>');return;}
+    const r=sc.dep, allMet=(r.compR>=PLEDGE.pctR&&r.compV>=PLEDGE.pctV);
+    p.push('<tr style="'+sc.style+';border-bottom:1px solid var(--border)">');
+    p.push('<td style="padding:8px 10px;font-weight:600;color:var(--dim)">'+sc.lbl+'</td>');
+    p.push('<td style="padding:8px 10px;color:#0097A7">'+(r.ctrR||0)+'R+'+(r.ctrV||0)+'V</td>');
+    p.push('<td style="padding:8px 10px;color:var(--accent)">'+(r.echR||0)+'R+'+(r.echV||0)+'V</td>');
+    p.push('<td style="padding:8px 10px;font-family:Space Mono,monospace;font-weight:700;color:#7c6af7">'+r.sia+'</td>');
+    p.push('<td style="padding:8px 10px;font-family:Space Mono,monospace;font-weight:700;color:'+wc(r.wtR||0,PLEDGE.R)+'">'+fmt(r.wtR||0)+' min</td>');
+    p.push('<td style="padding:8px 10px;font-family:Space Mono,monospace;font-weight:700;color:'+wc(r.wtV||0,PLEDGE.V)+'">'+fmt(r.wtV||0)+' min</td>');
+    p.push('<td style="padding:8px 10px;color:'+cc(r.compR||0)+'">'+( r.compR||0).toFixed(1)+'%</td>');
+    p.push('<td style="padding:8px 10px;color:'+cc(r.compV||0)+'">'+( r.compV||0).toFixed(1)+'%</td>');
+    p.push('<td style="padding:8px 10px"><span style="padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:Space Mono,monospace;background:'+(allMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)')+';color:'+(allMet?'#4ade80':'#f87171')+'">'+(allMet?'MET':'FAIL')+'</span></td>');
     p.push('</tr>');
-  }
-
-  streamRow('HKR (Resident)','#0097A7',volR,ctrR,echR,capR,uR,wtR,compR,PLEDGE.pctR,PLEDGE.R,false);
-  streamRow('Visitor','var(--gold)',volV,ctrV,echV,capV,uV,wtV,compV,PLEDGE.pctV,PLEDGE.V,false);
-  streamRow('TOTAL','var(--text)',totalVol,ctrR+ctrV,echR+echV,capTotal,uT,0,0,0,0,true);
-  p.push('</tbody></table></div>');
-
-  // ── Bottom row: Operational Summary (full width) ─────────────────────────────
-  p.push('<div>');
-
-  // Operational Summary
-  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
-  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)">');
-  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase">Operational Summary</span></div>');
-  p.push('<div style="padding:14px">');
-
-  // KPI mini grid
-  p.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">');
-  [{l:'SIA Staff',v:siaStaff,c:'#7c6af7',s:'deployed now'},
-   {l:'Efficiency',v:nt(efficiency),c:'var(--res)',s:'pax/staff/hr'},
-   {l:'HKR Queue',v:nt(Math.round(LqR))+' pax',c:LqR>50?'#f87171':'#4ade80',s:'waiting now'},
-   {l:'Vis Queue',v:nt(Math.round(LqV))+' pax',c:LqV>30?'#f87171':'#4ade80',s:'waiting now'},
-  ].forEach(k=>{
-    p.push('<div style="background:var(--surface2);border-radius:6px;padding:10px"><div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);margin-bottom:3px">'+k.l+'</div>');
-    p.push('<div style="font-family:Space Mono,monospace;font-size:18px;font-weight:700;color:'+k.c+'">'+k.v+'</div>');
-    p.push('<div style="font-size:9px;color:var(--muted)">'+k.s+'</div></div>');
   });
-  p.push('</div>');
+  p.push('</tbody></table></div>');
+  p.push('</div>'); // col 3
 
-  // Strategic recommendation
-  let stratTitle, stratBody, stratColor;
-  if(!allMet){
-    stratTitle='⚠ ACTION REQUIRED'; stratColor='#f87171';
-    stratBody='';
-    if(!pR) stratBody+='HKR pledge '+compR.toFixed(1)+'% below '+PLEDGE.pctR+'% target — add e-channels or R counters. ';
-    if(!pV) stratBody+='Visitor pledge '+compV.toFixed(1)+'% below '+PLEDGE.pctV+'% target — add V counters. ';
-  } else if(uT<55){
-    stratTitle='💡 OVER-RESOURCED'; stratColor='#f5c842';
-    const minSIA=Math.max(Math.round(siaStaff*uT/75),8);
-    stratBody='System only '+uT+'% utilised. Consider reducing to ~'+minSIA+' SIA staff (saving ~'+(siaStaff-minSIA)+' staff) while maintaining pledges.';
-  } else {
-    stratTitle='✓ OPTIMAL DEPLOYMENT'; stratColor='#4ade80';
-    stratBody='Balanced configuration. '+siaStaff+' staff across '+(ctrR+ctrV+echR+echV)+' active units. All service pledges met with '+uT+'% utilisation.';
-  }
-  p.push('<div style="border-top:1px solid var(--border);padding-top:12px">');
-  p.push('<div style="font-size:10px;font-weight:700;font-family:Space Mono,monospace;color:'+stratColor+';margin-bottom:6px">'+stratTitle+'</div>');
-  p.push('<div style="font-size:11px;color:var(--dim);line-height:1.6">'+stratBody+'</div>');
-  if(hallFillPct>50) p.push('<div style="font-size:10px;color:'+hallFillColor+';margin-top:6px">⚠ Hall queue '+hallFillPct+'% — '+nt(Math.round(LqR+LqV))+' pax waiting</div>');
-  p.push('</div></div></div>');
-
-  p.push('</div>'); // bottom row
-  p.push('</div>'); // right col
   p.push('</div>'); // main grid
-
-  root.innerHTML=p.join('');
+  root.innerHTML = p.join('');
 }
 
 
@@ -2881,7 +3266,7 @@ const SCENARIO_PROFILES = {
   normal:  { resRatio: 0.77, totalArr: 10500, totalDep:  9500 },
   // Summer Saturday: more outbound leisure trips, slight visitor uptick
   summer:  { resRatio: 0.72, totalArr: 18000, totalDep: 16500 },
-  // Easter: departure-heavy (Fri), visitor share rises (overseas tourists)
+  // Easter: departure-heavy (Fri), visitor share rises (Mainland travellers ~99.8% of visitors)
   easter:  { resRatio: 0.68, totalArr: 21000, totalDep: 23000 },
   // Golden Week: Mainland visitor surge — visitor-dominant
   golden:  { resRatio: 0.45, totalArr: 22000, totalDep: 20000 },
@@ -2910,7 +3295,7 @@ function optimalSplit(totalVol, resRatio, maxCtr, maxEch){
 
   // ── e-Channel split ────────────────────────────────────────────────────────
   // Visitor e-ch eligibility: base 8%, scales to 15% when visitor-heavy
-  // (more tourists with ePassports during Golden Week / peak holiday)
+  // (more Mainland travellers with ePassports / Home Return Permits / Two Way Permits during Golden Week)
   const visEChPct = resRatio < 0.5 ? 0.15          // visitor-heavy: Golden Week
                   : resRatio < 0.65 ? 0.12          // mixed: Easter
                   : resRatio < 0.75 ? 0.10          // normal peak
@@ -2957,6 +3342,208 @@ function selectEasterDay(dayKey, btn){
   }
 }
 
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PPTX EXPORT — PptxGenJS
+// Generates a professional presentation from the current analysis data
+// ══════════════════════════════════════════════════════════════════════════════
+function exportPPTX(){
+  if(!allDays.length){ alert('No data loaded. Please upload Excel files first.'); return; }
+  const days = eraFilter(allDays);
+  if(!days.length){ alert('No days in selected era range.'); return; }
+
+  const pres = new PptxGenJS();
+  pres.layout = 'LAYOUT_16x9';
+  pres.title = 'Passenger Statistics';
+  pres.author = 'Immigration Department';
+
+  const era = currentEra==='postcovid'?'Post-COVID':'Since Commissioning';
+  const latestDate = allDays[allDays.length-1].date;
+  const eraFrom = currentEra==='postcovid'?POST_COVID_DATE:COMM_DATE;
+
+  // ── Colour palette ──────────────────────────────────────────────────────────
+  const C = {
+    dark:    '07080b', // slide bg
+    navy:    '0D1F4C',
+    accent:  '00D4B8', // teal
+    gold:    'F5C842',
+    arr:     '0097A7',
+    dep:     '5B3D9E',
+    res:     '4ADE80',
+    white:   'FFFFFF',
+    dim:     'AAB0C8',
+    surface: '13151f',
+    border:  '252836',
+  };
+
+  function fN(n){ return n==null?'—':Number(n).toLocaleString(); }
+
+  // ── SLIDE 1: Title ──────────────────────────────────────────────────────────
+  const s1 = pres.addSlide();
+  s1.background = { color: C.dark };
+  // Accent bar left
+  s1.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:0.08, h:5.625, fill:{color:C.accent}, line:{color:C.accent} });
+  s1.addText('PASSENGER STATISTICS', { x:0.3, y:1.6, w:9.4, h:0.7, fontSize:32, bold:true, color:C.white, fontFace:'Calibri' });
+  s1.addText('RECORD HIGH ANALYSIS', { x:0.3, y:2.35, w:9.4, h:0.6, fontSize:22, color:C.accent, fontFace:'Calibri' });
+  s1.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.05, w:2.4, h:0.05, fill:{color:C.gold}, line:{color:C.gold} });
+  s1.addText(era+' Era', { x:0.3, y:3.2, w:4, h:0.4, fontSize:13, color:C.gold, fontFace:'Calibri' });
+  s1.addText('Data range: '+fDate(eraFrom)+' – '+fDate(latestDate), { x:0.3, y:3.65, w:6, h:0.35, fontSize:11, color:C.dim, fontFace:'Calibri' });
+  s1.addText('As at: '+fDate(latestDate)+' · '+days.length+' days in range', { x:0.3, y:4.0, w:6, h:0.35, fontSize:11, color:C.dim, fontFace:'Calibri' });
+  // Logo area
+  s1.addShape(pres.shapes.RECTANGLE, { x:7.8, y:1.5, w:2.1, h:2.1, fill:{color:C.surface}, line:{color:C.border,width:1} });
+  s1.addText('⬡', { x:7.8, y:1.5, w:2.1, h:2.1, fontSize:60, color:C.accent, align:'center', valign:'middle', fontFace:'Calibri' });
+
+  // ── SLIDE 2: Key KPIs ───────────────────────────────────────────────────────
+  const yoy = yoyAnalysis(days);
+  const lastYoy = yoy.length ? yoy[yoy.length-1] : null;
+  const prevYoy = yoy.length>1 ? yoy[yoy.length-2] : null;
+  const growthPct = lastYoy&&prevYoy&&prevYoy.avgDaily ? ((lastYoy.avgDaily-prevYoy.avgDaily)/prevYoy.avgDaily*100) : null;
+  const peakDay = days.reduce((a,b)=>((b.dt&&b.dt.ad_tot)||0)>((a.dt&&a.dt.ad_tot)||0)?b:a, days[0]);
+  const ww = weekdayWeekendAnalysis(days);
+
+  const s2 = pres.addSlide();
+  s2.background = { color: C.dark };
+  s2.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:C.navy}, line:{color:C.navy} });
+  s2.addText('KEY PERFORMANCE INDICATORS', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
+  s2.addText(era+' · '+fDate(eraFrom)+' – '+fDate(latestDate), { x:0.4, y:0, w:9.2, h:0.7, fontSize:10, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
+
+  const kpis2 = [
+    { lbl:'Days in Range', val:days.length.toLocaleString(), color:C.accent },
+    { lbl:'Avg Daily ('+( lastYoy?lastYoy.year:'')+')', val:lastYoy?fN(lastYoy.avgDaily):'—', color:C.gold },
+    { lbl:'YoY Growth', val:growthPct!=null?(growthPct>=0?'+':'')+growthPct.toFixed(1)+'%':'—', color:growthPct!=null&&growthPct>=0?C.res:'F87171' },
+    { lbl:'Avg Weekday', val:fN(ww.weekday.avgTotal), color:C.arr },
+    { lbl:'Avg Wknd/PH', val:fN(ww.phwk.avgTotal), color:C.gold },
+    { lbl:'Peak Day Total', val:peakDay?fN(peakDay.dt.ad_tot):'—', color:C.gold },
+  ];
+  kpis2.forEach((k,i)=>{
+    const col = i%3, row = Math.floor(i/3);
+    const x = 0.3 + col*3.25, y = 1.0 + row*2.1;
+    s2.addShape(pres.shapes.RECTANGLE, { x, y, w:3.0, h:1.8, fill:{color:C.surface}, line:{color:C.border,width:1} });
+    s2.addShape(pres.shapes.RECTANGLE, { x, y, w:3.0, h:0.06, fill:{color:k.color}, line:{color:k.color} });
+    s2.addText(k.lbl, { x:x+0.15, y:y+0.15, w:2.7, h:0.35, fontSize:9, color:C.dim, fontFace:'Calibri' });
+    s2.addText(k.val, { x:x+0.15, y:y+0.5, w:2.7, h:0.85, fontSize:26, bold:true, color:k.color, fontFace:'Calibri', shrinkText:true });
+  });
+  if(peakDay) s2.addText('Peak: '+fDate(peakDay.date)+' ('+getRemarks(peakDay.date)+')', { x:0.3, y:5.1, w:9.4, h:0.35, fontSize:9, color:C.dim, fontFace:'Calibri' });
+
+  // ── SLIDE 3: Year-over-Year Trend ──────────────────────────────────────────
+  const s3 = pres.addSlide();
+  s3.background = { color: C.dark };
+  s3.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:C.navy}, line:{color:C.navy} });
+  s3.addText('YEAR-OVER-YEAR TRAFFIC TREND', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
+  s3.addText('Same period: 1 Jan – '+fDate(latestDate).split(' ').slice(0,2).join(' ')+' each year', { x:0.4, y:0, w:9.2, h:0.7, fontSize:10, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
+
+  if(yoy.length>1){
+    // Bar chart of avg daily
+    const chartData = [{ name:'Avg Daily', labels: yoy.map(y=>y.year), values: yoy.map(y=>y.avgDaily) }];
+    s3.addChart(pres.charts.BAR, chartData, {
+      x:0.4, y:0.85, w:5.8, h:4.2, barDir:'col',
+      chartColors:[C.accent.replace('#','')],
+      showValue:true, valAxisMinVal:0,
+      dataLabelFontSize:8, dataLabelColor:C.white.replace('#',''),
+      catAxisLabelColor:C.dim.replace('#',''), valAxisLabelColor:C.dim.replace('#',''),
+      plotAreaFill:{color:C.surface.replace('#','')},
+    });
+    // YoY growth text
+    s3.addText('YoY Growth Summary', { x:6.4, y:0.9, w:3.3, h:0.4, fontSize:11, bold:true, color:C.white, fontFace:'Calibri' });
+    yoy.slice(-6).forEach((y,i)=>{
+      const prev = yoy[yoy.indexOf(y)-1];
+      const g = prev&&prev.avgDaily ? ((y.avgDaily-prev.avgDaily)/prev.avgDaily*100) : null;
+      const gStr = g!=null?(g>=0?'+':'')+g.toFixed(1)+'%':'—';
+      const gCol = g!=null&&g>=0?C.res:'F87171';
+      s3.addText(y.year+':  '+fN(y.avgDaily), { x:6.4, y:1.4+i*0.5, w:2.2, h:0.42, fontSize:11, color:C.dim, fontFace:'Calibri' });
+      s3.addText(gStr, { x:8.6, y:1.4+i*0.5, w:1.0, h:0.42, fontSize:11, bold:true, color:gCol, fontFace:'Calibri', align:'right' });
+    });
+    s3.addText('Note: Closed/Excl. days (border closure 2020-02-04 to 2023-01-07) excluded from averages.', { x:0.4, y:5.2, w:9.2, h:0.3, fontSize:8, color:C.dim, fontFace:'Calibri' });
+  }
+
+  // ── SLIDE 4: Day-of-Week Analysis ─────────────────────────────────────────
+  const dow = dowAnalysis(days);
+  const s4 = pres.addSlide();
+  s4.background = { color: C.dark };
+  s4.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:C.navy}, line:{color:C.navy} });
+  s4.addText('AVERAGE TRAFFIC BY DAY OF WEEK', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
+
+  if(dow.length){
+    const maxAvg = Math.max(...dow.map(d=>d.avg))||1;
+    dow.forEach((d,i)=>{
+      const barW = (d.avg/maxAvg)*6.5;
+      const y4 = 0.95+i*0.6;
+      s4.addText(d.day, { x:0.4, y:y4, w:0.8, h:0.5, fontSize:11, color:C.dim, valign:'middle', fontFace:'Calibri' });
+      s4.addShape(pres.shapes.RECTANGLE, { x:1.3, y:y4+0.08, w:barW||0.05, h:0.34, fill:{color:C.accent}, line:{color:C.accent} });
+      s4.addText(fN(d.avg), { x:1.3+(barW||0.05)+0.1, y:y4, w:2, h:0.5, fontSize:11, bold:true, color:C.accent, valign:'middle', fontFace:'Calibri' });
+      s4.addText('▲ '+fN(d.avgArr)+'  ▼ '+fN(d.avgDep), { x:5.8, y:y4, w:4, h:0.5, fontSize:9, color:C.dim, valign:'middle', align:'right', fontFace:'Calibri' });
+    });
+  }
+
+  // ── SLIDE 5: Holiday & Weekday Benchmark ─────────────────────────────────
+  const s5 = pres.addSlide();
+  s5.background = { color: C.dark };
+  s5.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:C.navy}, line:{color:C.navy} });
+  s5.addText('TRAFFIC BENCHMARK', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
+
+  // Two big comparison blocks
+  [
+    { lbl:'Average Weekday (Non-PH)', val:fN(ww.weekday.avgTotal), arr:fN(ww.weekday.avgArr), dep:fN(ww.weekday.avgDep), n:ww.weekday.count, color:C.arr, x:0.4 },
+    { lbl:'Average Weekend / Public Holiday', val:fN(ww.phwk.avgTotal), arr:fN(ww.phwk.avgArr), dep:fN(ww.phwk.avgDep), n:ww.phwk.count, color:C.gold, x:5.1 },
+  ].forEach(b=>{
+    s5.addShape(pres.shapes.RECTANGLE, { x:b.x, y:0.9, w:4.5, h:3.8, fill:{color:C.surface}, line:{color:C.border,width:1} });
+    s5.addShape(pres.shapes.RECTANGLE, { x:b.x, y:0.9, w:4.5, h:0.07, fill:{color:b.color}, line:{color:b.color} });
+    s5.addText(b.lbl, { x:b.x+0.2, y:1.1, w:4.1, h:0.5, fontSize:11, bold:true, color:C.white, fontFace:'Calibri' });
+    s5.addText(b.val, { x:b.x+0.2, y:1.7, w:4.1, h:1.0, fontSize:40, bold:true, color:b.color, fontFace:'Calibri', shrinkText:true });
+    s5.addText('pax/day average', { x:b.x+0.2, y:2.75, w:4.1, h:0.35, fontSize:10, color:C.dim, fontFace:'Calibri' });
+    s5.addText('▲ Arrival: '+b.arr, { x:b.x+0.2, y:3.2, w:4.1, h:0.35, fontSize:11, color:C.arr.replace('#','')==b.color?C.white:C.arr, fontFace:'Calibri' });
+    s5.addText('▼ Departure: '+b.dep, { x:b.x+0.2, y:3.6, w:4.1, h:0.35, fontSize:11, color:C.dep, fontFace:'Calibri' });
+    s5.addText(b.n+' days in dataset', { x:b.x+0.2, y:4.1, w:4.1, h:0.35, fontSize:9, color:C.dim, fontFace:'Calibri' });
+  });
+
+  // ── SLIDE 6: Easter Forecast ───────────────────────────────────────────────
+  const easter = forecastEaster2026(days);
+  if(easter && Object.keys(easter.dayProfiles).length){
+    const f = easter;
+    const tLabel = f.targetEasterLabel||'Easter';
+    const s6 = pres.addSlide();
+    s6.background = { color: C.dark };
+    s6.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:'B8860B'}, line:{color:'B8860B'} });
+    s6.addText(tLabel.toUpperCase()+' FORECAST', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
+    s6.addText('YoY Growth Applied: '+(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'%  ·  Based on '+f.easterDays.length+' historical Easter days', { x:0.4, y:0, w:9.2, h:0.7, fontSize:10, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
+
+    // Day cards
+    const profiles = Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).slice(0,5);
+    profiles.forEach(([off,dp],i)=>{
+      const sumArr=dp.profile.reduce((s,h)=>s+(h.arr_tot||0),0)||0;
+      const sumTot=dp.profile.reduce((s,h)=>s+(h.ad_tot||0),0)||1;
+      const pArr=Math.round(dp.projTotal*(sumArr/sumTot));
+      const pDep=dp.projTotal-pArr;
+      const x=0.3+i*1.9, cardW=1.75;
+      const hexColor = dp.color.replace('var(--accent)','00D4B8').replace('var(--res)','4ADE80').replace('var(--vis)','F5C842');
+      s6.addShape(pres.shapes.RECTANGLE, { x, y:0.85, w:cardW, h:4.4, fill:{color:C.surface}, line:{color:C.border,width:1} });
+      s6.addShape(pres.shapes.RECTANGLE, { x, y:0.85, w:cardW, h:0.06, fill:{color:hexColor.replace('#','')}, line:{color:hexColor.replace('#','')} });
+      s6.addText(dp.label.replace(/ \(.*\)/,''), { x:x+0.1, y:0.97, w:cardW-0.2, h:0.45, fontSize:9, bold:true, color:C.white, fontFace:'Calibri' });
+      s6.addText(fDate(dp.date), { x:x+0.1, y:1.45, w:cardW-0.2, h:0.35, fontSize:8, color:C.dim, fontFace:'Calibri' });
+      s6.addText(fN(dp.projTotal), { x:x+0.1, y:1.85, w:cardW-0.2, h:0.7, fontSize:20, bold:true, color:'F5C842', fontFace:'Calibri', shrinkText:true });
+      s6.addText('Total pax', { x:x+0.1, y:2.55, w:cardW-0.2, h:0.3, fontSize:8, color:C.dim, fontFace:'Calibri' });
+      s6.addText('▲ '+fN(pArr), { x:x+0.1, y:3.0, w:cardW-0.2, h:0.35, fontSize:9, color:C.arr, fontFace:'Calibri' });
+      s6.addText('▼ '+fN(pDep), { x:x+0.1, y:3.4, w:cardW-0.2, h:0.35, fontSize:9, color:C.dep, fontFace:'Calibri' });
+      s6.addText(dp.isEstimated?'⚠ est.':dp.histCount+'yr avg', { x:x+0.1, y:3.85, w:cardW-0.2, h:0.3, fontSize:7, color:C.dim, fontFace:'Calibri' });
+    });
+
+    // Narrative
+    const histDep = f.easterDays.length ? f.easterDays.reduce((a,b)=>(b.dt.dep_tot||0)>(a.dt.dep_tot||0)?b:a, f.easterDays[0]) : null;
+    const avgResShare = f.easterDays.length ? Math.round(f.easterDays.reduce((s,d)=>s+(d.dt.ad_res||0),0)/f.easterDays.reduce((s,d)=>s+(d.dt.ad_tot||0),1)*100) : null;
+    let narrative = tLabel+' is one of the busiest periods at this control point, driven by outbound HKR travel on Good Friday and return traffic on Easter Monday/Tuesday. ';
+    if(histDep) narrative += 'Historical peak departure day: '+fDate(histDep.date)+' ('+getRemarks(histDep.date)+') with '+fN(histDep.dt.dep_tot||0)+' departures. ';
+    if(avgResShare) narrative += 'Average HKR share: '+avgResShare+'% of total Easter traffic. ';
+    narrative += 'YoY growth of '+(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'% applied to projections.';
+
+    s6.addShape(pres.shapes.RECTANGLE, { x:0.3, y:5.1, w:9.4, h:0.4, fill:{color:C.surface}, line:{color:C.border,width:1} });
+    s6.addText(narrative, { x:0.4, y:5.12, w:9.2, h:0.36, fontSize:8, color:C.dim, fontFace:'Calibri' });
+  }
+
+  // ── Save ──────────────────────────────────────────────────────────────────
+  const eraSlug = currentEra==='postcovid'?'PostCOVID':'SinceCommissioning';
+  const fn = 'RecordHigh_'+eraSlug+'_'+latestDate+'.pptx';
+  pres.writeFile({ fileName: fn });
+}
 
 // estimator render triggered from switchSection directly
 </script>
