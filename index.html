@@ -638,6 +638,7 @@ const HK_GAZETTE_PH = {
   '2025-12-26': 'First Weekday after Christmas',
   // 2026 (note: Ching Ming on Sun → Mon sub; clashes with Easter Mon → extra Tue PH)
   '2026-01-01': "New Year's Day",
+  '2026-01-02': 'Day after New Year\'s Day',
   '2026-02-17': 'Lunar New Year (Day 1)',
   '2026-02-18': 'Lunar New Year (Day 2)',
   '2026-02-19': 'Lunar New Year (Day 3)',
@@ -729,7 +730,8 @@ function getRemarks(dateStr){
 
   // ── 2. Fixed-date public holidays (algorithmic fallback for other years) ──
   if(month===1&&day===1) return "New Year's Day";
-  if(month===1&&day===2&&dow===1) return "New Year's Holiday";
+  if(month===1&&day===2&&dow===1) return "New Year's Day Holiday (Sub)";
+  if(month===1&&day===2) return 'Day after New Year\'s Day'; // elevated return traffic
   if(month===5&&day===1) return 'Labour Day';
   if(month===5&&day===2&&dow===1) return 'Labour Day Holiday';
   if(month===7&&day===1) return 'HKSAR Establishment Day';
@@ -1363,155 +1365,381 @@ function buildAnalysisHTML(days){
 
 
 function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDate, fN){
-  const yoy=yoyAnalysis(days);
-  const dow=dowAnalysis(days);
-  const holidays=holidayAnalysis(days);
-  const easter=forecastEaster2026(days);
-  const easterDays=getEasterDays(days);
+  const yoy        = yoyAnalysis(days);
+  const fullYoy2   = fullYearAnalysis(days);
+  const dow        = dowAnalysis(days);
+  const holidays   = holidayAnalysis(days);
+  const easter     = forecastEaster2026(days);
+  const easterDays = getEasterDays(days);
+  const ww         = weekdayWeekendAnalysis(days);
+  const latestDate = days.length ? days[days.length-1].date : '';
+  const latestMMDD2 = latestDate.substring(5);
+  const _mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const _moParts = latestMMDD2.split('-');
+  const periodLabel = parseInt(_moParts[1])+' '+_mo[parseInt(_moParts[0])-1];
 
-  const ws={};
-  const merges=[];
-  let R=0;
-  const NC=9; // columns A-I (no counter cols)
-  ws['!rows']=[];
+  const ws  = {};
+  const mrg = [];
+  let R = 0;
+  const NC = 10;
+  ws['!rows'] = [];
 
-  function c(r,col,v,s){ws[XLSX.utils.encode_cell({r,c:col})]={v:v===null||v===undefined?'':v,t:typeof v==='number'?'n':'s',s:s||{}};}
-  function hdr(r,col,v,bg,fg,bold,sz,span){
-    const s={font:{name:'Calibri',sz:sz||10,bold:bold||false,color:{rgb:fg||'FFFFFF'}},
-      fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||'1565C0'}},
-      alignment:{horizontal:'center',vertical:'center'},border:{top:{style:'thin',color:{rgb:'BBCCE0'}},bottom:{style:'thin',color:{rgb:'BBCCE0'}},left:{style:'thin',color:{rgb:'BBCCE0'}},right:{style:'thin',color:{rgb:'BBCCE0'}}}};
-    c(r,col,v,s);
-    if(span>1){for(let i=1;i<span;i++)c(r,col+i,'',s);merges.push({s:{r,c:col},e:{r,c:col+span-1}});}
+  // ── helpers ──────────────────────────────────────────────────────────────
+  const blank = (rgb) => ({v:'',t:'s',s:{font:{name:'Calibri',sz:9},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:rgb||'FFFFFF'}},border:{}}});
+  const fmtNum = (cell) => { cell.s.numFmt='#,##0'; return cell; };
+  const fmtPct = (cell) => { cell.s.numFmt='0.0%'; return cell; };
+
+  function putCell(r,c2,v,s){
+    ws[XLSX.utils.encode_cell({r,c:c2})]={v:v===null||v===undefined?'':v, t:typeof v==='number'?'n':'s', s:s||{}};
   }
-  function dataCell(r,col,v,bg,fg,bold){
-    const s={font:{name:'Calibri',sz:10,bold:bold||false,color:{rgb:fg||'333333'}},
+  function merge(r,c1,r2,c2){ mrg.push({s:{r,c:c1},e:{r:r2,c:c2}}); }
+
+  // Style factories
+  const navyBg  = isPostCovid?'0D47A1':'1B5E20';
+  const navy2   = isPostCovid?'1565C0':'2E7D52';
+  const navy3   = isPostCovid?'1E88E5':'388E3C';
+  const arrCol  = isPostCovid?'0097A7':'1A6B3A';
+  const depCol  = isPostCovid?'5B3D9E':'3D4E9E';
+  const altBg   = isPostCovid?'EBF3FB':'EBF7EE';
+  const warnBg  = 'FFF3CD';
+  const warnFg  = '856404';
+
+  function hdrCell(v, bg, fg, sz, bold, halign, wrap){
+    return {v, t:'s', s:{
+      font:{name:'Calibri',sz:sz||9,bold:bold!==false,color:{rgb:fg||'FFFFFF'}},
+      fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||navyBg}},
+      alignment:{horizontal:halign||'center',vertical:'center',wrapText:wrap||false},
+      border:{bottom:{style:'medium',color:{rgb:bg||navyBg}}}
+    }};
+  }
+  function dataC(v, bg, fg, bold, sz){
+    return {v:v===null||v===undefined?'':v, t:typeof v==='number'?'n':'s', s:{
+      font:{name:'Calibri',sz:sz||10,bold:bold||false,color:{rgb:fg||'333333'}},
       fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||'FFFFFF'}},
-      alignment:{horizontal:'center',vertical:'center'},
-      border:{top:{style:'thin',color:{rgb:'DDEEFF'}},bottom:{style:'thin',color:{rgb:'DDEEFF'}},left:{style:'thin',color:{rgb:'DDEEFF'}},right:{style:'thin',color:{rgb:'DDEEFF'}}}};
-    c(r,col,v,s);
+      alignment:{horizontal:typeof v==='number'?'right':'left',vertical:'center'},
+      border:{bottom:{style:'thin',color:{rgb:'D8E4F0'}}}
+    }};
   }
+  function numC(v, bg, fg, bold){ const c=dataC(v,bg,fg,bold); c.s.numFmt='#,##0'; c.s.alignment.horizontal='right'; return c; }
+  function pctC(v, bg, fg, bold){ const c=dataC(v+'%',bg,fg,bold); return c; }
 
-  // ── Title banner ──
-  for(let col=0;col<NC;col++) c(R,col,'',{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'4CAF50'}},font:{name:'Calibri',sz:10},alignment:{horizontal:'center',vertical:'center'},border:{}});
-  c(R,0,'PASSENGER STATISTICS — ANALYSIS & FORECAST',{font:{name:'Calibri',sz:16,bold:true,color:{rgb:isPostCovid?'0D1F4C':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'4CAF50'}},alignment:{horizontal:'center',vertical:'center'},border:{}});
-  merges.push({s:{r:R,c:0},e:{r:R,c:NC-1}});
-  ws['!rows'][R]={hpt:28};R++;
+  // ── TITLE BANNER ─────────────────────────────────────────────────────────
+  ws['!rows'][R]={hpt:6};
+  for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'43A047'}},border:{}}};
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:(isPostCovid?'POST-COVID ERA':'SINCE COMMISSIONING ERA')+'  ●',t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:isPostCovid?'0D2B6B':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'43A047'}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
+  merge(R,0,R,NC-1); R++;
 
-  // ── YoY Section ──
-  R++;
-  hdr(R,0,'YEAR-OVER-YEAR TRAFFIC TREND',isPostCovid?'0D47A1':'1B5E20','FFFFFF',true,11,NC);
-  ws['!rows'][R]={hpt:18};R++;
-  ['Year','Days','Total Traffic','Avg Daily','Arrival','Departure','Residents','Visitors','YoY Growth'].forEach((h,i)=>
-    hdr(R,i,h,isPostCovid?'1E88E5':'2E7D52','FFFFFF',true,9,1));
-  R++;
+  ws['!rows'][R]={hpt:28};
+  for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navyBg}},border:{}}};
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'LAND BOUNDARY CONTROL POINT',t:'s',s:{font:{name:'Calibri',sz:14,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navyBg}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
+  merge(R,0,R,5);
+  ws[XLSX.utils.encode_cell({r:R,c:6})]={v:'ANALYSIS & FORECAST REPORT',t:'s',s:{font:{name:'Calibri',sz:10,color:{rgb:isPostCovid?'90CAF9':'A8E6C0'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'0A2F6B':'0A2E1A'}},alignment:{horizontal:'right',vertical:'center'},border:{}}};
+  merge(R,6,R,NC-1); R++;
+
+  ws['!rows'][R]={hpt:16};
+  for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navy2}},border:{}}};
+  const metaStr='Era: '+(isPostCovid?'Post-COVID (from '+POST_COVID_DATE+')':'Since Commissioning (from '+COMM_DATE+')')+'   |   As at: '+fDate(latestDate)+'   |   Operational days: '+days.filter(d=>!isBorderClosed(d.date)).length+' days';
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:metaStr,t:'s',s:{font:{name:'Calibri',sz:9,color:{rgb:'BBDEFB'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navy2}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
+  merge(R,0,R,NC-1); R++;
+
+  // spacer
+  ws['!rows'][R]={hpt:6}; for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=blank('F5F7FA'); R++;
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SECTION 1: YoY TREND — SAME PERIOD
+  // ─────────────────────────────────────────────────────────────────────────
+  ws['!rows'][R]={hpt:20};
+  const s1Hdrs=['YEAR-OVER-YEAR TREND — SAME PERIOD (1 Jan – '+periodLabel+' each year)'];
+  ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell(s1Hdrs[0],navyBg,'FFFFFF',11,true,'left');
+  for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
+  merge(R,0,R,NC-1); R++;
+
+  const yoyHdrs=['Year','Period','Op. Days','Excl.','Avg Daily','▲ Arrival','▼ Departure','HKR (Res.)','Visitors','YoY Growth'];
+  ws['!rows'][R]={hpt:14};
+  yoyHdrs.forEach((h,i)=>{
+    ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navy3}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:navy3}}}}};
+  }); R++;
+
   yoy.forEach((y,i)=>{
     const prev=i>0?yoy[i-1]:null;
-    const growth=prev&&prev.avgDaily>0?((y.avgDaily-prev.avgDaily)/prev.avgDaily*100):null;
-    const bg=i%2===0?'FFFFFF':'F0F8FF';
-    dataCell(R,0,y.year,bg,isPostCovid?'0D47A1':'1B5E20',true);
-    dataCell(R,1,y.count,bg,'333333');
-    dataCell(R,2,y.total,bg,'333333');ws[XLSX.utils.encode_cell({r:R,c:2})].s.numFmt='#,##0';
-    dataCell(R,3,y.avgDaily,bg,'333333');ws[XLSX.utils.encode_cell({r:R,c:3})].s.numFmt='#,##0';
-    dataCell(R,4,y.arr,bg,isPostCovid?'1A6B8A':'1A6B3A');ws[XLSX.utils.encode_cell({r:R,c:4})].s.numFmt='#,##0';
-    dataCell(R,5,y.dep,bg,isPostCovid?'5B3D9E':'3D4E9E');ws[XLSX.utils.encode_cell({r:R,c:5})].s.numFmt='#,##0';
-    dataCell(R,6,y.res,bg,'2E7D52');ws[XLSX.utils.encode_cell({r:R,c:6})].s.numFmt='#,##0';
-    dataCell(R,7,y.vis,bg,'B8860B');ws[XLSX.utils.encode_cell({r:R,c:7})].s.numFmt='#,##0';
-    const gc=growth===null?'333333':growth>=0?'1B5E20':'C62828';
-    dataCell(R,8,growth===null?'—':(growth>=0?'+':'')+growth.toFixed(1)+'%',bg,gc,true);
-    R++;
+    const g=prev&&prev.avgDaily>0?((y.avgDaily-prev.avgDaily)/prev.avgDaily*100):null;
+    const bg=y.caveat==='early-reopen'?warnBg:(i%2===0?'FFFFFF':altBg);
+    const yFg=y.caveat==='early-reopen'?warnFg:navyBg;
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(y.year,bg,yFg,true);
+    ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC('1 Jan – '+y.asAt,bg,'666666',false,9);
+    ws[XLSX.utils.encode_cell({r:R,c:2})]=dataC(y.count,bg,'333333');
+    ws[XLSX.utils.encode_cell({r:R,c:3})]=dataC(y.closedDays>0?y.closedDays+' excl.':'—',bg,y.closedDays>0?'C62828':'999999',false,9);
+    ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(y.avgDaily,bg,'333333',true);
+    ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(y.arr,bg,arrCol);
+    ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(y.dep,bg,depCol);
+    ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(y.res,bg,'2E7D52');
+    ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(y.vis,bg,'B8860B');
+    const gFg=g===null?'999999':g>=0?'1B5E20':'C62828';
+    ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC(g===null?'—':(g>=0?'+':'')+g.toFixed(1)+'%',bg,gFg,true);
+    ws['!rows'][R]={hpt:14}; R++;
+    if(y.caveat==='early-reopen'){
+      ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'⚠ 2023: Border reopened Jan 2023 — early months reflect cautious travel behaviour; figures understate structural demand.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:warnFg}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:warnBg}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
+      merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
+    }
   });
 
-  // ── Holiday Analysis ──
-  R+=2;
-  hdr(R,0,'AVERAGE TRAFFIC BY HOLIDAY / DAY TYPE',isPostCovid?'0D47A1':'1B5E20','FFFFFF',true,11,NC);
-  ws['!rows'][R]={hpt:18};R++;
-  ['Category','Count','Avg Total','Avg Arrival','Avg Departure','Max Recorded'].forEach((h,i)=>
-    hdr(R,i,h,isPostCovid?'1E88E5':'2E7D52','FFFFFF',true,9,1));
-  R++;
-  holidays.slice(0,15).forEach((h,i)=>{
-    const bg=i%2===0?'FFFFFF':(isPostCovid?'EBF3FB':'EBF7EE');
-    const isEaster=h.cat.includes('Easter');
-    const fg=isEaster?'B8860B':'333333';
-    dataCell(R,0,h.cat,bg,fg,isEaster);
-    dataCell(R,1,h.count,bg,'555555');
-    dataCell(R,2,h.avg,bg,fg,isEaster);ws[XLSX.utils.encode_cell({r:R,c:2})].s.numFmt='#,##0';
-    dataCell(R,3,h.avgArr,bg,isPostCovid?'1A6B8A':'1A6B3A');ws[XLSX.utils.encode_cell({r:R,c:3})].s.numFmt='#,##0';
-    dataCell(R,4,h.avgDep,bg,isPostCovid?'5B3D9E':'3D4E9E');ws[XLSX.utils.encode_cell({r:R,c:4})].s.numFmt='#,##0';
-    dataCell(R,5,h.max,bg,isEaster?'B8860B':'555555');ws[XLSX.utils.encode_cell({r:R,c:5})].s.numFmt='#,##0';
-    R++;
+  // Note row
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'Note: "Op. Days" excludes border closure period (2020-02-04 to 2023-01-07). "Excl." = number of closure days within the Jan–'+periodLabel+' window.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
+  merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
+  R++; // spacer
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SECTION 2: FULL YEAR TREND
+  // ─────────────────────────────────────────────────────────────────────────
+  ws['!rows'][R]={hpt:20};
+  ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('ANNUAL TRAFFIC — FULL YEAR',navyBg,'FFFFFF',11,true,'left');
+  for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
+  merge(R,0,R,NC-1); R++;
+  ws['!rows'][R]={hpt:14};
+  ['Year','Type','Op. Days','Excl.','Total Traffic','Avg Daily','▲ Arrival','▼ Departure','HKR (Res.)','YoY Growth'].forEach((h,i)=>{
+    ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navy3}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:navy3}}}}};
+  }); R++;
+  fullYoy2.forEach((y,i)=>{
+    const prev=i>0?fullYoy2[i-1]:null;
+    const g=prev&&prev.avgDaily>0?((y.avgDaily-prev.avgDaily)/prev.avgDaily*100):null;
+    const bg=y.caveat==='early-reopen'?warnBg:(i%2===0?'FFFFFF':altBg);
+    const yFg=y.caveat==='early-reopen'?warnFg:navyBg;
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(y.year,bg,yFg,true);
+    ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC(y.isPartial?'Partial (in progress)':'Full Year',bg,y.isPartial?'B8860B':'333333',false,9);
+    ws[XLSX.utils.encode_cell({r:R,c:2})]=dataC(y.count,bg,'333333');
+    ws[XLSX.utils.encode_cell({r:R,c:3})]=dataC(y.closedDays>0?y.closedDays:'—',bg,y.closedDays>0?'C62828':'999999',false,9);
+    ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(y.total,bg,'333333');
+    ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(y.avgDaily,bg,'333333',true);
+    ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(y.arr,bg,arrCol);
+    ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(y.dep,bg,depCol);
+    ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(y.res,bg,'2E7D52');
+    const gFg=g===null?'999999':g>=0?'1B5E20':'C62828';
+    ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC(g===null?'—':(g>=0?'+':'')+g.toFixed(1)+'%',bg,gFg,true);
+    ws['!rows'][R]={hpt:14}; R++;
   });
+  R++; // spacer
 
-  // ── Easter 2026 Forecast ──
-  R+=2;
-  hdr(R,0,'EASTER 2026 FORECAST (Good Friday 3 Apr — Mon 6 Apr)',isPostCovid?'B8860B':'8B6914','FFFFFF',true,11,NC);
-  ws['!rows'][R]={hpt:18};R++;
+  // ─────────────────────────────────────────────────────────────────────────
+  // SECTION 3: WEEKDAY vs WEEKEND/PH BENCHMARK
+  // ─────────────────────────────────────────────────────────────────────────
+  ws['!rows'][R]={hpt:20};
+  ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('TRAFFIC BENCHMARK — WEEKDAY vs WEEKEND / PUBLIC HOLIDAY',navyBg,'FFFFFF',11,true,'left');
+  for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
+  merge(R,0,R,NC-1); R++;
+  ws['!rows'][R]={hpt:14};
+  ['Category','Days','Avg Total','▲ Avg Arrival','▼ Avg Departure','Avg HKR','Avg Visitors','HKR Share %','Visitor Share %',''].forEach((h,i)=>{
+    ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navy3}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:navy3}}}}};
+  }); R++;
+  [
+    {cat:'Average Weekday (Non-PH)',d:ww.weekday,fg:'0097A7',bg:'EBF6FB'},
+    {cat:'Average Weekend / Public Holiday',d:ww.phwk,fg:'B8860B',bg:'FFFDE7'},
+  ].forEach(row=>{
+    const resShare = row.d.avgTotal>0?((row.d.avgRes||row.d.avgTotal*0.77)/row.d.avgTotal*100).toFixed(1):'—';
+    const visShare = row.d.avgTotal>0?((row.d.avgVis||row.d.avgTotal*0.23)/row.d.avgTotal*100).toFixed(1):'—';
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(row.cat,row.bg,row.fg,true);
+    ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC(row.d.count,row.bg,'333333');
+    ws[XLSX.utils.encode_cell({r:R,c:2})]=numC(row.d.avgTotal,row.bg,'333333',true);
+    ws[XLSX.utils.encode_cell({r:R,c:3})]=numC(row.d.avgArr,row.bg,arrCol);
+    ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(row.d.avgDep,row.bg,depCol);
+    ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(row.d.avgRes||0,row.bg,'2E7D52');
+    ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(row.d.avgVis||0,row.bg,'B8860B');
+    ws[XLSX.utils.encode_cell({r:R,c:7})]=dataC(resShare+'%',row.bg,'2E7D52');
+    ws[XLSX.utils.encode_cell({r:R,c:8})]=dataC(visShare+'%',row.bg,'B8860B');
+    ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',row.bg,'999999');
+    ws['!rows'][R]={hpt:16}; R++;
+  });
+  R++; // spacer
 
-  if(easter&&easterDays.length>0){
-    const f=easter;
-    dataCell(R,0,'Historical Easter days used:',isPostCovid?'EBF3FB':'EBF7EE','333333',true);
-    merges.push({s:{r:R,c:0},e:{r:R,c:2}});
-    dataCell(R,3,easterDays.length,isPostCovid?'EBF3FB':'EBF7EE',isPostCovid?'0D47A1':'1B5E20',true);
-    dataCell(R,4,'YoY Growth Applied:','FFFFFF','333333',true);merges.push({s:{r:R,c:4},e:{r:R,c:5}});
-    dataCell(R,6,(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'%','FFFFFF',f.growthRate>=0?'1B5E20':'C62828',true);
-    dataCell(R,7,'Avg Easter Total (hist.):','FFFFFF','333333',true);merges.push({s:{r:R,c:7},e:{r:R,c:8}});
-    dataCell(R,9,f.avgEasterTotal,'FFFFFF',isPostCovid?'0D47A1':'1B5E20',true);ws[XLSX.utils.encode_cell({r:R,c:9})].s.numFmt='#,##0';
-    dataCell(R,10,'Projected 2026 Daily:','FFF8DC','B8860B',true);merges.push({s:{r:R,c:10},e:{r:R,c:11}});
-    dataCell(R,12,f.projectedTotal,'FFF8DC','B8860B',true);ws[XLSX.utils.encode_cell({r:R,c:12})].s.numFmt='#,##0';
-    R++;R++;
+  // ─────────────────────────────────────────────────────────────────────────
+  // SECTION 4: HOLIDAY TYPE ANALYSIS
+  // ─────────────────────────────────────────────────────────────────────────
+  ws['!rows'][R]={hpt:20};
+  ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY HOLIDAY / DAY TYPE  (Top '+Math.min(holidays.length,20)+')',navyBg,'FFFFFF',11,true,'left');
+  for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
+  merge(R,0,R,NC-1); R++;
+  ws['!rows'][R]={hpt:14};
+  ['Holiday / Day Type','Occurrences','Avg Total','▲ Avg Arrival','▼ Avg Departure','Avg HKR','Avg Visitors','vs Weekday Avg','Peak Recorded',''].forEach((h,i)=>{
+    ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navy3}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:{bottom:{style:'medium',color:{rgb:navy3}}}}};
+  }); R++;
+  const wdAvg = ww.weekday.avgTotal||1;
+  holidays.slice(0,20).forEach((h,i)=>{
+    const isEaster=h.cat.toLowerCase().includes('easter');
+    const isGolden=h.cat.toLowerCase().includes('national day')||h.cat.toLowerCase().includes('golden');
+    const fg=isEaster?'B8860B':isGolden?'C62828':'333333';
+    const bg=isEaster?(i%2===0?'FFFDE7':'FFF8DC'):isGolden?(i%2===0?'FEECEC':'FDE8E8'):(i%2===0?'FFFFFF':altBg);
+    const vsWD = wdAvg>0?((h.avg-wdAvg)/wdAvg*100):0;
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(h.cat,bg,fg,isEaster||isGolden);
+    ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC(h.count,bg,'555555');
+    ws[XLSX.utils.encode_cell({r:R,c:2})]=numC(h.avg,bg,fg,isEaster);
+    ws[XLSX.utils.encode_cell({r:R,c:3})]=numC(h.avgArr,bg,arrCol);
+    ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(h.avgDep,bg,depCol);
+    ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(h.avgRes||0,bg,'2E7D52');
+    ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(h.avgVis||0,bg,'B8860B');
+    const vsCol=vsWD>=0?'1B5E20':'C62828';
+    ws[XLSX.utils.encode_cell({r:R,c:7})]=dataC((vsWD>=0?'+':'')+vsWD.toFixed(1)+'%',bg,vsCol,true);
+    ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(h.max,bg,isEaster?'B8860B':'555555',true);
+    ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999');
+    ws['!rows'][R]={hpt:14}; R++;
+  });
+  R++; // spacer
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SECTION 5: DAY OF WEEK
+  // ─────────────────────────────────────────────────────────────────────────
+  ws['!rows'][R]={hpt:20};
+  ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY DAY OF WEEK',navyBg,'FFFFFF',11,true,'left');
+  for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
+  merge(R,0,R,NC-1); R++;
+  ws['!rows'][R]={hpt:14};
+  ['Day','Avg Total','▲ Avg Arrival','▼ Avg Departure','Relative to Mon','','','','',''].forEach((h,i)=>{
+    ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navy3}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:navy3}}}}};
+  }); R++;
+  const monAvg = (dow.find(d=>d.day==='Mon')||{avg:1}).avg||1;
+  dow.forEach((d,i)=>{
+    const isWknd=d.day==='Sat'||d.day==='Sun';
+    const bg=isWknd?(i%2===0?'FFF9E6':'FFFDE7'):(i%2===0?'FFFFFF':altBg);
+    const rel=monAvg>0?((d.avg-monAvg)/monAvg*100):0;
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(d.day,bg,isWknd?'B8860B':navyBg,true);
+    ws[XLSX.utils.encode_cell({r:R,c:1})]=numC(d.avg,bg,'333333',true);
+    ws[XLSX.utils.encode_cell({r:R,c:2})]=numC(d.avgArr,bg,arrCol);
+    ws[XLSX.utils.encode_cell({r:R,c:3})]=numC(d.avgDep,bg,depCol);
+    ws[XLSX.utils.encode_cell({r:R,c:4})]=dataC((rel>=0?'+':'')+rel.toFixed(1)+'%',bg,rel>=0?'1B5E20':'333333');
+    for(let j=5;j<NC;j++) ws[XLSX.utils.encode_cell({r:R,c:j})]=dataC('',bg,'999999');
+    ws['!rows'][R]={hpt:14}; R++;
+  });
+  R++; // spacer
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SECTION 6: EASTER FORECAST
+  // ─────────────────────────────────────────────────────────────────────────
+  if(easter){
+    const f = easter;
+    const tLabel = f.targetEasterLabel||'Easter';
+    ws['!rows'][R]={hpt:20};
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell(tLabel.toUpperCase()+' FORECAST','B8860B','FFFFFF',11,true,'left');
+    for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('','B8860B','FFFFFF',11,true,'left');
+    merge(R,0,R,NC-1); R++;
+
+    // Methodology row
+    const meth='Projection method: '+f.growthMethod+' | Growth rate: '+(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'% | Historical baseline: '+f.postCovidEasterCount+' post-COVID Easter days | All projections ×'+((1+f.growthRate).toFixed(3));
+    ws[XLSX.utils.encode_cell({r:R,c:0})]={v:meth,t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'6B5200'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFF8DC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
+    merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
 
     // Day-by-day table
-    ['Date','Occasion (PH Status)','Proj. Arrival','Proj. Departure','Proj. Total'].forEach((h,i)=>
-      hdr(R,i,h,'B8860B','FFFFFF',true,9,1));
-    R++;
+    ws['!rows'][R]={hpt:14};
+    ['Date','Day','Occasion','PH?','Hist. Avg','Proj. Arrival','Proj. Departure','Proj. Total','vs Avg Weekday','vs Avg Wknd/PH'].forEach((h,i)=>{
+      ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'B8860B'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:'B8860B'}}}}};
+    }); R++;
+
     Object.entries(f.dayProfiles||{}).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp],i)=>{
       const sumArr=dp.profile.reduce((s,h)=>s+(h.arr_tot||0),0)||0;
       const sumTot=dp.profile.reduce((s,h)=>s+(h.ad_tot||0),0)||1;
       const projArr=Math.round(dp.projTotal*(sumArr/sumTot));
       const projDep=dp.projTotal-projArr;
-      const arrRes=Math.round(projArr*TP.resEChannel), arrVis=projArr-arrRes;
-      const depRes=Math.round(projDep*TP.resEChannel), depVis=projDep-depRes;
-      const res=estimateResources(arrRes,arrVis,depRes,depVis);
       const bg=i%2===0?'FFFDE7':'FFF8DC';
-      dataCell(R,0,fDate(dp.date),bg,'B8860B',true);
-      dataCell(R,1,dp.label,bg,'555555');
-      dataCell(R,2,projArr,bg,isPostCovid?'1A6B8A':'1A6B3A',true);ws[XLSX.utils.encode_cell({r:R,c:2})].s.numFmt='#,##0';
-      dataCell(R,3,projDep,bg,isPostCovid?'5B3D9E':'3D4E9E',true);ws[XLSX.utils.encode_cell({r:R,c:3})].s.numFmt='#,##0';
-      dataCell(R,4,dp.projTotal,bg,'B8860B',true);ws[XLSX.utils.encode_cell({r:R,c:4})].s.numFmt='#,##0';
+      const isPH=HK_GAZETTE_PH[dp.date]||(getRemarks(dp.date)!==''&&getRemarks(dp.date)!=='Saturday'&&getRemarks(dp.date)!=='Sunday');
+      const vsWD=ww.weekday.avgTotal>0?((dp.projTotal-ww.weekday.avgTotal)/ww.weekday.avgTotal*100):0;
+      const vsPH=ww.phwk.avgTotal>0?((dp.projTotal-ww.phwk.avgTotal)/ww.phwk.avgTotal*100):0;
+      ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(fDate(dp.date),bg,'B8860B',true);
+      ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC(new Date(dp.date+'T00:00:00').toLocaleDateString('en-HK',{weekday:'short'}),bg,'555555');
+      ws[XLSX.utils.encode_cell({r:R,c:2})]=dataC(dp.label.replace(/ \(.*\)/,''),bg,'333333');
+      ws[XLSX.utils.encode_cell({r:R,c:3})]=dataC(isPH?'PH':'Non-PH',bg,isPH?'B8860B':'666666',isPH);
+      ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(dp.avgTotal,bg,'555555');
+      ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(projArr,bg,arrCol,true);
+      ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(projDep,bg,depCol,true);
+      ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(dp.projTotal,bg,'B8860B',true);
+      ws[XLSX.utils.encode_cell({r:R,c:8})]=dataC((vsWD>=0?'+':'')+vsWD.toFixed(1)+'%',bg,vsWD>=0?'1B5E20':'C62828',true);
+      ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC((vsPH>=0?'+':'')+vsPH.toFixed(1)+'%',bg,vsPH>=0?'1B5E20':'C62828',true);
+      ws['!rows'][R]={hpt:14}; R++;
+    });
+    R++; // spacer
+
+    // Hourly profile per day (Good Friday and Easter Monday as the two most significant)
+    const keyDays = ['-2','1']; // Good Friday, Easter Monday
+    keyDays.forEach(off=>{
+      const dp = f.dayProfiles[off];
+      if(!dp||!dp.profile.length) return;
+      ws['!rows'][R]={hpt:18};
+      ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('HOURLY PROFILE: '+dp.label.toUpperCase().replace(/ \(.*\)/,'')+'  ('+fDate(dp.date)+') — HISTORICAL AVG + '+tLabel+' PROJECTION','0097A7','FFFFFF',10,true,'left');
+      for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('','0097A7','FFFFFF',10,true,'left');
+      merge(R,0,R,NC-1); R++;
+      ws['!rows'][R]={hpt:13};
+      ['Time','Arr HKR (H)','Arr Vis (H)','Arr Total (H)','Dep HKR (H)','Dep Vis (H)','Dep Total (H)','Total (H)','Proj. Total','Day Total'].forEach((h,i)=>{
+        ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:'0097A7'}}}}};
+      }); R++;
+
+      const hrs=dp.profile.filter(h=>/^\d{4}/.test(h.time||''));
+      const peakH=hrs.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a,hrs[0]||{time:'',ad_tot:0});
+      let dayTotH=0, dayTotP=0;
+      hrs.forEach((hr,i)=>{
+        const isPk=hr.time===peakH.time;
+        const proj=Math.round((hr.ad_tot||0)*f.factor);
+        const bg=isPk?'FFF8DC':(i%2===0?'FFFFFF':'F0F8FF');
+        dayTotH+=hr.ad_tot||0; dayTotP+=proj;
+        ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(hr.time+(isPk?' ★':''),bg,'333333',isPk);
+        ws[XLSX.utils.encode_cell({r:R,c:1})]=numC(hr.arr_res||0,bg,arrCol);
+        ws[XLSX.utils.encode_cell({r:R,c:2})]=numC(hr.arr_vis||0,bg,'B8860B');
+        ws[XLSX.utils.encode_cell({r:R,c:3})]=numC(hr.arr_tot||0,bg,arrCol,true);
+        ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(hr.dep_res||0,bg,depCol);
+        ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(hr.dep_vis||0,bg,'B8860B');
+        ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(hr.dep_tot||0,bg,depCol,true);
+        ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(hr.ad_tot||0,bg,'333333',true);
+        ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(proj,bg,'B8860B',true);
+        ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999');
+        ws['!rows'][R]={hpt:12}; R++;
+      });
+      // Day total row
+      ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'DAY TOTAL',t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}},alignment:{horizontal:'left',vertical:'center'},border:{top:{style:'medium',color:{rgb:'0097A7'}}}}};
+      [1,2,3,4,5,6,7,8,9].forEach(j=>{ ws[XLSX.utils.encode_cell({r:R,c:j})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}},border:{}}}; });
+      ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(dayTotH,'0097A7','FFFFFF',true); ws[XLSX.utils.encode_cell({r:R,c:7})].s.fill={type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}}; ws[XLSX.utils.encode_cell({r:R,c:7})].s.font.color={rgb:'FFFFFF'};
+      ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(dayTotP,'FFF8DC','B8860B',true);
+      ws['!rows'][R]={hpt:14}; R++;
       R++;
     });
 
-    // Hourly profile
-    R+=2;
-    hdr(R,0,'EASTER HOURLY PROFILE — 2026 PROJECTION',isPostCovid?'0097A7':'1A6B3A','FFFFFF',true,11,NC);
-    ws['!rows'][R]={hpt:18};R++;
-    ['Time','Arr R (Hist)','Arr V (Hist)','Arr Total (Hist)','Dep R (Hist)','Dep V (Hist)','Dep Total (Hist)','Total (Hist)','2026 Proj.'].forEach((h,i)=>
-      hdr(R,i,h,isPostCovid?'0097A7':'1A6B3A','FFFFFF',true,9,1));
-    R++;
-    const _refDayXL = f.dayProfiles ? (f.dayProfiles['0']||f.dayProfiles['-2']||Object.values(f.dayProfiles)[0]) : null;
-    const _profileXL = _refDayXL ? _refDayXL.profile : [];
-    const peakHour = _profileXL.length ? _profileXL.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a,_profileXL[0]) : {time:'2100-2159',ad_tot:0,arr_res:0,arr_vis:0,arr_tot:0,dep_res:0,dep_vis:0,dep_tot:0};
-    _profileXL.forEach((hr,i)=>{
-      if(/^CBS$/i.test(hr.time))return;
-      const isPeak=hr.time===peakHour.time;
-      const proj=Math.round(hr.ad_tot*f.factor);
-      const arrRes=Math.round(hr.arr_res*f.factor),arrVis=Math.round(hr.arr_vis*f.factor);
-      const depRes=Math.round(hr.dep_res*f.factor),depVis=Math.round(hr.dep_vis*f.factor);
-      const res=estimateResources(arrRes,arrVis,depRes,depVis);
-      const bg=isPeak?'FFF8DC':(i%2===0?'FFFFFF':(isPostCovid?'F0F8FF':'F0FFF4'));
-      const tfg=isPeak?'B8860B':'333333';
-      [hr.time,hr.arr_res,hr.arr_vis,hr.arr_tot,hr.dep_res,hr.dep_vis,hr.dep_tot,hr.ad_tot,proj].forEach((v,ci)=>{
-        dataCell(R,ci,v,bg,ci===8?'B8860B':tfg,isPeak||ci===8);
-        if(typeof v==='number'&&ci>=1)ws[XLSX.utils.encode_cell({r:R,c:ci})].s.numFmt='#,##0';
-      });
-      R++;
+    // Historical Easter reference table
+    ws['!rows'][R]={hpt:18};
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('HISTORICAL EASTER DATA — ACTUAL FIGURES ('+easterDays.length+' days)','7B6000','FFFFFF',10,true,'left');
+    for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('','7B6000','FFFFFF',10,true,'left');
+    merge(R,0,R,NC-1); R++;
+    ws['!rows'][R]={hpt:13};
+    ['Date','Day','Occasion','PH?','▲ HKR Arr','▲ Vis Arr','▲ Arrival','▼ HKR Dep','▼ Vis Dep','Total'].forEach((h,i)=>{
+      ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'7B6000'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:'7B6000'}}}}};
+    }); R++;
+    let prevEY='';
+    easterDays.sort((a,b)=>a.date.localeCompare(b.date)).forEach((d,i)=>{
+      const ey=d.date.substring(0,4);
+      const isNew=ey!==prevEY; prevEY=ey;
+      const rem=getRemarks(d.date)||'';
+      const isPH=HK_GAZETTE_PH[d.date]||(rem!==''&&rem!=='Saturday'&&rem!=='Sunday');
+      const bg=ey%2===0?'FFFFF4':(i%2===0?'FFFFFF':altBg);
+      const rowStyle=isNew?{top:{style:'medium',color:{rgb:'AAAAAA'}}}:{};
+      ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(fDate(d.date),bg,'B8860B',true);
+      ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC(new Date(d.date+'T00:00:00').toLocaleDateString('en-HK',{weekday:'short'}),bg,'555555');
+      ws[XLSX.utils.encode_cell({r:R,c:2})]=dataC(rem||'—',bg,'333333',false,9);
+      ws[XLSX.utils.encode_cell({r:R,c:3})]=dataC(isPH?'PH':'Non-PH',bg,isPH?'B8860B':'666666',isPH);
+      ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(d.dt.arr_res||0,bg,arrCol);
+      ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(d.dt.arr_vis||0,bg,'B8860B');
+      ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(d.dt.arr_tot||0,bg,arrCol,true);
+      ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(d.dt.dep_res||0,bg,depCol);
+      ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(d.dt.dep_vis||0,bg,'B8860B');
+      ws[XLSX.utils.encode_cell({r:R,c:9})]=numC(d.dt.ad_tot||0,bg,'333333',true);
+      if(isNew){
+        for(let j=0;j<NC;j++){
+          const cell=ws[XLSX.utils.encode_cell({r:R,c:j})];
+          if(cell) cell.s.border={...cell.s.border, top:{style:'thin',color:{rgb:'BBBBBB'}}};
+        }
+      }
+      ws['!rows'][R]={hpt:12}; R++;
     });
   }
 
   ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R+2,c:NC-1}});
-  ws['!merges']=merges;
-  ws['!cols']=[{wch:14},{wch:8},{wch:8},{wch:10},{wch:8},{wch:8},{wch:10},{wch:10},{wch:12},{wch:9},{wch:8},{wch:9},{wch:8}];
+  ws['!merges']=mrg;
+  ws['!cols']=[{wch:28},{wch:10},{wch:9},{wch:8},{wch:13},{wch:13},{wch:13},{wch:13},{wch:13},{wch:14}];
   XLSX.utils.book_append_sheet(wb,ws,'Analysis & Forecast');
 }
+
 
 // ─── PDF EXPORT ──────────────────────────────────────────────────────────────
 function exportExcel(){
@@ -2690,10 +2918,31 @@ function renderContent(){
 const SR = {
   ctrR:  300,  // HKR manned counter:  5.0 pax/min × 60
   ctrV:  180,  // Visitor counter:     3.0 pax/min × 60
-  echR:  600,  // HKR e-channel:      10.0 pax/min × 60
-  echV:  360,  // Visitor e-channel:   6.0 pax/min × 60 (less familiar with system)
+  echR:  300,  // HKR e-channel:       5.0 pax/min × 60 (same rate per lane as counter)
+  echV:  180,  // Visitor e-channel:   3.0 pax/min × 60 (same rate per lane as counter)
+  // Note: e-channels are more STAFF-efficient (1 SIA per 4.77 lanes vs 1 per counter)
+  // but each lane clears pax at the same rate as a manned position
 };
-const HALL_CAPACITY = 2500; // arrival hall capacity pax — load baseline
+// ── Hall geometry (from arrival hall floor plan) ─────────────────────────────
+// Green arrow at centre e-channel corridor = ~60 pax queue depth per lane
+// E-channel queuing zone: 47 lanes × 60 pax/lane = 2,820 pax
+// Counter queuing zone:   28 lanes × 20 pax/lane =   560 pax
+// Open hall (trapezoid area behind queues):         ~3,000 pax (estimated from proportion)
+// Total operational capacity before serious congestion: ~6,380 pax
+const HALL = {
+  echLanes:    47,
+  ctrLanes:    28,
+  echQueuePax: 60,    // pax/lane depth (from green arrow, floor plan)
+  ctrQueuePax: 20,    // pax/lane depth (counter queue depth estimate)
+  openArea:    3000,  // open trapezoid area behind queuing zones
+  get echZone(){ return this.echLanes * this.echQueuePax; },   // 2,820
+  get ctrZone(){ return this.ctrLanes * this.ctrQueuePax; },   //   560
+  get total(){   return this.echZone + this.ctrZone + this.openArea; }, // 6,380
+  // Congestion thresholds (% of total)
+  amber: 0.45,   // 45% full — queues becoming visible
+  red:   0.75,   // 75% full — serious congestion
+};
+const HALL_CAPACITY = HALL.total; // backwards compat
 // Service pledge — Immigration Dept performance pledge
 // HKR: 98% within 15 min | Visitor: 95% within 30 min
 const PLEDGE = {
@@ -2791,13 +3040,13 @@ var UNITS = {
 };
 var EST = {
   dir: 'arr',
-  arrR: 10000, arrV: 4000,
-  depR: 9000,  depV: 4000,
-  ctrR: 22, ctrV: 6,      // arr counters (R+V must ≤ 28)
-  echR: 47, echV: 0,      // arr e-channels (R+V must ≤ 47)
-  // dep resources stored separately, toggled by dir
-  depCtrR: 22, depCtrV: 6,
-  depEchR: 53, depEchV: 0,
+  arrR: 8085, arrV: 2415,   // 10500 pax/hr, 77% HKR (normal day)
+  depR: 7315, depV: 2185,   // 9500 pax/hr
+  // Realistic splits: HKR mostly use e-channels, Visitors mostly need counters
+  ctrR: 6,  ctrV: 22,       // arr: 6 HKR + 22 Vis counters (visitors dominate counter demand)
+  echR: 44, echV:  3,       // arr: 44 HKR + 3 Vis e-channels
+  depCtrR: 6,  depCtrV: 22, // dep same logic
+  depEchR: 50, depEchV:  3,
 };
 
 
@@ -2927,7 +3176,10 @@ function renderEstimator(){
   const vBreak = curve.find(p=>p.wtV > PLEDGE.V);
 
   const nt = v => Number(v).toLocaleString();
-  const fmt = v => v >= 999 ? '∞' : v.toFixed(1);
+  const fmt = v => v >= 999 ? 'OVRLD' : v.toFixed(1);
+  // rho: utilisation ratio per stream (if ≥ 1 = overloaded, can never clear queue)
+  const rhoR = sR > 0 ? volR / (sR * muR) : 0;
+  const rhoV = sV > 0 ? volV / (sV * muV) : 0;
   const cc = v => v >= 98 ? '#4ade80' : v >= 90 ? '#f5c842' : '#f87171';
   const wc = (w,t) => w >= 999 ? '#f87171' : w > t ? '#f5c842' : '#4ade80';
   const fullSIA = maxCtr + Math.ceil(maxEch/ICO_PER_ECH);
@@ -2996,7 +3248,12 @@ function renderEstimator(){
   p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
   p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">');
   p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">② Current Deployment</span>');
-  p.push('<span style="font-size:9px;font-family:Space Mono,monospace;color:#7c6af7;font-weight:700">'+curSIA+' SIA</span>');
+  p.push('<div style="text-align:right">'
+    + '<div style="font-size:9px;color:var(--muted);font-family:Space Mono,monospace">'
+    + (ctrR+ctrV)+' ctr + ⌈'+(echR+echV)+'÷4.77⌉ = '+Math.ceil((echR+echV)/ICO_PER_ECH)+' e-ch'
+    + '</div>'
+    + '<div style="font-family:Space Mono,monospace;font-size:14px;font-weight:700;color:#7c6af7">'+curSIA+' SIA total</div>'
+    + '</div>');
   p.push('</div><div style="padding:12px 14px">');
 
   // Counters
@@ -3035,10 +3292,11 @@ function renderEstimator(){
     p2.push('<span style="padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:Space Mono,monospace;background:'+(pledgeMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)')+';color:'+(pledgeMet?'#4ade80':'#f87171')+'">'+(pledgeMet?'✓ PLEDGE MET':'✗ BREACH')+'</span>');
     p2.push('</div>');
     // Big wait time
+    const isOvld = wt >= 999;
     p2.push('<div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:8px">');
     p2.push('<div><div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Mean Wait</div>');
-    p2.push('<div style="font-family:Space Mono,monospace;font-size:36px;font-weight:700;color:'+wtColor+';line-height:1">'+fmt(wt)+'</div>');
-    p2.push('<div style="font-size:9px;color:var(--muted)">min (target ≤'+tWt+')</div></div>');
+    p2.push('<div style="font-family:Space Mono,monospace;font-size:'+(isOvld?'20':'36')+'px;font-weight:700;color:#f87171;line-height:1">'+(isOvld?'OVERLOADED':fmt(wt))+'</div>');
+    p2.push('<div style="font-size:9px;color:'+(isOvld?'#f87171':'var(--muted)')+'">'+( isOvld?'Capacity < demand — add resources':'min (target ≤'+tWt+')')+'</div></div>');
     // Compliance bar
     p2.push('<div style="flex:1"><div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Pledge Compliance</div>');
     p2.push('<div style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:'+compColor+'">'+comp.toFixed(1)+'%</div>');
@@ -3053,6 +3311,13 @@ function renderEstimator(){
 
   p.push(streamBlock('HKR (Resident)','#0097A7',volR,wtR,compR,PLEDGE.R,PLEDGE.pctR,LqR,uR));
   p.push(streamBlock('Visitor (Mainland)','var(--gold)',volV,wtV,compV,PLEDGE.V,PLEDGE.pctV,LqV,uV));
+  // Show capacity vs demand summary
+  const capTot=capR+capV;
+  p.push('<div style="font-size:9px;color:var(--muted);background:var(--surface2);border-radius:6px;padding:8px 10px;margin-top:8px">');
+  p.push('HKR capacity: <b style="color:#0097A7">'+nt(capR)+'</b> pax/hr ('+sR+' servers) vs demand '+nt(volR)+' &nbsp;·&nbsp; ');
+  p.push('Visitor capacity: <b style="color:var(--gold)">'+nt(capV)+'</b> pax/hr ('+sV+' servers) vs demand '+nt(volV));
+  if(rhoV>=1||rhoR>=1) p.push('<br><b style="color:#f87171">⚠ '+( rhoR>=1?'HKR ':'')+(rhoR>=1&&rhoV>=1?'& ':'')+( rhoV>=1?'Visitor ':'')+' stream overloaded — reduce volume or add resources</b>');
+  p.push('</div>');
   p.push('</div></div>'); // wait time panel
 
   // ── Minimum staff optimiser ───────────────────────────────────────────────
@@ -3231,9 +3496,278 @@ function renderEstimator(){
   p.push('</div>'); // col 3
 
   p.push('</div>'); // main grid
+
+  // ── DAY SIMULATION PANEL ───────────────────────────────────────────────────
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:16px">');
+  p.push('<div style="padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">');
+  p.push('<div>');
+  p.push('<div style="font-family:Space Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.06em">Full-Day Hall Simulation</div>');
+  p.push('<div style="font-size:9px;color:var(--muted);margin-top:2px">Queue buildup over time · floor plan capacity: e-ch zone '+HALL.echZone+' + ctr zone '+HALL.ctrZone+' + open area '+HALL.openArea+' = <b>'+HALL.total+'</b> pax total</div>');
+  p.push('</div>');
+  // Day picker — from loaded data or forecast
+  p.push('<select id="simDayPicker" onchange="renderSimDay()" style="background:var(--surface3);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:5px;font-size:10px;font-family:Space Mono,monospace">');
+  p.push('<option value="">— select a day to simulate —</option>');
+  // Offer loaded Easter days
+  const easterDaysAll = typeof allDays!=='undefined' ? getEasterDays(allDays) : [];
+  easterDaysAll.sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20).forEach(d=>{
+    const rem = getRemarks(d.date)||'';
+    p.push('<option value="loaded:'+d.date+'">'+fDate(d.date)+' ('+rem+') — actual</option>');
+  });
+  // Offer forecast days
+  const _fc = typeof allDays!=='undefined' ? forecastEaster2026(allDays) : null;
+  if(_fc && _fc.dayProfiles){
+    Object.entries(_fc.dayProfiles).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp])=>{
+      p.push('<option value="forecast:'+off+'">'+fDate(dp.date)+' '+dp.label+' — forecast</option>');
+    });
+  }
+  p.push('</select>');
+  p.push('</div>');
+  p.push('<div id="simContent" style="padding:16px"><div style="color:var(--muted);font-size:11px;text-align:center;padding:24px">Select a day above to simulate queue buildup and wait times throughout the day.</div></div>');
+  p.push('</div>');
+
   root.innerHTML = p.join('');
 }
 
+// Called when user selects a day in the simulation picker
+function renderSimDay(){
+  const sel = document.getElementById('simDayPicker');
+  const container = document.getElementById('simContent');
+  if(!sel||!container||!sel.value) return;
+
+  const [type, key] = sel.value.split(':');
+  const d = EST;
+  const isArr = d.dir === 'arr';
+  const ctrR=isArr?d.ctrR:d.depCtrR, ctrV=isArr?d.ctrV:d.depCtrV;
+  const echR=isArr?d.echR:d.depEchR, echV=isArr?d.echV:d.depEchV;
+
+  let profile = [], dayLabel = '', growthFactor = 1;
+
+  if(type==='loaded'){
+    const day = allDays.find(d=>d.date===key);
+    if(!day){ container.innerHTML='<div style="color:#f87171;padding:16px">Day not found</div>'; return; }
+    profile = day.hrs || [];
+    dayLabel = fDate(key) + ' — ' + (getRemarks(key)||'Actual data');
+  } else if(type==='forecast'){
+    const fc = forecastEaster2026(allDays);
+    if(!fc){ container.innerHTML='<div style="color:#f87171;padding:16px">No forecast data</div>'; return; }
+    const dp = fc.dayProfiles[key];
+    if(!dp){ container.innerHTML='<div style="color:#f87171;padding:16px">Forecast day not found</div>'; return; }
+    profile = dp.profile;
+    growthFactor = fc.factor;
+    dayLabel = fDate(dp.date) + ' — ' + dp.label + ' (forecast ×'+(fc.factor>=1?'+':'')+((fc.factor-1)*100).toFixed(1)+'%)';
+  }
+
+  if(!profile.length){ container.innerHTML='<div style="color:var(--muted);padding:16px">No hourly data for this day.</div>'; return; }
+
+  const slots = simulateDay(profile, ctrR, ctrV, echR, echV, growthFactor);
+  if(!slots.length){ container.innerHTML='<div style="color:var(--muted);padding:16px">No valid time slots.</div>'; return; }
+
+  const nt = v => Number(v).toLocaleString();
+  const fmt = v => v>=999?'∞':v.toFixed(1);
+  const peakQ = Math.max(...slots.map(s=>s.qTotal));
+  const peakFill = Math.max(...slots.map(s=>s.hallFillPct));
+  const peakArrSlot = slots.reduce((a,b)=>b.totArr>a.totArr?b:a, slots[0]);
+  const hoursBreachR = slots.filter(s=>!s.pledgeMetR).length;
+  const hoursBreachV = slots.filter(s=>!s.pledgeMetV).length;
+  const maxWaitR = Math.max(...slots.map(s=>s.totalWaitR));
+  const maxWaitV = Math.max(...slots.map(s=>s.totalWaitV));
+
+  const p2 = [];
+
+  // ── Summary KPIs ───────────────────────────────────────────────────────────
+  p2.push('<div style="font-family:Space Mono,monospace;font-size:11px;font-weight:700;color:var(--dim);margin-bottom:10px">'+dayLabel+'</div>');
+  p2.push('<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">');
+  [
+    {l:'Peak Queue',v:nt(peakQ)+' pax',c:peakQ>HALL.total*0.75?'#f87171':peakQ>HALL.total*0.45?'#f5c842':'#4ade80',s:'max simultaneous waiting'},
+    {l:'Max Hall Fill',v:peakFill+'%',c:peakFill>75?'#f87171':peakFill>45?'#f5c842':'#4ade80',s:'floor plan capacity: '+nt(HALL.total)+' pax'},
+    {l:'Worst HKR Wait',v:fmt(maxWaitR)+' min',c:maxWaitR>PLEDGE.R?'#f87171':maxWaitR>PLEDGE.R*0.7?'#f5c842':'#4ade80',s:'target ≤'+PLEDGE.R+' min'},
+    {l:'Worst Vis Wait',v:fmt(maxWaitV)+' min',c:maxWaitV>PLEDGE.V?'#f87171':maxWaitV>PLEDGE.V*0.7?'#f5c842':'#4ade80',s:'target ≤'+PLEDGE.V+' min'},
+    {l:'Pledge Breach',v:(hoursBreachR+hoursBreachV)+' hrs',c:(hoursBreachR+hoursBreachV)>0?'#f87171':'#4ade80',s:'HKR: '+hoursBreachR+' hrs · Vis: '+hoursBreachV+' hrs'},
+  ].forEach(k=>{
+    p2.push('<div style="background:var(--surface2);border-radius:8px;padding:10px;border-top:2px solid '+k.c+'">');
+    p2.push('<div style="font-size:8px;color:var(--muted);margin-bottom:3px">'+k.l+'</div>');
+    p2.push('<div style="font-family:Space Mono,monospace;font-size:17px;font-weight:700;color:'+k.c+'">'+k.v+'</div>');
+    p2.push('<div style="font-size:9px;color:var(--muted)">'+k.s+'</div></div>');
+  });
+  p2.push('</div>');
+
+  // ── Hall fill SVG chart ────────────────────────────────────────────────────
+  const svgW=900, svgH=160, pad={l:50,r:16,t:14,b:32};
+  const cW=svgW-pad.l-pad.r, cH=svgH-pad.t-pad.b;
+  const nSlots=slots.length, barW=Math.floor(cW/nSlots)-1;
+  const maxQVis = Math.max(peakQ*1.1, HALL.total*0.6);
+
+  let svg='<svg width="'+svgW+'" height="'+svgH+'" viewBox="0 0 '+svgW+' '+svgH+'" style="width:100%" xmlns="http://www.w3.org/2000/svg">';
+  // Threshold bands
+  [
+    {pct:HALL.amber, col:'rgba(245,200,66,.08)', label:'45% (amber)'},
+    {pct:HALL.red, col:'rgba(248,113,113,.08)', label:'75% (red)'},
+  ].forEach(band=>{
+    const yB=pad.t+cH*(1-Math.min(HALL.total*band.pct/maxQVis,1));
+    svg+='<rect x="'+pad.l+'" y="'+yB+'" width="'+cW+'" height="'+(svgH-pad.b-yB)+'" fill="'+band.col+'"/>';
+    svg+='<line x1="'+pad.l+'" y1="'+yB+'" x2="'+(svgW-pad.r)+'" y2="'+yB+'" stroke="rgba(200,150,50,.3)" stroke-width="1" stroke-dasharray="4,3"/>';
+    svg+='<text x="'+(pad.l+2)+'" y="'+(yB-2)+'" font-size="8" fill="rgba(200,150,50,.6)">'+band.label+'</text>';
+  });
+  // Hall capacity line
+  const yHall=pad.t+cH*(1-Math.min(HALL.total/maxQVis,1));
+  svg+='<line x1="'+pad.l+'" y1="'+yHall+'" x2="'+(svgW-pad.r)+'" y2="'+yHall+'" stroke="rgba(248,113,113,.5)" stroke-width="1.5" stroke-dasharray="6,3"/>';
+  svg+='<text x="'+(svgW-pad.r-2)+'" y="'+(yHall-3)+'" font-size="8" fill="rgba(248,113,113,.7)" text-anchor="end">Hall capacity '+nt(HALL.total)+'</text>';
+
+  // Queue bars
+  slots.forEach((s,i)=>{
+    const x=pad.l+i*(barW+1);
+    const qH=Math.min(s.qTotal/maxQVis,1)*cH;
+    const barY=pad.t+cH-qH;
+    const fillCol=s.hallFillPct>75?'#f87171':s.hallFillPct>45?'#f5c842':'rgba(0,212,184,.7)';
+    svg+='<rect x="'+x+'" y="'+barY+'" width="'+barW+'" height="'+qH+'" fill="'+fillCol+'" opacity="0.85"/>';
+  });
+
+  // Arrival line
+  const maxArr=Math.max(...slots.map(s=>s.totArr));
+  if(maxArr>0){
+    const arrPts=slots.map((s,i)=>{
+      const x=pad.l+i*(barW+1)+barW/2;
+      const y=pad.t+cH*(1-s.totArr/maxArr)*0.85+pad.t*0.15; // scale to top 85% of chart
+      return x.toFixed(1)+','+y.toFixed(1);
+    });
+    svg+='<polyline points="'+arrPts.join(' ')+'" fill="none" stroke="rgba(124,106,247,.7)" stroke-width="1.5"/>';
+    svg+='<text x="'+(pad.l+2)+'" y="'+(pad.t+10)+'" font-size="8" fill="rgba(124,106,247,.7)">▲ arrivals</text>';
+  }
+
+  // X-axis labels
+  slots.forEach((s,i)=>{
+    if(i%3===0){
+      const x=pad.l+i*(barW+1)+barW/2;
+      svg+='<text x="'+x+'" y="'+(svgH-pad.b+10)+'" font-size="7" text-anchor="middle" fill="rgba(170,176,200,.6)">'+s.time.substring(0,4)+'</text>';
+    }
+  });
+  // Y-axis
+  [0, Math.round(HALL.total/2), HALL.total].forEach(v=>{
+    const y=pad.t+cH*(1-v/maxQVis);
+    if(y>pad.t&&y<svgH-pad.b){
+      svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(pad.l-4)+'" y2="'+y+'" stroke="rgba(170,176,200,.4)" stroke-width="1"/>';
+      svg+='<text x="'+(pad.l-6)+'" y="'+(y+3)+'" font-size="7" text-anchor="end" fill="rgba(170,176,200,.5)">'+(v/1000).toFixed(1)+'k</text>';
+    }
+  });
+  svg+='<text x="14" y="'+(svgH/2)+'" font-size="8" fill="rgba(170,176,200,.5)" transform="rotate(-90,14,'+(svgH/2)+')">queue (pax)</text>';
+  svg+='<text x="'+(svgW/2)+'" y="'+(svgH)+'" font-size="8" text-anchor="middle" fill="rgba(170,176,200,.5)">time</text>';
+  svg+='<text x="'+(svgW-pad.r)+'" y="'+(pad.t+10)+'" font-size="8" fill="rgba(170,176,200,.4)" text-anchor="end">teal = safe · amber · red = congested</text>';
+  svg+='</svg>';
+  p2.push('<div style="background:var(--surface2);border-radius:8px;padding:10px;margin-bottom:14px">'+svg+'</div>');
+
+  // ── Hour-by-hour table ─────────────────────────────────────────────────────
+  p2.push('<div style="overflow-x:auto">');
+  p2.push('<table class="af-table" style="min-width:800px"><thead><tr>');
+  ['Time','HKR Arr','Vis Arr','Total Arr','Capacity','Queue Total','Hall Fill','Wait HKR','Wait Vis','HKR Pledge','Vis Pledge'].forEach(h=>{
+    p2.push('<th style="white-space:nowrap">'+h+'</th>');
+  });
+  p2.push('</tr></thead><tbody>');
+  const capTotStr = nt(capR+capV);
+  slots.forEach(s=>{
+    const fillCol=s.hallFillPct>75?'#f87171':s.hallFillPct>45?'#f5c842':'#4ade80';
+    const rowBg=s.hallFillPct>75?'background:rgba(248,113,113,.04)':s.hallFillPct>45?'background:rgba(245,200,66,.04)':'';
+    p2.push('<tr style="'+rowBg+'">');
+    p2.push('<td style="font-family:Space Mono,monospace;font-size:10px">'+s.time+'</td>');
+    p2.push('<td class="arr-c">'+nt(s.arrR)+'</td>');
+    p2.push('<td>'+nt(s.arrV)+'</td>');
+    p2.push('<td style="font-weight:700">'+nt(s.totArr)+'</td>');
+    p2.push('<td style="color:var(--muted)">'+capTotStr+'</td>');
+    p2.push('<td style="font-family:Space Mono,monospace;font-weight:700;color:'+fillCol+'">'+nt(s.qTotal)+'</td>');
+    // Hall fill — visual bar
+    p2.push('<td><div style="display:flex;align-items:center;gap:5px;min-width:80px">');
+    p2.push('<div style="flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden">');
+    p2.push('<div style="height:100%;width:'+s.hallFillPct+'%;background:'+fillCol+';border-radius:3px"></div></div>');
+    p2.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:'+fillCol+';width:35px">'+s.hallFillPct+'%</span>');
+    p2.push('</div></td>');
+    // Wait times
+    const wColR=s.totalWaitR>PLEDGE.R?'#f87171':s.totalWaitR>PLEDGE.R*0.7?'#f5c842':'#4ade80';
+    const wColV=s.totalWaitV>PLEDGE.V?'#f87171':s.totalWaitV>PLEDGE.V*0.7?'#f5c842':'#4ade80';
+    p2.push('<td style="font-family:Space Mono,monospace;font-weight:700;color:'+wColR+'">'+fmt(s.totalWaitR)+' min</td>');
+    p2.push('<td style="font-family:Space Mono,monospace;font-weight:700;color:'+wColV+'">'+fmt(s.totalWaitV)+' min</td>');
+    p2.push('<td><span style="padding:2px 7px;border-radius:8px;font-size:9px;font-weight:700;background:'+(s.pledgeMetR?'rgba(74,222,128,.12)':'rgba(248,113,113,.12)')+';color:'+(s.pledgeMetR?'#4ade80':'#f87171')+'">'+(s.pledgeMetR?'MET':'FAIL')+'</span></td>');
+    p2.push('<td><span style="padding:2px 7px;border-radius:8px;font-size:9px;font-weight:700;background:'+(s.pledgeMetV?'rgba(74,222,128,.12)':'rgba(248,113,113,.12)')+';color:'+(s.pledgeMetV?'#4ade80':'#f87171')+'">'+(s.pledgeMetV?'MET':'FAIL')+'</span></td>');
+    p2.push('</tr>');
+  });
+  p2.push('</tbody></table></div>');
+  p2.push('<div style="font-size:9px;color:var(--muted);margin-top:8px">Wait time = queue backlog wait + Erlang-C service wait. Hall capacity from floor plan: '+HALL.echLanes+' e-ch lanes × '+HALL.echQueuePax+' pax + '+HALL.ctrLanes+' ctr lanes × '+HALL.ctrQueuePax+' pax + '+HALL.openArea+' open area = '+nt(HALL.total)+' pax. Resources: '+ctrR+'R+'+ctrV+'V counters · '+echR+'R+'+echV+'V e-channels.</div>');
+
+  container.innerHTML = p2.join('');
+}
+
+
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FULL-DAY HALL SIMULATION
+// Time-step model: each hour, track arrivals vs clearance → queue buildup
+// Combined wait = queue backlog wait + Erlang-C service wait
+// Hall fill % from floor plan geometry
+// ══════════════════════════════════════════════════════════════════════════════
+function simulateDay(hourlyProfile, ctrR, ctrV, echR, echV, growthFactor){
+  growthFactor = growthFactor || 1;
+  const capR = ctrR*SR.ctrR + echR*SR.echR;  // HKR clearance capacity pax/hr
+  const capV = ctrV*SR.ctrV + echV*SR.echV;  // Visitor clearance capacity pax/hr
+  const capTotal = capR + capV;
+  const sR = ctrR+echR, sV = ctrV+echV;
+  const muR = sR>0?capR/sR:SR.ctrR, muV = sV>0?capV/sV:SR.ctrV;
+
+  let queueR=0, queueV=0;  // running queue at start of each hour
+  const slots = [];
+
+  // Filter valid time slots (numeric, not CBS)
+  const hours = hourlyProfile.filter(h=>/^\d{4}/.test(h.time||''));
+
+  for(const hr of hours){
+    // Projected arrivals this hour
+    const arrR = Math.round((hr.arr_res||0) * growthFactor);
+    const arrV = Math.round((hr.arr_vis||0) * growthFactor);
+    const depR = Math.round((hr.dep_res||0) * growthFactor);
+    const depV = Math.round((hr.dep_vis||0) * growthFactor);
+    const totArr = arrR+arrV;
+
+    // Clearance this hour (can't clear more than available)
+    const clearedR = Math.min(queueR+arrR, capR);
+    const clearedV = Math.min(queueV+arrV, capV);
+
+    // Queue at end of this hour
+    const newQR = Math.max(0, queueR + arrR - capR);
+    const newQV = Math.max(0, queueV + arrV - capV);
+    const qTotal = newQR + newQV;
+
+    // Hall fill — queue pax in physical space
+    const hallFill = HALL.total>0 ? Math.min(qTotal/HALL.total, 1) : 0;
+
+    // Wait time = queue backlog wait + Erlang-C service wait
+    // Queue wait: how long before currently-queued pax reach service
+    const queueWaitR = capR>0 ? Math.round(newQR/capR*60*10)/10 : 0;  // minutes
+    const queueWaitV = capV>0 ? Math.round(newQV/capV*60*10)/10 : 0;
+    // Erlang-C service wait (M/M/c)
+    const erlangWaitR = sR>0 ? waitTime(Math.min(arrR, capR*0.99), sR, muR) : 0;
+    const erlangWaitV = sV>0 ? waitTime(Math.min(arrV, capV*0.99), sV, muV) : 0;
+    const totalWaitR = Math.round((queueWaitR + erlangWaitR)*10)/10;
+    const totalWaitV = Math.round((queueWaitV + erlangWaitV)*10)/10;
+
+    // Pledge compliance for this hour's arrivals
+    const compR = sR>0&&arrR>0 ? pledgeCompliance(arrR, sR, muR, PLEDGE.R) : 100;
+    const compV = sV>0&&arrV>0 ? pledgeCompliance(arrV, sV, muV, PLEDGE.V) : 100;
+
+    slots.push({
+      time: hr.time,
+      arrR, arrV, totArr,
+      depR, depV,
+      queueR: newQR, queueV: newQV, qTotal,
+      hallFill, hallFillPct: Math.round(hallFill*100),
+      totalWaitR, totalWaitV,
+      pledgeMetR: totalWaitR <= PLEDGE.R,
+      pledgeMetV: totalWaitV <= PLEDGE.V,
+      compR, compV,
+      capTotal, capR, capV,
+    });
+    queueR = newQR;
+    queueV = newQV;
+  }
+  return slots;
+}
 
 // Linked slider: when key moves, otherKey = max - key (total stays ≤ max)
 // Also updates the other slider's display value without full re-render
@@ -3348,202 +3882,337 @@ function selectEasterDay(dayKey, btn){
 // Generates a professional presentation from the current analysis data
 // ══════════════════════════════════════════════════════════════════════════════
 function exportPPTX(){
-  if(!allDays.length){ alert('No data loaded. Please upload Excel files first.'); return; }
+  if(!allDays.length){ alert('No data loaded.'); return; }
   const days = eraFilter(allDays);
   if(!days.length){ alert('No days in selected era range.'); return; }
 
   const pres = new PptxGenJS();
   pres.layout = 'LAYOUT_16x9';
-  pres.title = 'Passenger Statistics';
+  pres.title = 'Land Boundary Control Point — Passenger Statistics';
   pres.author = 'Immigration Department';
+  pres.subject = 'Record High Analysis & Forecast';
 
   const era = currentEra==='postcovid'?'Post-COVID':'Since Commissioning';
   const latestDate = allDays[allDays.length-1].date;
   const eraFrom = currentEra==='postcovid'?POST_COVID_DATE:COMM_DATE;
+  const isPC = currentEra==='postcovid';
 
   // ── Colour palette ──────────────────────────────────────────────────────────
   const C = {
-    dark:    '07080b', // slide bg
-    navy:    '0D1F4C',
-    accent:  '00D4B8', // teal
-    gold:    'F5C842',
-    arr:     '0097A7',
-    dep:     '5B3D9E',
-    res:     '4ADE80',
-    white:   'FFFFFF',
-    dim:     'AAB0C8',
-    surface: '13151f',
-    border:  '252836',
+    bg:     '0A0E1A',  // near-black slide background
+    panel:  '111827',  // card background
+    navy:   isPC?'0D2B6B':'0A3020',  // header bar
+    accent: isPC?'00D4B8':'4ADE80',  // teal / green
+    gold:   'F5C842',
+    arr:    '00B4C8',
+    dep:    '7C6AF7',
+    res:    '4ADE80',
+    warn:   'F87171',
+    white:  'FFFFFF',
+    dim:    'AAB4C8',
+    muted:  '556070',
+    border: '1E2A3A',
   };
+  const nt = n => n==null?'—':Number(n).toLocaleString();
+  const fmtPct = n => n==null?'—':(n>=0?'+':'')+n.toFixed(1)+'%';
 
-  function fN(n){ return n==null?'—':Number(n).toLocaleString(); }
+  // ── Shared helpers ───────────────────────────────────────────────────────────
+  // Slide header bar
+  function addHeader(sl, title, subtitle){
+    sl.background = { color: C.bg };
+    sl.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.68, fill:{color:C.navy}, line:{color:C.navy} });
+    sl.addShape(pres.shapes.RECTANGLE, { x:0, y:0.68, w:10, h:0.04, fill:{color:C.accent}, line:{color:C.accent} });
+    sl.addText(title, { x:0.38, y:0.02, w:7.5, h:0.64, fontSize:15, bold:true, color:C.white, valign:'middle', fontFace:'Calibri', charSpacing:1 });
+    if(subtitle) sl.addText(subtitle, { x:0.38, y:0.02, w:9.2, h:0.64, fontSize:9, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
+  }
+  // KPI card
+  function addKPI(sl, x, y, w, h, label, value, sub, accentCol){
+    sl.addShape(pres.shapes.RECTANGLE, { x, y, w, h, fill:{color:C.panel}, line:{color:C.border,width:1} });
+    sl.addShape(pres.shapes.RECTANGLE, { x, y, w, h:0.05, fill:{color:accentCol||C.accent}, line:{color:accentCol||C.accent} });
+    sl.addText(label, { x:x+0.15, y:y+0.12, w:w-0.3, h:0.3, fontSize:8, color:C.dim, fontFace:'Calibri' });
+    sl.addText(value, { x:x+0.15, y:y+0.38, w:w-0.3, h:h*0.5, fontSize:22, bold:true, color:accentCol||C.accent, fontFace:'Calibri', shrinkText:true });
+    if(sub) sl.addText(sub, { x:x+0.15, y:y+h-0.28, w:w-0.3, h:0.25, fontSize:8, color:C.muted, fontFace:'Calibri' });
+  }
+  // Footnote
+  function addFootnote(sl, text){
+    sl.addShape(pres.shapes.RECTANGLE, { x:0, y:5.35, w:10, h:0.28, fill:{color:C.navy}, line:{color:C.navy} });
+    sl.addText(text, { x:0.3, y:5.36, w:9.4, h:0.26, fontSize:7.5, color:C.dim, fontFace:'Calibri', valign:'middle' });
+  }
 
-  // ── SLIDE 1: Title ──────────────────────────────────────────────────────────
+  const yoy  = yoyAnalysis(days);
+  const fullY = fullYearAnalysis(days);
+  const dow  = dowAnalysis(days);
+  const hols = holidayAnalysis(days);
+  const ww   = weekdayWeekendAnalysis(days);
+  const easterDaysAll = getEasterDays(days);
+  const lastY = yoy.length ? yoy[yoy.length-1] : null;
+  const prevY = yoy.length>1 ? yoy[yoy.length-2] : null;
+  const gPct  = lastY&&prevY&&prevY.avgDaily ? ((lastY.avgDaily-prevY.avgDaily)/prevY.avgDaily*100) : null;
+  const peakD = days.reduce((a,b)=>((b.dt&&b.dt.ad_tot)||0)>((a.dt&&a.dt.ad_tot)||0)?b:a, days[0]);
+
+  // ══════════════════════════════════════════════════════════════════
+  // SLIDE 1 — TITLE
+  // ══════════════════════════════════════════════════════════════════
   const s1 = pres.addSlide();
-  s1.background = { color: C.dark };
-  // Accent bar left
-  s1.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:0.08, h:5.625, fill:{color:C.accent}, line:{color:C.accent} });
-  s1.addText('PASSENGER STATISTICS', { x:0.3, y:1.6, w:9.4, h:0.7, fontSize:32, bold:true, color:C.white, fontFace:'Calibri' });
-  s1.addText('RECORD HIGH ANALYSIS', { x:0.3, y:2.35, w:9.4, h:0.6, fontSize:22, color:C.accent, fontFace:'Calibri' });
-  s1.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.05, w:2.4, h:0.05, fill:{color:C.gold}, line:{color:C.gold} });
-  s1.addText(era+' Era', { x:0.3, y:3.2, w:4, h:0.4, fontSize:13, color:C.gold, fontFace:'Calibri' });
-  s1.addText('Data range: '+fDate(eraFrom)+' – '+fDate(latestDate), { x:0.3, y:3.65, w:6, h:0.35, fontSize:11, color:C.dim, fontFace:'Calibri' });
-  s1.addText('As at: '+fDate(latestDate)+' · '+days.length+' days in range', { x:0.3, y:4.0, w:6, h:0.35, fontSize:11, color:C.dim, fontFace:'Calibri' });
-  // Logo area
-  s1.addShape(pres.shapes.RECTANGLE, { x:7.8, y:1.5, w:2.1, h:2.1, fill:{color:C.surface}, line:{color:C.border,width:1} });
-  s1.addText('⬡', { x:7.8, y:1.5, w:2.1, h:2.1, fontSize:60, color:C.accent, align:'center', valign:'middle', fontFace:'Calibri' });
+  s1.background = { color: C.bg };
+  // Left accent strip
+  s1.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:0.1, h:5.625, fill:{color:C.accent}, line:{color:C.accent} });
+  // Background panel right
+  s1.addShape(pres.shapes.RECTANGLE, { x:6.8, y:0, w:3.2, h:5.625, fill:{color:C.panel}, line:{color:C.border,width:1} });
+  // Title
+  s1.addText('LAND BOUNDARY\nCONTROL POINT', { x:0.3, y:1.0, w:6.2, h:1.6, fontSize:36, bold:true, color:C.white, fontFace:'Calibri', lineSpacingMultiple:1.1 });
+  s1.addText('Passenger Statistics — Record High Analysis', { x:0.3, y:2.75, w:6.2, h:0.5, fontSize:16, color:C.accent, fontFace:'Calibri' });
+  s1.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.32, w:3.2, h:0.04, fill:{color:C.gold}, line:{color:C.gold} });
+  s1.addText(era+' Era  ·  As at '+fDate(latestDate), { x:0.3, y:3.45, w:6.2, h:0.38, fontSize:12, color:C.gold, fontFace:'Calibri' });
+  s1.addText('Data period: '+fDate(eraFrom)+' – '+fDate(latestDate), { x:0.3, y:3.9, w:6, h:0.3, fontSize:10, color:C.dim, fontFace:'Calibri' });
+  s1.addText(days.filter(d=>!isBorderClosed(d.date)).length.toLocaleString()+' operational days in dataset', { x:0.3, y:4.25, w:6, h:0.3, fontSize:10, color:C.dim, fontFace:'Calibri' });
+  // Right panel stats
+  s1.addText('QUICK SNAPSHOT', { x:7.0, y:0.3, w:2.8, h:0.4, fontSize:9, color:C.dim, fontFace:'Calibri', bold:true, align:'center', charSpacing:2 });
+  const snap=[
+    {l:'Avg Daily ('+(lastY?lastY.year:'')+')' , v:lastY?nt(lastY.avgDaily):'—', c:C.accent},
+    {l:'Same-period YoY', v:gPct!=null?fmtPct(gPct):'—', c:gPct!=null&&gPct>=0?C.res:C.warn},
+    {l:'Avg Wknd / PH', v:nt(ww.phwk.avgTotal), c:C.gold},
+    {l:'Peak Day', v:peakD?nt(peakD.dt.ad_tot):'—', c:C.gold},
+  ];
+  snap.forEach((k,i)=>{
+    s1.addText(k.l, { x:7.0, y:0.85+i*1.1, w:2.8, h:0.3, fontSize:8, color:C.muted, fontFace:'Calibri', align:'center' });
+    s1.addText(k.v, { x:7.0, y:1.1+i*1.1, w:2.8, h:0.55, fontSize:20, bold:true, color:k.c, fontFace:'Calibri', align:'center' });
+  });
+  s1.addText('Immigration Department  ·  Confidential', { x:0.3, y:5.25, w:9.4, h:0.25, fontSize:8, color:C.muted, fontFace:'Calibri' });
 
-  // ── SLIDE 2: Key KPIs ───────────────────────────────────────────────────────
-  const yoy = yoyAnalysis(days);
-  const lastYoy = yoy.length ? yoy[yoy.length-1] : null;
-  const prevYoy = yoy.length>1 ? yoy[yoy.length-2] : null;
-  const growthPct = lastYoy&&prevYoy&&prevYoy.avgDaily ? ((lastYoy.avgDaily-prevYoy.avgDaily)/prevYoy.avgDaily*100) : null;
-  const peakDay = days.reduce((a,b)=>((b.dt&&b.dt.ad_tot)||0)>((a.dt&&a.dt.ad_tot)||0)?b:a, days[0]);
-  const ww = weekdayWeekendAnalysis(days);
-
+  // ══════════════════════════════════════════════════════════════════
+  // SLIDE 2 — EXECUTIVE SUMMARY KPIs (2-row grid of 6 cards)
+  // ══════════════════════════════════════════════════════════════════
   const s2 = pres.addSlide();
-  s2.background = { color: C.dark };
-  s2.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:C.navy}, line:{color:C.navy} });
-  s2.addText('KEY PERFORMANCE INDICATORS', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
-  s2.addText(era+' · '+fDate(eraFrom)+' – '+fDate(latestDate), { x:0.4, y:0, w:9.2, h:0.7, fontSize:10, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
-
-  const kpis2 = [
-    { lbl:'Days in Range', val:days.length.toLocaleString(), color:C.accent },
-    { lbl:'Avg Daily ('+( lastYoy?lastYoy.year:'')+')', val:lastYoy?fN(lastYoy.avgDaily):'—', color:C.gold },
-    { lbl:'YoY Growth', val:growthPct!=null?(growthPct>=0?'+':'')+growthPct.toFixed(1)+'%':'—', color:growthPct!=null&&growthPct>=0?C.res:'F87171' },
-    { lbl:'Avg Weekday', val:fN(ww.weekday.avgTotal), color:C.arr },
-    { lbl:'Avg Wknd/PH', val:fN(ww.phwk.avgTotal), color:C.gold },
-    { lbl:'Peak Day Total', val:peakDay?fN(peakDay.dt.ad_tot):'—', color:C.gold },
+  addHeader(s2, 'EXECUTIVE SUMMARY', era+' · '+fDate(eraFrom)+' – '+fDate(latestDate));
+  const kpis2=[
+    {l:'Days in Dataset',       v:days.filter(d=>!isBorderClosed(d.date)).length.toLocaleString(), s:'operational days',    c:C.accent},
+    {l:'Avg Daily ('+( lastY?lastY.year:'')+')', v:lastY?nt(lastY.avgDaily):'—',                 s:'pax/day',             c:C.gold},
+    {l:'YoY Growth (same period)', v:gPct!=null?fmtPct(gPct):'—',                                 s:'vs prior same period', c:gPct!=null&&gPct>=0?C.res:C.warn},
+    {l:'Avg Weekday (Non-PH)',  v:nt(ww.weekday.avgTotal),                                        s:ww.weekday.count+' days baseline', c:C.arr},
+    {l:'Avg Weekend / PH',      v:nt(ww.phwk.avgTotal),                                           s:ww.phwk.count+' days',  c:C.gold},
+    {l:'All-time Peak Day',     v:peakD?nt(peakD.dt.ad_tot):'—',                                  s:peakD?fDate(peakD.date):'',       c:C.gold},
   ];
   kpis2.forEach((k,i)=>{
-    const col = i%3, row = Math.floor(i/3);
-    const x = 0.3 + col*3.25, y = 1.0 + row*2.1;
-    s2.addShape(pres.shapes.RECTANGLE, { x, y, w:3.0, h:1.8, fill:{color:C.surface}, line:{color:C.border,width:1} });
-    s2.addShape(pres.shapes.RECTANGLE, { x, y, w:3.0, h:0.06, fill:{color:k.color}, line:{color:k.color} });
-    s2.addText(k.lbl, { x:x+0.15, y:y+0.15, w:2.7, h:0.35, fontSize:9, color:C.dim, fontFace:'Calibri' });
-    s2.addText(k.val, { x:x+0.15, y:y+0.5, w:2.7, h:0.85, fontSize:26, bold:true, color:k.color, fontFace:'Calibri', shrinkText:true });
+    const col=i%3, row=Math.floor(i/3);
+    addKPI(s2, 0.25+col*3.25, 0.9+row*2.2, 3.1, 2.0, k.l, k.v, k.s, k.c);
   });
-  if(peakDay) s2.addText('Peak: '+fDate(peakDay.date)+' ('+getRemarks(peakDay.date)+')', { x:0.3, y:5.1, w:9.4, h:0.35, fontSize:9, color:C.dim, fontFace:'Calibri' });
+  // Peak day context
+  if(peakD) addFootnote(s2, 'Peak day: '+fDate(peakD.date)+' ('+( getRemarks(peakD.date)||'—')+')'
+    +' · Arrival: '+nt(peakD.dt.arr_tot||0)+' · Departure: '+nt(peakD.dt.dep_tot||0)
+    +' · HKR: '+nt(peakD.dt.ad_res||0)+' · Visitor: '+nt(peakD.dt.ad_vis||0)
+    +(ww.weekday.avgTotal>0?' · Peak is ×'+( peakD.dt.ad_tot/ww.weekday.avgTotal).toFixed(1)+' avg weekday':''));
 
-  // ── SLIDE 3: Year-over-Year Trend ──────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════
+  // SLIDE 3 — YEAR-OVER-YEAR TREND (bar chart + commentary)
+  // ══════════════════════════════════════════════════════════════════
   const s3 = pres.addSlide();
-  s3.background = { color: C.dark };
-  s3.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:C.navy}, line:{color:C.navy} });
-  s3.addText('YEAR-OVER-YEAR TRAFFIC TREND', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
-  s3.addText('Same period: 1 Jan – '+fDate(latestDate).split(' ').slice(0,2).join(' ')+' each year', { x:0.4, y:0, w:9.2, h:0.7, fontSize:10, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
+  const _moParts3 = latestDate.substring(5).split('-');
+  const pLabel = parseInt(_moParts3[1])+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(_moParts3[0])-1];
+  addHeader(s3, 'YEAR-OVER-YEAR TRAFFIC TREND', 'Same period (1 Jan – '+pLabel+') compared across years');
 
   if(yoy.length>1){
-    // Bar chart of avg daily
-    const chartData = [{ name:'Avg Daily', labels: yoy.map(y=>y.year), values: yoy.map(y=>y.avgDaily) }];
-    s3.addChart(pres.charts.BAR, chartData, {
-      x:0.4, y:0.85, w:5.8, h:4.2, barDir:'col',
-      chartColors:[C.accent.replace('#','')],
+    s3.addChart(pres.charts.BAR, [{ name:'Avg Daily Pax', labels:yoy.map(y=>y.year), values:yoy.map(y=>y.avgDaily) }], {
+      x:0.25, y:0.85, w:6.0, h:3.9, barDir:'col',
+      chartColors:[C.accent],
       showValue:true, valAxisMinVal:0,
-      dataLabelFontSize:8, dataLabelColor:C.white.replace('#',''),
-      catAxisLabelColor:C.dim.replace('#',''), valAxisLabelColor:C.dim.replace('#',''),
-      plotAreaFill:{color:C.surface.replace('#','')},
+      dataLabelFontSize:7, dataLabelColor:C.white,
+      catAxisLabelColor:C.dim, valAxisLabelColor:C.dim,
+      plotAreaFill:{color:C.panel},
+      dataLabelPosition:'outEnd',
     });
-    // YoY growth text
-    s3.addText('YoY Growth Summary', { x:6.4, y:0.9, w:3.3, h:0.4, fontSize:11, bold:true, color:C.white, fontFace:'Calibri' });
-    yoy.slice(-6).forEach((y,i)=>{
-      const prev = yoy[yoy.indexOf(y)-1];
-      const g = prev&&prev.avgDaily ? ((y.avgDaily-prev.avgDaily)/prev.avgDaily*100) : null;
-      const gStr = g!=null?(g>=0?'+':'')+g.toFixed(1)+'%':'—';
-      const gCol = g!=null&&g>=0?C.res:'F87171';
-      s3.addText(y.year+':  '+fN(y.avgDaily), { x:6.4, y:1.4+i*0.5, w:2.2, h:0.42, fontSize:11, color:C.dim, fontFace:'Calibri' });
-      s3.addText(gStr, { x:8.6, y:1.4+i*0.5, w:1.0, h:0.42, fontSize:11, bold:true, color:gCol, fontFace:'Calibri', align:'right' });
+    // YoY table on right
+    s3.addShape(pres.shapes.RECTANGLE, { x:6.5, y:0.85, w:3.25, h:0.4, fill:{color:C.navy}, line:{color:C.navy} });
+    s3.addText('Year-on-Year Growth', { x:6.55, y:0.85, w:3.15, h:0.4, fontSize:9, bold:true, color:C.white, fontFace:'Calibri', valign:'middle' });
+    yoy.slice(-8).forEach((y,i)=>{
+      const prev=yoy[yoy.indexOf(y)-1];
+      const g=prev&&prev.avgDaily?((y.avgDaily-prev.avgDaily)/prev.avgDaily*100):null;
+      const gCol=g!=null&&g>=0?C.res:C.warn;
+      const rowBg=y.caveat==='early-reopen'?'1A1408':C.panel;
+      s3.addShape(pres.shapes.RECTANGLE, { x:6.5, y:1.3+i*0.48, w:3.25, h:0.46, fill:{color:rowBg}, line:{color:C.border,width:1} });
+      s3.addText(y.year+(y.caveat==='early-reopen'?' ⚠':''), { x:6.6, y:1.32+i*0.48, w:0.7, h:0.42, fontSize:10, bold:true, color:y.caveat==='early-reopen'?C.gold:C.white, fontFace:'Calibri', valign:'middle' });
+      s3.addText(nt(y.avgDaily), { x:7.35, y:1.32+i*0.48, w:1.2, h:0.42, fontSize:10, color:C.dim, fontFace:'Calibri', valign:'middle', align:'right' });
+      s3.addText(g!=null?fmtPct(g):'—', { x:8.6, y:1.32+i*0.48, w:1.0, h:0.42, fontSize:10, bold:true, color:gCol, fontFace:'Calibri', valign:'middle', align:'right' });
     });
-    s3.addText('Note: Closed/Excl. days (border closure 2020-02-04 to 2023-01-07) excluded from averages.', { x:0.4, y:5.2, w:9.2, h:0.3, fontSize:8, color:C.dim, fontFace:'Calibri' });
+    addFootnote(s3, 'Avg daily calculated from same calendar period (1 Jan – '+pLabel+') for fair comparison. Border closure period (Feb 2020 – Jan 2023) excluded from averages. ⚠ 2023 = early-reopening year, public remained cautious; figures understate structural demand.');
   }
 
-  // ── SLIDE 4: Day-of-Week Analysis ─────────────────────────────────────────
-  const dow = dowAnalysis(days);
+  // ══════════════════════════════════════════════════════════════════
+  // SLIDE 4 — FULL YEAR TREND
+  // ══════════════════════════════════════════════════════════════════
+  const s4b = pres.addSlide();
+  addHeader(s4b, 'ANNUAL TRAFFIC — FULL YEAR TOTALS', 'Complete calendar year · COVID closure excluded · current year partial');
+  const fyData = fullY.filter(y=>!isBorderClosed(y.year+'-06-01')&&y.count>10);
+  if(fyData.length>1){
+    s4b.addChart(pres.charts.BAR, [
+      { name:'Total Traffic', labels:fyData.map(y=>y.year), values:fyData.map(y=>y.total) },
+    ], {
+      x:0.25, y:0.88, w:9.5, h:3.7, barDir:'col',
+      chartColors:[C.arr],
+      showValue:true, valAxisMinVal:0,
+      dataLabelFontSize:7, dataLabelColor:C.white,
+      catAxisLabelColor:C.dim, valAxisLabelColor:C.dim,
+      plotAreaFill:{color:C.panel},
+    });
+    // Mark 2023 caveat
+    s4b.addText('⚠ 2023: Border reopened Jan 8, 2023. Traffic ramped gradually. Year understates structural demand.', { x:0.3, y:4.65, w:9.4, h:0.35, fontSize:9, color:C.gold, fontFace:'Calibri', italic:true });
+  }
+  addFootnote(s4b, 'Full-year totals. Border closure days (2020-02-04 to 2023-01-07) excluded from averages. Current year is partial and based on data loaded. Chart shows all post-COVID years with sufficient data.');
+
+  // ══════════════════════════════════════════════════════════════════
+  // SLIDE 5 — DAY-OF-WEEK PROFILE
+  // ══════════════════════════════════════════════════════════════════
   const s4 = pres.addSlide();
-  s4.background = { color: C.dark };
-  s4.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:C.navy}, line:{color:C.navy} });
-  s4.addText('AVERAGE TRAFFIC BY DAY OF WEEK', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
-
+  addHeader(s4, 'TRAFFIC PROFILE BY DAY OF WEEK', 'Average pax/day · arrival vs departure breakdown');
   if(dow.length){
-    const maxAvg = Math.max(...dow.map(d=>d.avg))||1;
-    dow.forEach((d,i)=>{
-      const barW = (d.avg/maxAvg)*6.5;
-      const y4 = 0.95+i*0.6;
-      s4.addText(d.day, { x:0.4, y:y4, w:0.8, h:0.5, fontSize:11, color:C.dim, valign:'middle', fontFace:'Calibri' });
-      s4.addShape(pres.shapes.RECTANGLE, { x:1.3, y:y4+0.08, w:barW||0.05, h:0.34, fill:{color:C.accent}, line:{color:C.accent} });
-      s4.addText(fN(d.avg), { x:1.3+(barW||0.05)+0.1, y:y4, w:2, h:0.5, fontSize:11, bold:true, color:C.accent, valign:'middle', fontFace:'Calibri' });
-      s4.addText('▲ '+fN(d.avgArr)+'  ▼ '+fN(d.avgDep), { x:5.8, y:y4, w:4, h:0.5, fontSize:9, color:C.dim, valign:'middle', align:'right', fontFace:'Calibri' });
+    const maxAvg=Math.max(...dow.map(d=>d.avg))||1;
+    // Chart left
+    s4.addChart(pres.charts.BAR, [
+      { name:'Arrival',   labels:dow.map(d=>d.day), values:dow.map(d=>d.avgArr) },
+      { name:'Departure', labels:dow.map(d=>d.day), values:dow.map(d=>d.avgDep) },
+    ], {
+      x:0.25, y:0.85, w:6.2, h:3.9, barDir:'col', barGrouping:'stacked',
+      chartColors:[C.arr, C.dep],
+      showValue:false, valAxisMinVal:0,
+      catAxisLabelColor:C.dim, valAxisLabelColor:C.dim,
+      plotAreaFill:{color:C.panel},
     });
+    // Table right
+    s4.addShape(pres.shapes.RECTANGLE, { x:6.6, y:0.85, w:3.15, h:0.38, fill:{color:C.navy}, line:{color:C.navy} });
+    ['Day','Total','Arrival','Dep'].forEach((h,i)=>{
+      s4.addText(h, { x:6.62+[0,0.72,1.45,2.3][i], y:0.87, w:[0.7,0.7,0.82,0.82][i], h:0.34, fontSize:8, bold:true, color:C.dim, fontFace:'Calibri', valign:'middle', align:'center' });
+    });
+    const monRef=(dow.find(d=>d.day==='Mon')||{avg:1}).avg||1;
+    dow.forEach((d,i)=>{
+      const isWknd=d.day==='Sat'||d.day==='Sun';
+      const rowBg=isWknd?'15120A':C.panel;
+      s4.addShape(pres.shapes.RECTANGLE, { x:6.6, y:1.28+i*0.48, w:3.15, h:0.46, fill:{color:rowBg}, line:{color:C.border,width:1} });
+      s4.addText(d.day, { x:6.62, y:1.3+i*0.48, w:0.7, h:0.42, fontSize:10, bold:isWknd, color:isWknd?C.gold:C.white, fontFace:'Calibri', valign:'middle' });
+      s4.addText(nt(d.avg), { x:7.34, y:1.3+i*0.48, w:0.7, h:0.42, fontSize:10, color:C.dim, fontFace:'Calibri', valign:'middle', align:'right' });
+      s4.addText(nt(d.avgArr), { x:8.07, y:1.3+i*0.48, w:0.82, h:0.42, fontSize:9, color:C.arr, fontFace:'Calibri', valign:'middle', align:'right' });
+      s4.addText(nt(d.avgDep), { x:8.92, y:1.3+i*0.48, w:0.8, h:0.42, fontSize:9, color:C.dep, fontFace:'Calibri', valign:'middle', align:'right' });
+    });
+    addFootnote(s4, 'Stacked bar: teal = arrival, purple = departure. Weekends typically 30–60% above weekday baseline due to leisure travel and public holiday concentration. Mon–Fri baseline excludes public holidays.');
   }
 
-  // ── SLIDE 5: Holiday & Weekday Benchmark ─────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════
+  // SLIDE 6 — BENCHMARK (Weekday vs Weekend/PH)
+  // ══════════════════════════════════════════════════════════════════
   const s5 = pres.addSlide();
-  s5.background = { color: C.dark };
-  s5.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:C.navy}, line:{color:C.navy} });
-  s5.addText('TRAFFIC BENCHMARK', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
-
-  // Two big comparison blocks
+  addHeader(s5, 'TRAFFIC BENCHMARK', 'Average weekday (non-PH) vs weekend / public holiday');
   [
-    { lbl:'Average Weekday (Non-PH)', val:fN(ww.weekday.avgTotal), arr:fN(ww.weekday.avgArr), dep:fN(ww.weekday.avgDep), n:ww.weekday.count, color:C.arr, x:0.4 },
-    { lbl:'Average Weekend / Public Holiday', val:fN(ww.phwk.avgTotal), arr:fN(ww.phwk.avgArr), dep:fN(ww.phwk.avgDep), n:ww.phwk.count, color:C.gold, x:5.1 },
+    { lbl:'Average Weekday (Non-Public Holiday)', d:ww.weekday, color:C.arr, x:0.25 },
+    { lbl:'Average Weekend / Public Holiday',     d:ww.phwk,    color:C.gold, x:5.1  },
   ].forEach(b=>{
-    s5.addShape(pres.shapes.RECTANGLE, { x:b.x, y:0.9, w:4.5, h:3.8, fill:{color:C.surface}, line:{color:C.border,width:1} });
-    s5.addShape(pres.shapes.RECTANGLE, { x:b.x, y:0.9, w:4.5, h:0.07, fill:{color:b.color}, line:{color:b.color} });
-    s5.addText(b.lbl, { x:b.x+0.2, y:1.1, w:4.1, h:0.5, fontSize:11, bold:true, color:C.white, fontFace:'Calibri' });
-    s5.addText(b.val, { x:b.x+0.2, y:1.7, w:4.1, h:1.0, fontSize:40, bold:true, color:b.color, fontFace:'Calibri', shrinkText:true });
-    s5.addText('pax/day average', { x:b.x+0.2, y:2.75, w:4.1, h:0.35, fontSize:10, color:C.dim, fontFace:'Calibri' });
-    s5.addText('▲ Arrival: '+b.arr, { x:b.x+0.2, y:3.2, w:4.1, h:0.35, fontSize:11, color:C.arr.replace('#','')==b.color?C.white:C.arr, fontFace:'Calibri' });
-    s5.addText('▼ Departure: '+b.dep, { x:b.x+0.2, y:3.6, w:4.1, h:0.35, fontSize:11, color:C.dep, fontFace:'Calibri' });
-    s5.addText(b.n+' days in dataset', { x:b.x+0.2, y:4.1, w:4.1, h:0.35, fontSize:9, color:C.dim, fontFace:'Calibri' });
+    s5.addShape(pres.shapes.RECTANGLE, { x:b.x, y:0.85, w:4.65, h:4.5, fill:{color:C.panel}, line:{color:C.border,width:1} });
+    s5.addShape(pres.shapes.RECTANGLE, { x:b.x, y:0.85, w:4.65, h:0.06, fill:{color:b.color}, line:{color:b.color} });
+    s5.addText(b.lbl, { x:b.x+0.2, y:0.98, w:4.25, h:0.5, fontSize:11, bold:true, color:C.white, fontFace:'Calibri' });
+    s5.addText(nt(b.d.avgTotal), { x:b.x+0.2, y:1.55, w:4.25, h:1.1, fontSize:48, bold:true, color:b.color, fontFace:'Calibri', shrinkText:true });
+    s5.addText('pax / day', { x:b.x+0.2, y:2.7, w:4.25, h:0.35, fontSize:11, color:C.dim, fontFace:'Calibri' });
+    // breakdown
+    s5.addShape(pres.shapes.RECTANGLE, { x:b.x+0.2, y:3.15, w:4.25, h:0.04, fill:{color:C.border}, line:{color:C.border} });
+    [
+      ['▲ Avg Arrival',   nt(b.d.avgArr),  C.arr],
+      ['▼ Avg Departure', nt(b.d.avgDep),  C.dep],
+      ['HKR (Resident)',  nt(b.d.avgRes||0), C.res],
+      ['Visitor (Mainland)', nt(b.d.avgVis||0), C.gold],
+    ].forEach(([l,v,c],j)=>{
+      s5.addText(l, { x:b.x+0.2, y:3.28+j*0.27, w:2.5, h:0.26, fontSize:9, color:C.dim, fontFace:'Calibri', valign:'middle' });
+      s5.addText(v, { x:b.x+2.7, y:3.28+j*0.27, w:1.75, h:0.26, fontSize:10, bold:true, color:c, fontFace:'Calibri', valign:'middle', align:'right' });
+    });
+    s5.addText(b.d.count.toLocaleString()+' days in dataset', { x:b.x+0.2, y:4.45, w:4.25, h:0.25, fontSize:8, color:C.muted, fontFace:'Calibri' });
   });
+  addFootnote(s5, 'Visitor category is ~99.8% Mainland Chinese travellers crossing via Home Return Permit (回鄉證) or Two Way Permit (雙程證). '
+    +'Weekend/PH vs Weekday uplift: ×'+(ww.weekday.avgTotal>0?(ww.phwk.avgTotal/ww.weekday.avgTotal).toFixed(2):'—')+' avg. '
+    +'Peak demand planning should be anchored to Weekend/PH baseline rather than weekday average.');
 
-  // ── SLIDE 6: Easter Forecast ───────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════
+  // SLIDE 7 — HOLIDAY TYPE ANALYSIS
+  // ══════════════════════════════════════════════════════════════════
+  const s7 = pres.addSlide();
+  addHeader(s7, 'PEAK HOLIDAY ANALYSIS', 'Average daily traffic by holiday type · top 8 by volume');
+  const topH = hols.slice(0,8);
+  if(topH.length){
+    // Bar chart
+    s7.addChart(pres.charts.BAR, [{
+      name:'Avg Daily Pax',
+      labels: topH.map(h=>h.cat.length>22?h.cat.substring(0,20)+'…':h.cat),
+      values: topH.map(h=>h.avg),
+    }], {
+      x:0.25, y:0.85, w:9.5, h:3.5, barDir:'bar',
+      chartColors:[C.gold],
+      showValue:true, valAxisMinVal:0,
+      dataLabelFontSize:8, dataLabelColor:C.white,
+      catAxisLabelColor:C.dim, valAxisLabelColor:C.dim,
+      plotAreaFill:{color:C.panel},
+    });
+    // Key observations text box
+    const easter_h = hols.find(h=>h.cat.toLowerCase().includes('good friday'));
+    const golden_h = hols.find(h=>h.cat.toLowerCase().includes('national day golden week'));
+    s7.addShape(pres.shapes.RECTANGLE, { x:0.25, y:4.42, w:9.5, h:0.88, fill:{color:C.panel}, line:{color:C.border,width:1} });
+    s7.addText('Key observations:', { x:0.4, y:4.48, w:2, h:0.28, fontSize:9, bold:true, color:C.white, fontFace:'Calibri' });
+    let obs='';
+    if(easter_h) obs+='Good Friday avg: '+nt(easter_h.avg)+' pax (peak recorded: '+nt(easter_h.max)+').  ';
+    if(golden_h) obs+='National Day Golden Week avg: '+nt(golden_h.avg)+' pax.  ';
+    obs+='Weekend/PH avg: '+nt(ww.phwk.avgTotal)+'.  Holiday uplift vs weekday: ×'+(ww.weekday.avgTotal>0?(ww.phwk.avgTotal/ww.weekday.avgTotal).toFixed(2):'—')+'.';
+    s7.addText(obs, { x:0.4, y:4.7, w:9.3, h:0.52, fontSize:9, color:C.dim, fontFace:'Calibri', wrap:true });
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // SLIDE 8 — EASTER FORECAST
+  // ══════════════════════════════════════════════════════════════════
   const easter = forecastEaster2026(days);
   if(easter && Object.keys(easter.dayProfiles).length){
     const f = easter;
     const tLabel = f.targetEasterLabel||'Easter';
     const s6 = pres.addSlide();
-    s6.background = { color: C.dark };
-    s6.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.7, fill:{color:'B8860B'}, line:{color:'B8860B'} });
-    s6.addText(tLabel.toUpperCase()+' FORECAST', { x:0.4, y:0, w:9.2, h:0.7, fontSize:16, bold:true, color:C.white, valign:'middle', fontFace:'Calibri' });
-    s6.addText('YoY Growth Applied: '+(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'%  ·  Based on '+f.easterDays.length+' historical Easter days', { x:0.4, y:0, w:9.2, h:0.7, fontSize:10, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
+    s6.background = { color: C.bg };
+    // Gold header for Easter
+    s6.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.68, fill:{color:'7B4F00'}, line:{color:'7B4F00'} });
+    s6.addShape(pres.shapes.RECTANGLE, { x:0, y:0.68, w:10, h:0.04, fill:{color:C.gold}, line:{color:C.gold} });
+    s6.addText(tLabel.toUpperCase()+' FORECAST', { x:0.38, y:0.02, w:7, h:0.64, fontSize:15, bold:true, color:C.white, valign:'middle', fontFace:'Calibri', charSpacing:1 });
+    s6.addText('Growth: '+(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'% ('+f.growthMethod+')  ·  Baseline: '+f.postCovidEasterCount+' post-COVID Easter days', { x:0.38, y:0.02, w:9.2, h:0.64, fontSize:9, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
 
-    // Day cards
+    // Day cards (5 across)
     const profiles = Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).slice(0,5);
     profiles.forEach(([off,dp],i)=>{
       const sumArr=dp.profile.reduce((s,h)=>s+(h.arr_tot||0),0)||0;
       const sumTot=dp.profile.reduce((s,h)=>s+(h.ad_tot||0),0)||1;
       const pArr=Math.round(dp.projTotal*(sumArr/sumTot));
       const pDep=dp.projTotal-pArr;
-      const x=0.3+i*1.9, cardW=1.75;
-      const hexColor = dp.color.replace('var(--accent)','00D4B8').replace('var(--res)','4ADE80').replace('var(--vis)','F5C842');
-      s6.addShape(pres.shapes.RECTANGLE, { x, y:0.85, w:cardW, h:4.4, fill:{color:C.surface}, line:{color:C.border,width:1} });
-      s6.addShape(pres.shapes.RECTANGLE, { x, y:0.85, w:cardW, h:0.06, fill:{color:hexColor.replace('#','')}, line:{color:hexColor.replace('#','')} });
-      s6.addText(dp.label.replace(/ \(.*\)/,''), { x:x+0.1, y:0.97, w:cardW-0.2, h:0.45, fontSize:9, bold:true, color:C.white, fontFace:'Calibri' });
-      s6.addText(fDate(dp.date), { x:x+0.1, y:1.45, w:cardW-0.2, h:0.35, fontSize:8, color:C.dim, fontFace:'Calibri' });
-      s6.addText(fN(dp.projTotal), { x:x+0.1, y:1.85, w:cardW-0.2, h:0.7, fontSize:20, bold:true, color:'F5C842', fontFace:'Calibri', shrinkText:true });
-      s6.addText('Total pax', { x:x+0.1, y:2.55, w:cardW-0.2, h:0.3, fontSize:8, color:C.dim, fontFace:'Calibri' });
-      s6.addText('▲ '+fN(pArr), { x:x+0.1, y:3.0, w:cardW-0.2, h:0.35, fontSize:9, color:C.arr, fontFace:'Calibri' });
-      s6.addText('▼ '+fN(pDep), { x:x+0.1, y:3.4, w:cardW-0.2, h:0.35, fontSize:9, color:C.dep, fontFace:'Calibri' });
-      s6.addText(dp.isEstimated?'⚠ est.':dp.histCount+'yr avg', { x:x+0.1, y:3.85, w:cardW-0.2, h:0.3, fontSize:7, color:C.dim, fontFace:'Calibri' });
+      const x=0.2+i*1.92, cardW=1.78;
+      const hexCol=dp.color.replace('var(--accent)',C.accent).replace('var(--res)',C.res).replace('var(--vis)',C.gold).replace('var(--gold)',C.gold).replace('#','');
+      s6.addShape(pres.shapes.RECTANGLE, { x, y:0.88, w:cardW, h:2.85, fill:{color:C.panel}, line:{color:C.border,width:1} });
+      s6.addShape(pres.shapes.RECTANGLE, { x, y:0.88, w:cardW, h:0.06, fill:{color:hexCol}, line:{color:hexCol} });
+      s6.addText(dp.label.replace(/ \(.*\)/,''), { x:x+0.1, y:1.0, w:cardW-0.2, h:0.45, fontSize:9, bold:true, color:C.white, fontFace:'Calibri' });
+      s6.addText(fDate(dp.date), { x:x+0.1, y:1.48, w:cardW-0.2, h:0.28, fontSize:8, color:C.dim, fontFace:'Calibri' });
+      s6.addText(nt(dp.projTotal), { x:x+0.1, y:1.78, w:cardW-0.2, h:0.65, fontSize:22, bold:true, color:C.gold, fontFace:'Calibri', shrinkText:true });
+      s6.addText('total pax', { x:x+0.1, y:2.42, w:cardW-0.2, h:0.22, fontSize:7.5, color:C.muted, fontFace:'Calibri' });
+      s6.addText('▲ '+nt(pArr), { x:x+0.1, y:2.65, w:cardW-0.2, h:0.24, fontSize:8.5, color:C.arr, fontFace:'Calibri' });
+      s6.addText('▼ '+nt(pDep), { x:x+0.1, y:2.9, w:cardW-0.2, h:0.24, fontSize:8.5, color:C.dep, fontFace:'Calibri' });
+      s6.addText(dp.isEstimated?'⚠ estimated':dp.histCount+' yr avg', { x:x+0.1, y:3.15, w:cardW-0.2, h:0.2, fontSize:7, color:C.muted, fontFace:'Calibri' });
     });
 
-    // Narrative
+    // Narrative block
     const histDep = f.easterDays.length ? f.easterDays.reduce((a,b)=>(b.dt.dep_tot||0)>(a.dt.dep_tot||0)?b:a, f.easterDays[0]) : null;
-    const avgResShare = f.easterDays.length ? Math.round(f.easterDays.reduce((s,d)=>s+(d.dt.ad_res||0),0)/f.easterDays.reduce((s,d)=>s+(d.dt.ad_tot||0),1)*100) : null;
-    let narrative = tLabel+' is one of the busiest periods at this control point, driven by outbound HKR travel on Good Friday and return traffic on Easter Monday/Tuesday. ';
-    if(histDep) narrative += 'Historical peak departure day: '+fDate(histDep.date)+' ('+getRemarks(histDep.date)+') with '+fN(histDep.dt.dep_tot||0)+' departures. ';
-    if(avgResShare) narrative += 'Average HKR share: '+avgResShare+'% of total Easter traffic. ';
-    narrative += 'YoY growth of '+(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'% applied to projections.';
-
-    s6.addShape(pres.shapes.RECTANGLE, { x:0.3, y:5.1, w:9.4, h:0.4, fill:{color:C.surface}, line:{color:C.border,width:1} });
-    s6.addText(narrative, { x:0.4, y:5.12, w:9.2, h:0.36, fontSize:8, color:C.dim, fontFace:'Calibri' });
+    const avgRes  = f.easterDays.length ? Math.round(f.easterDays.reduce((s,d)=>s+(d.dt.ad_res||0),0)/f.easterDays.reduce((s,d)=>s+(d.dt.ad_tot||0),1)*100) : null;
+    const peakDepOff = Object.entries(f.dayProfiles).reduce((best,[k,dp])=>dp.projTotal>best[1]?[k,dp.projTotal]:[],['',0]);
+    s6.addShape(pres.shapes.RECTANGLE, { x:0.2, y:3.48, w:9.6, h:1.98, fill:{color:C.panel}, line:{color:C.border,width:1} });
+    s6.addText('Operational Context & Historical Insight', { x:0.35, y:3.56, w:9.3, h:0.32, fontSize:10, bold:true, color:C.gold, fontFace:'Calibri' });
+    let narr='';
+    narr += tLabel+' is one of the highest-traffic periods of the year. Good Friday typically sees a surge in HKR outbound departures as residents begin the long weekend, while Easter Monday/Tuesday brings return flows. ';
+    if(histDep) narr += 'Historical peak departure day: '+fDate(histDep.date)+' ('+( getRemarks(histDep.date)||'—')+') — '+nt(histDep.dt.dep_tot||0)+' departures recorded. ';
+    if(avgRes)  narr += 'HKR share of Easter traffic: ~'+avgRes+'% (residents dominate, using e-channels and manned counters). Visitor share (~'+(100-avgRes)+'%) is predominantly Mainland Chinese travellers. ';
+    narr += 'Projection applies a '+( f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'% trend factor derived from '+f.growthMethod+' on post-COVID data. ';
+    narr += 'Hall management: expect queuing zone at 60–80% capacity during peak departure hours on Good Friday.';
+    s6.addText(narr, { x:0.35, y:3.92, w:9.3, h:1.45, fontSize:9, color:C.dim, fontFace:'Calibri', wrap:true, lineSpacingMultiple:1.3 });
   }
 
   // ── Save ──────────────────────────────────────────────────────────────────
-  const eraSlug = currentEra==='postcovid'?'PostCOVID':'SinceCommissioning';
-  const fn = 'RecordHigh_'+eraSlug+'_'+latestDate+'.pptx';
-  pres.writeFile({ fileName: fn });
+  const eraSlug = currentEra==='postcovid'?'PostCOVID':'SinceComm';
+  pres.writeFile({ fileName:'RecordHigh_'+eraSlug+'_'+latestDate+'.pptx' });
 }
+
 
 // estimator render triggered from switchSection directly
 </script>
