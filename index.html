@@ -563,6 +563,89 @@ function dayOfWeek(s){
 
 // ─── HK HOLIDAY REMARKS ENGINE ───────────────────────────────────────────────
 // Compute Easter Sunday for a given year (Anonymous Gregorian algorithm)
+// ══════════════════════════════════════════════════════════════════════════════
+// HK GENERAL HOLIDAYS — Official gazette lookup table (gov.hk)
+// Source: https://www.gov.hk/en/about/abouthk/holiday/
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Official gazetted HK General Holidays 2023-2026 (exact dates from gov.hk)
+const HK_GAZETTE_PH = {
+  // 2023
+  '2023-01-02': "New Year's Holiday",
+  '2023-01-22': 'Lunar New Year (Day 1)',
+  '2023-01-23': 'Lunar New Year (Day 2)',
+  '2023-01-24': 'Lunar New Year (Day 3)',
+  '2023-01-25': 'Lunar New Year (Day 4 — Sub)',
+  '2023-04-05': 'Ching Ming Festival',
+  '2023-04-07': 'Good Friday',
+  '2023-04-08': 'Day following Good Friday',
+  '2023-04-10': 'Easter Monday',
+  '2023-05-01': 'Labour Day',
+  '2023-05-26': "Buddha's Birthday",
+  '2023-06-22': 'Dragon Boat Festival (Tuen Ng)',
+  '2023-07-01': 'HKSAR Establishment Day',
+  '2023-09-30': 'Day following Mid-Autumn Festival',
+  '2023-10-02': 'National Day Holiday',
+  '2023-10-23': 'Chung Yeung Festival',
+  '2023-12-25': 'Christmas Day',
+  '2023-12-26': 'First Weekday after Christmas',
+  // 2024
+  '2024-01-01': "New Year's Day",
+  '2024-02-10': 'Lunar New Year (Day 1)',
+  '2024-02-12': 'Lunar New Year (Day 3)',
+  '2024-02-13': 'Lunar New Year (Day 4 — Sub)',
+  '2024-03-29': 'Good Friday',
+  '2024-03-30': 'Day following Good Friday',
+  '2024-04-01': 'Easter Monday',
+  '2024-04-04': 'Ching Ming Festival',
+  '2024-05-01': 'Labour Day',
+  '2024-05-15': "Buddha's Birthday",
+  '2024-06-10': 'Dragon Boat Festival (Tuen Ng)',
+  '2024-07-01': 'HKSAR Establishment Day',
+  '2024-09-18': 'Day following Mid-Autumn Festival',
+  '2024-10-01': 'National Day',
+  '2024-10-11': 'Chung Yeung Festival',
+  '2024-12-25': 'Christmas Day',
+  '2024-12-26': 'First Weekday after Christmas',
+  // 2025
+  '2025-01-01': "New Year's Day",
+  '2025-01-29': 'Lunar New Year (Day 1)',
+  '2025-01-30': 'Lunar New Year (Day 2)',
+  '2025-01-31': 'Lunar New Year (Day 3)',
+  '2025-04-04': 'Ching Ming Festival',
+  '2025-04-18': 'Good Friday',
+  '2025-04-19': 'Day following Good Friday',
+  '2025-04-21': 'Easter Monday',
+  '2025-05-01': 'Labour Day',
+  '2025-05-05': "Buddha's Birthday",
+  '2025-05-31': 'Dragon Boat Festival (Tuen Ng)',
+  '2025-07-01': 'HKSAR Establishment Day',
+  '2025-10-01': 'National Day',
+  '2025-10-07': 'Day following Mid-Autumn Festival',
+  '2025-10-29': 'Chung Yeung Festival',
+  '2025-12-25': 'Christmas Day',
+  '2025-12-26': 'First Weekday after Christmas',
+  // 2026 (note: Ching Ming on Sun → Mon sub; clashes with Easter Mon → extra Tue PH)
+  '2026-01-01': "New Year's Day",
+  '2026-02-17': 'Lunar New Year (Day 1)',
+  '2026-02-18': 'Lunar New Year (Day 2)',
+  '2026-02-19': 'Lunar New Year (Day 3)',
+  '2026-04-03': 'Good Friday',
+  '2026-04-04': 'Day following Good Friday',
+  '2026-04-05': 'Easter Sunday',
+  '2026-04-06': 'Easter Monday / Day following Ching Ming',
+  '2026-04-07': 'Additional Public Holiday (Ching Ming + Easter overlap)',
+  '2026-05-01': 'Labour Day',
+  '2026-05-25': "Day following Buddha's Birthday",
+  '2026-06-19': 'Dragon Boat Festival (Tuen Ng)',
+  '2026-07-01': 'HKSAR Establishment Day',
+  '2026-09-26': 'Day following Mid-Autumn Festival',
+  '2026-10-01': 'National Day',
+  '2026-10-19': 'Day following Chung Yeung Festival',
+  '2026-12-25': 'Christmas Day',
+  '2026-12-26': 'First Weekday after Christmas',
+};
+
 function easterSunday(year){
   const a=year%19,b=Math.floor(year/100),c=year%100;
   const d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25);
@@ -576,7 +659,6 @@ function easterSunday(year){
 function dateAdd(d,days){const r=new Date(d);r.setDate(r.getDate()+days);return r;}
 function toISO(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 
-// Lunar New Year approximate dates (Year: [month, day] of first day)
 const LUNAR_NEW_YEAR = {
   2003:[2,1],2004:[1,22],2005:[2,9],2006:[1,29],2007:[2,18],2008:[2,7],
   2009:[1,26],2010:[2,14],2011:[2,3],2012:[1,23],2013:[2,10],2014:[1,31],
@@ -584,18 +666,14 @@ const LUNAR_NEW_YEAR = {
   2021:[2,12],2022:[2,1],2023:[1,22],2024:[2,10],2025:[1,29],2026:[2,17],
   2027:[2,6],2028:[1,26],2029:[2,13],2030:[2,3],
 };
-
-// Chung Yeung: 9th day of 9th lunar month (approximate fixed dates)
 const CHUNG_YEUNG = {
   2003:'2003-10-04',2004:'2004-10-22',2005:'2005-10-11',2006:'2006-10-30',
   2007:'2007-10-19',2008:'2008-10-07',2009:'2009-10-26',2010:'2010-10-16',
   2011:'2011-10-05',2012:'2012-10-23',2013:'2013-10-13',2014:'2014-10-02',
   2015:'2015-10-21',2016:'2016-10-09',2017:'2017-10-28',2018:'2018-10-17',
   2019:'2019-10-07',2020:'2020-10-25',2021:'2021-10-14',2022:'2022-10-04',
-  2023:'2023-10-23',2024:'2024-10-11',2025:'2025-10-29',2026:'2026-10-19',
+  2023:'2023-10-23',2024:'2024-10-11',2025:'2025-10-29',2026:'2026-10-18',
 };
-
-// Dragon Boat / Tuen Ng Festival
 const TUEN_NG = {
   2003:'2003-06-04',2004:'2004-06-22',2005:'2005-06-11',2006:'2006-05-31',
   2007:'2007-06-19',2008:'2008-06-08',2009:'2009-05-28',2010:'2010-06-16',
@@ -604,8 +682,6 @@ const TUEN_NG = {
   2019:'2019-06-07',2020:'2020-06-25',2021:'2021-06-14',2022:'2022-06-03',
   2023:'2023-06-22',2024:'2024-06-10',2025:'2025-05-31',2026:'2026-06-19',
 };
-
-// Ching Ming Festival (approx Apr 4-5 each year, sometimes Apr 6)
 const CHING_MING = {
   2003:'2003-04-05',2004:'2004-04-05',2005:'2005-04-05',2006:'2006-04-05',
   2007:'2007-04-05',2008:'2008-04-04',2009:'2009-04-04',2010:'2010-04-05',
@@ -614,8 +690,6 @@ const CHING_MING = {
   2019:'2019-04-05',2020:'2020-04-04',2021:'2021-04-04',2022:'2022-04-05',
   2023:'2023-04-05',2024:'2024-04-04',2025:'2025-04-04',2026:'2026-04-05',
 };
-
-// Buddha's Birthday (4th month 8th day lunar, approx)
 const BUDDHAS_BIRTHDAY = {
   2003:'2003-05-09',2004:'2004-05-26',2005:'2005-05-15',2006:'2006-05-05',
   2007:'2007-05-24',2008:'2008-05-12',2009:'2009-05-02',2010:'2010-05-21',
@@ -624,147 +698,119 @@ const BUDDHAS_BIRTHDAY = {
   2019:'2019-05-12',2020:'2020-04-30',2021:'2021-05-19',2022:'2022-05-08',
   2023:'2023-05-26',2024:'2024-05-15',2025:'2025-05-05',2026:'2026-05-24',
 };
-
-// National Games years (held in China, big cross-border movement)
-const NATIONAL_GAMES_YEARS = [2021, 2025]; // 2021 Shaanxi, 2025 Guangdong-HK-Macau
+const NATIONAL_GAMES_YEARS = [2021, 2025];
 
 function getRemarks(dateStr){
-  if(!dateStr)return'';
-  const d=new Date(dateStr+'T00:00:00');
-  const year=d.getFullYear();
-  const month=d.getMonth()+1; // 1-12
-  const day=d.getDate();
-  const dow=d.getDay(); // 0=Sun,6=Sat
-  const isWeekend=dow===0||dow===6;
-  const isSat=dow===6;
-  const isSun=dow===0;
-  const isSummer=month>=6&&month<=9; // Jun-Sep
-  const remarks=[];
+  if(!dateStr) return '';
 
-  // ── Fixed public holidays ──
-  // New Year's Day
-  if(month===1&&day===1)return"New Year's Day";
-  if(month===1&&day===2&&dow===1)return"New Year's Holiday";
+  // ── 1. Official gazette lookup first (2023-2026) ──────────────────────────
+  if(HK_GAZETTE_PH[dateStr]) return HK_GAZETTE_PH[dateStr];
 
-  // Labour Day (1 May)
-  if(month===5&&day===1)return'Labour Day';
-  if(month===5&&day===2&&dow===1)return'Labour Day Holiday';
+  const d = new Date(dateStr+'T00:00:00');
+  const year = d.getFullYear();
+  const month = d.getMonth()+1;
+  const day = d.getDate();
+  const dow = d.getDay();
+  const isWeekend = dow===0||dow===6;
+  const isSat = dow===6;
+  const isSun = dow===0;
+  const isSummer = month>=6&&month<=9;
 
-  // HKSAR Establishment Day (1 Jul)
-  if(month===7&&day===1)return'HKSAR Establishment Day';
-  if(month===7&&day===2&&dow===1)return'HKSAR Establishment Day Holiday';
-
-  // National Day Golden Week (1-7 Oct) — massive Mainland traffic
-  if(month===10&&day===1)return'National Day';
+  // ── 2. Fixed-date public holidays (algorithmic fallback for other years) ──
+  if(month===1&&day===1) return "New Year's Day";
+  if(month===1&&day===2&&dow===1) return "New Year's Holiday";
+  if(month===5&&day===1) return 'Labour Day';
+  if(month===5&&day===2&&dow===1) return 'Labour Day Holiday';
+  if(month===7&&day===1) return 'HKSAR Establishment Day';
+  if(month===7&&day===2&&dow===1) return 'HKSAR Establishment Day Holiday';
+  if(month===10&&day===1) return 'National Day';
   if(month===10&&day>=1&&day<=7){
-    if(isWeekend)return`National Day Golden Week (${isSat?'Saturday':'Sunday'})`;
-    return'National Day Golden Week';
+    if(isWeekend) return `National Day Golden Week (${isSat?'Saturday':'Sunday'})`;
+    return 'National Day Golden Week';
   }
-  if(month===10&&day===8&&dow===1)return'National Day Holiday';
+  if(month===10&&day===8&&dow===1) return 'National Day Holiday';
+  if(month===12&&day===25) return 'Christmas Day';
+  if(month===12&&day===26) return 'Boxing Day / First Weekday after Christmas';
+  if(month===12&&day===27&&dow===1) return 'Christmas Holiday';
 
-  // Christmas
-  if(month===12&&day===25)return'Christmas Day';
-  if(month===12&&day===26)return'Boxing Day';
-  if(month===12&&day===27&&dow===1)return'Christmas Holiday';
+  // ── 3. Easter (computed for non-gazetted years) ───────────────────────────
+  const easter = easterSunday(year);
+  const easterDiff = Math.round((d-easter)/86400000);
+  if(easterDiff===-2) return 'Good Friday';
+  if(easterDiff===-1) return 'Easter Saturday';
+  if(easterDiff===0)  return 'Easter Sunday';
+  if(easterDiff===1)  return 'Easter Monday';
+  if(easterDiff===2)  return 'Day after Easter Holiday';
+  if(easterDiff>=-3&&easterDiff<=2)
+    return `Easter Holiday${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
 
-  // ── Easter (computed) ──
-  const easter=easterSunday(year);
-  const goodFri=dateAdd(easter,-2);
-  const easterMon=dateAdd(easter,1);
-  const easterTue=dateAdd(easter,2);
-  const easterPre=dateAdd(easter,-7); // Palm Sunday week
-  const easterDate=toISO(easter);
-  const goodFriDate=toISO(goodFri);
-  const easterMonDate=toISO(easterMon);
-  const easterTueDate=toISO(easterTue);
-  if(dateStr===goodFriDate)return'Good Friday (Easter Holiday)';
-  if(dateStr===toISO(dateAdd(easter,-1)))return'Easter Eve';
-  if(dateStr===easterDate)return'Easter Sunday';
-  if(dateStr===easterMonDate)return'Easter Monday';
-  if(dateStr===easterTueDate)return'Day after Easter Holiday';
-  // Easter week
-  const easterDiff=Math.round((d-easter)/86400000);
-  if(easterDiff>=-6&&easterDiff<=3)return`Easter Holiday${isWeekend?' ('+( isSat?'Saturday':'Sunday')+')':''}`;
-
-  // ── Lunar New Year ──
-  const lny=LUNAR_NEW_YEAR[year];
+  // ── 4. Lunar New Year ─────────────────────────────────────────────────────
+  const lny = LUNAR_NEW_YEAR[year];
   if(lny){
-    const lnyDate=new Date(year,lny[0]-1,lny[1]);
-    const lnyDiff=Math.round((d-lnyDate)/86400000);
-    if(lnyDiff===0)return'Lunar New Year (Day 1)';
-    if(lnyDiff===1)return'Lunar New Year (Day 2)';
-    if(lnyDiff===2)return'Lunar New Year (Day 3)';
-    if(lnyDiff===-1)return'Lunar New Year Eve';
-    if(lnyDiff>=-3&&lnyDiff<=6){
-      const dayName=['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Day 7'][lnyDiff]||`Day ${lnyDiff+1}`;
-      return`Lunar New Year${lnyDiff>0?' ('+dayName+')':''}`;
-    }
-    // Golden Week before LNY
-    if(lnyDiff>=-7&&lnyDiff<0)return'Pre-Lunar New Year';
+    const lnyDate = new Date(year,lny[0]-1,lny[1]);
+    const lnyDiff = Math.round((d-lnyDate)/86400000);
+    if(lnyDiff===0) return 'Lunar New Year (Day 1)';
+    if(lnyDiff===1) return 'Lunar New Year (Day 2)';
+    if(lnyDiff===2) return 'Lunar New Year (Day 3)';
+    if(lnyDiff===-1) return 'Lunar New Year Eve';
+    if(lnyDiff>=3&&lnyDiff<=6) return `Lunar New Year (Day ${lnyDiff+1})`;
+    if(lnyDiff>=-7&&lnyDiff<0) return 'Pre-Lunar New Year';
   }
 
-  // ── Ching Ming ──
-  const chingMing=CHING_MING[year];
+  // ── 5. Ching Ming ─────────────────────────────────────────────────────────
+  const chingMing = CHING_MING[year];
   if(chingMing){
-    if(dateStr===chingMing)return'Ching Ming Festival';
-    const cmDate=new Date(chingMing);
-    const cmDiff=Math.round((d-cmDate)/86400000);
-    if(cmDiff===1&&dow===1)return'Ching Ming Festival Holiday';
+    if(dateStr===chingMing) return 'Ching Ming Festival';
+    const cmDate = new Date(chingMing);
+    if(Math.round((d-cmDate)/86400000)===1&&dow===1) return 'Ching Ming Festival Holiday';
   }
 
-  // ── Buddha's Birthday ──
-  const bday=BUDDHAS_BIRTHDAY[year];
-  if(bday&&dateStr===bday)return"Buddha's Birthday";
+  // ── 6. Buddha's Birthday ─────────────────────────────────────────────────
+  const bday = BUDDHAS_BIRTHDAY[year];
+  if(bday&&dateStr===bday) return "Buddha's Birthday";
   if(bday){const bd=new Date(bday);if(Math.round((d-bd)/86400000)===1&&dow===1)return"Buddha's Birthday Holiday";}
 
-  // ── Dragon Boat / Tuen Ng ──
-  const tuenNg=TUEN_NG[year];
-  if(tuenNg&&dateStr===tuenNg)return'Dragon Boat Festival (Tuen Ng)';
+  // ── 7. Tuen Ng / Dragon Boat ─────────────────────────────────────────────
+  const tuenNg = TUEN_NG[year];
+  if(tuenNg&&dateStr===tuenNg) return 'Dragon Boat Festival (Tuen Ng)';
   if(tuenNg){const tn=new Date(tuenNg);if(Math.round((d-tn)/86400000)===1&&dow===1)return'Tuen Ng Festival Holiday';}
 
-  // ── Chung Yeung ──
-  const chungyeung=CHUNG_YEUNG[year];
-  if(chungyeung&&dateStr===chungyeung)return'Chung Yeung Festival';
-  if(chungyeung){const cy=new Date(chungyeung);if(Math.round((d-cy)/86400000)===1&&dow===1)return'Chung Yeung Festival Holiday';}
+  // ── 8. Chung Yeung ───────────────────────────────────────────────────────
+  const cy = CHUNG_YEUNG[year];
+  if(cy&&dateStr===cy) return 'Chung Yeung Festival';
+  if(cy){const cyd=new Date(cy);if(Math.round((d-cyd)/86400000)===1&&dow===1)return'Chung Yeung Festival Holiday';}
 
-  // ── National Games ──
-  if(NATIONAL_GAMES_YEARS.includes(year)){
-    // National Games 2025: Nov 9 - Nov 26
-    if(year===2025&&month===11&&day>=9&&day<=26)return`National Games${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
-    // National Games 2021: Sep 15 - Sep 27
-    if(year===2021&&month===9&&day>=15&&day<=27)return`National Games${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
+  // ── 9. National Games ────────────────────────────────────────────────────
+  if(year===2025&&month===11&&day>=9&&day<=26)
+    return `National Games 2025${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
+  if(year===2021&&month===9&&day>=15&&day<=27)
+    return `National Games 2021${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
+
+  // ── 10. Labour Week (first week of May cross-border) ─────────────────────
+  if(month===5&&day>=2&&day<=7){
+    if(isWeekend) return `Labour Week (${isSat?'Saturday':'Sunday'})`;
+    return 'Labour Week';
   }
 
-  // ── Labour Week (Golden Week around May 1) ──
-  if(month===5&&day>=1&&day<=7){
-    if(isWeekend)return`Labour Week (${isSat?'Saturday':'Sunday'})`;
-    return'Labour Week';
-  }
-  if(month===4&&day>=29&&day<=30)return'Pre-Labour Day';
-
-  // ── Mainland National Week (carried over, ends Oct 7) ──
-  // Already handled above in Oct 1-7
-
-  // ── Summer weekends / weekdays ──
+  // ── 11. Summer period ────────────────────────────────────────────────────
   if(isSummer){
-    if(isSat)return'Summer Saturday';
-    if(isSun)return'Summer Sunday';
-    // Check if it's a special summer period
-    if(month===7||month===8)return'Summer Weekday';
+    if(isSat) return 'Summer Saturday';
+    if(isSun) return 'Summer Sunday';
+    if(month===7||month===8) return 'Summer Weekday';
   }
 
-  // ── School holidays (HK) rough periods ──
-  // Christmas school holiday ~Dec 21 - Jan 2
-  if((month===12&&day>=21)||(month===1&&day<=2)){
-    if(isWeekend)return`Christmas Holiday (${isSat?'Saturday':'Sunday'})`;
-    return'Christmas Holiday';
+  // ── 12. Christmas holiday period ─────────────────────────────────────────
+  if((month===12&&day>=22&&day<=24)||(month===12&&day===27&&dow!==1)){
+    if(isWeekend) return `Christmas Holiday (${isSat?'Saturday':'Sunday'})`;
+    return 'Christmas Holiday';
   }
 
-  // ── Weekends & normal days ──
-  if(isSat)return'Saturday';
-  if(isSun)return'Sunday';
-  return''; // weekday, no special remark
+  // ── 13. Weekends ─────────────────────────────────────────────────────────
+  if(isSat) return 'Saturday';
+  if(isSun) return 'Sunday';
+  return '';
 }
+
 
 function buildAnalysisHTML(days){
   if(!days||days.length===0)
@@ -828,8 +874,8 @@ function buildAnalysisHTML(days){
     push('<div class="kpi-lbl">'+k.lbl+'</div>');
     push('<div class="kpi-val" style="color:'+k.color+'">'+k.val+'</div>');
     push('<div class="kpi-sub" style="margin-top:3px">');
-    push('<span style="color:var(--arrival)">▲ '+nt(k.arr)+'</span> &nbsp;');
-    push('<span style="color:var(--departure)">▼ '+nt(k.dep)+'</span>');
+    push('<span style="color:var(--arrival)" title="Arrival">▲ Arr: '+nt(k.arr)+'</span><br>');
+    push('<span style="color:var(--departure)" title="Departure">▼ Dep: '+nt(k.dep)+'</span>');
     push('</div>');
     push('<div class="kpi-sub">'+k.sub+'</div>');
     push('</div>');
@@ -868,7 +914,7 @@ function buildAnalysisHTML(days){
   push('<div class="af-card-body" style="padding:0">');
   push('<div style="overflow-x:auto">');
   push('<table class="af-table" style="min-width:700px"><thead><tr>');
-  ['Year','Days','Avg Daily','Arrival','Departure','HKR','Visitors','YoY Growth','Note'].forEach(h=>push('<th>'+h+'</th>'));
+  ['Year','Op. Days','Closed/Excl.','Avg Daily','Arrival','Departure','HKR','Visitors','YoY Growth'].forEach(h=>push('<th>'+h+'</th>'));
   push('</tr></thead><tbody>');
   yoy.forEach((y,i)=>{
     const prev=i>0?yoy[i-1]:null;
@@ -885,7 +931,8 @@ function buildAnalysisHTML(days){
     push('<td style="font-size:9px;color:var(--muted)">'+(y.isPartial?'▶ as-at':'Full year')+'</td>');
     push('</tr>');
   });
-  push('</tbody></table></div></div></div>');
+  push('</tbody></table></div>');
+  push('<div style="font-size:9px;color:var(--muted);padding:8px 16px;border-top:1px solid var(--border)">⚠ "Closed/Excl." = days with fewer than '+MIN_OPERATIONAL_PAX.toLocaleString()+' pax excluded from averages (border closures, inc. COVID 2020–2023). Op. Days = operational days only. Avg Daily reflects only open days.</div></div></div>');
 
   // Day of week
   const maxDow = Math.max(...dow.map(d=>d.avg))||1;
@@ -1003,30 +1050,77 @@ function buildAnalysisHTML(days){
   const wwF = wdwph;
   const pctAboveWD = wwF.weekday.avgTotal ? Math.round((f.projectedTotal-wwF.weekday.avgTotal)/wwF.weekday.avgTotal*100) : null;
   const pctAboveWE = wwF.phwk.avgTotal ? Math.round((f.projectedTotal-wwF.phwk.avgTotal)/wwF.phwk.avgTotal*100) : null;
+  // ── Baseline + Historical Easter Table ─────────────────────────────────────
   push('<div class="af-card" style="margin-bottom:16px">');
-  push('<div class="af-card-hdr"><h3>Baseline Comparison</h3><span class="kpi-sub">How Easter 2026 compares to your averages</span></div>');
+  push('<div class="af-card-hdr"><h3>Baseline & Historical Easter Reference</h3>');
+  push('<span class="kpi-sub">Actual past data · '+f.easterDays.length+' Easter days loaded · proj. uses ×'+(f.factor>=1?'+':'')+((f.factor-1)*100).toFixed(1)+'% growth</span></div>');
   push('<div class="af-card-body">');
-  push('<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">');
-  // Weekday avg
-  push('<div style="background:var(--surface2);border-radius:8px;padding:14px;border:1px solid var(--border)">');
-  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase">Avg Weekday</div>');
-  push('<div style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:var(--accent)">'+nt(wwF.weekday.avgTotal)+'</div>');
-  push('<div style="font-size:10px;color:var(--muted);margin-top:3px">'+wwF.weekday.count+' days (non-PH)</div>');
-  push('</div>');
-  // Weekend/PH avg
-  push('<div style="background:var(--surface2);border-radius:8px;padding:14px;border:1px solid var(--border)">');
-  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase">Avg Weekend / PH</div>');
-  push('<div style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:var(--gold)">'+nt(wwF.phwk.avgTotal)+'</div>');
-  push('<div style="font-size:10px;color:var(--muted);margin-top:3px">'+wwF.phwk.count+' days (Sat/Sun/PH)</div>');
-  push('</div>');
-  // Easter 2026 projection
-  push('<div style="background:rgba(245,200,66,.08);border-radius:8px;padding:14px;border:1px solid var(--gold)">');
-  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--gold);letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase">Easter 2026 Proj.</div>');
-  push('<div style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:var(--gold)">'+nt(f.projectedTotal)+'</div>');
-  push('<div style="font-size:10px;margin-top:3px">');
-  if(pctAboveWD!==null) push('<span style="color:var(--res)">+'+pctAboveWD+'% vs weekday</span>');
+
+  // 3 summary tiles
+  push('<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">');
+  push('<div style="background:var(--surface2);border-radius:8px;padding:12px 14px;border:1px solid var(--border)">');
+  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase">Avg Weekday (Non-PH)</div>');
+  push('<div style="font-family:Space Mono,monospace;font-size:22px;font-weight:700;color:var(--accent)">'+nt(wwF.weekday.avgTotal)+'</div>');
+  push('<div style="display:flex;gap:12px;margin-top:4px;font-size:10px">');
+  push('<span style="color:var(--arrival)">▲ Arr: '+nt(wwF.weekday.avgArr)+'</span>');
+  push('<span style="color:var(--departure)">▼ Dep: '+nt(wwF.weekday.avgDep)+'</span>');
+  push('</div><div style="font-size:9px;color:var(--muted);margin-top:3px">'+wwF.weekday.count+' days</div></div>');
+
+  push('<div style="background:var(--surface2);border-radius:8px;padding:12px 14px;border:1px solid var(--border)">');
+  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase">Avg Weekend / PH</div>');
+  push('<div style="font-family:Space Mono,monospace;font-size:22px;font-weight:700;color:var(--gold)">'+nt(wwF.phwk.avgTotal)+'</div>');
+  push('<div style="display:flex;gap:12px;margin-top:4px;font-size:10px">');
+  push('<span style="color:var(--arrival)">▲ Arr: '+nt(wwF.phwk.avgArr)+'</span>');
+  push('<span style="color:var(--departure)">▼ Dep: '+nt(wwF.phwk.avgDep)+'</span>');
+  push('</div><div style="font-size:9px;color:var(--muted);margin-top:3px">'+wwF.phwk.count+' days</div></div>');
+
+  push('<div style="background:rgba(245,200,66,.06);border-radius:8px;padding:12px 14px;border:1px solid var(--gold)">');
+  push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--gold);letter-spacing:.08em;margin-bottom:4px;text-transform:uppercase">'+(f.targetEasterLabel||'Easter')+' Projection</div>');
+  push('<div style="font-family:Space Mono,monospace;font-size:22px;font-weight:700;color:var(--gold)">'+nt(f.projectedTotal)+'</div>');
+  push('<div style="font-size:10px;margin-top:4px">');
+  if(pctAboveWD!==null) push('<span style="color:var(--res);font-weight:600">+'+pctAboveWD+'% above weekday avg</span>');
+  if(pctAboveWE!==null) push('<br><span style="color:var(--dim)">+'+pctAboveWE+'% above Wknd/PH avg</span>');
   push('</div></div>');
-  push('</div></div></div>');
+  push('</div>');
+
+  // Historical Easter actual data table
+  if(f.easterDays.length>0){
+    // Group by year, show each Easter year's data
+    const eByYear={};
+    for(const d of f.easterDays){
+      const y=d.date.substring(0,4);
+      if(!eByYear[y]) eByYear[y]=[];
+      eByYear[y].push(d);
+    }
+    push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Historical Easter Data — Actual Figures</div>');
+    push('<div style="overflow-x:auto">');
+    push('<table class="af-table"><thead><tr>');
+    push('<th>Year</th><th>Day</th><th>Date</th><th>Occasion</th><th>Arr HKR</th><th>Arr Vis</th><th>▲ Arrival</th><th>Dep HKR</th><th>Dep Vis</th><th>▼ Departure</th><th>Total</th></tr></thead><tbody>');
+    // Sort all Easter days by date
+    const sortedEaster=[...f.easterDays].sort((a,b)=>a.date.localeCompare(b.date));
+    var _prevEY='';
+    sortedEaster.forEach((d,idx)=>{
+      const ey=d.date.substring(0,4);
+      const isNewYear=ey!==_prevEY;
+      _prevEY=ey;
+      const rowBg=ey%2===0?'':'background:var(--surface2)';
+      push('<tr style="'+rowBg+(isNewYear?';border-top:2px solid var(--border)':'')+'">');
+      push('<td style="font-weight:700;color:var(--gold);font-family:Space Mono,monospace">'+(isNewYear?ey:'')+'</td>');
+      push('<td>'+dayOfWeek(d.date)+'</td>');
+      push('<td>'+fDate(d.date)+'</td>');
+      push('<td style="font-size:10px">'+getRemarks(d.date)+'</td>');
+      push('<td class="arr-c">'+nt(d.dt.arr_res||0)+'</td>');
+      push('<td>'+nt(d.dt.arr_vis||0)+'</td>');
+      push('<td class="arr-c hi">'+nt(d.dt.arr_tot||0)+'</td>');
+      push('<td class="dep-c">'+nt(d.dt.dep_res||0)+'</td>');
+      push('<td>'+nt(d.dt.dep_vis||0)+'</td>');
+      push('<td class="dep-c hi">'+nt(d.dt.dep_tot||0)+'</td>');
+      push('<td style="font-weight:700">'+nt(d.dt.ad_tot||0)+'</td>');
+      push('</tr>');
+    });
+    push('</tbody></table></div>');
+  }
+  push('</div></div>');
 
 
     // ── Day cards using per-day profiles ─────────────────────────────────────
@@ -1114,32 +1208,6 @@ function buildAnalysisHTML(days){
     });
 
 
-    // Peak hour counter recommendation
-    push('<div class="af-card" style="margin-top:16px">');
-    push('<div class="af-card-hdr"><h3>Peak Hour Counter & e-Channel Recommendation</h3>');
-    push('<span class="kpi-sub">Peak: '+peakHr.time+'</span></div>');
-    push('<div class="af-card-body">');
-    const pAR=Math.round(peakHr.arr_res*f.factor),pAV=Math.round(peakHr.arr_vis*f.factor);
-    const pDR=Math.round(peakHr.dep_res*f.factor),pDV=Math.round(peakHr.dep_vis*f.factor);
-    const pkRes=estimateResources(pAR,pAV,pDR,pDV);
-    const ctrs=[
-      {val:pkRes.arrCounter,lbl:'Arrival Counters',sub:'Manned (HKR + Visitor)',sub2:'1 ICO per counter',color:'var(--arrival)'},
-      {val:pkRes.arrECh,    lbl:'Arrival e-Channels',sub:'Residents ('+Math.round(TP.resEChannel*100)+'%)',sub2:'1 ICO per 5 units',color:'var(--accent)'},
-      {val:pkRes.depCounter,lbl:'Departure Counters',sub:'Manned (HKR + Visitor)',sub2:'1 ICO per counter',color:'var(--departure)'},
-      {val:pkRes.depECh,    lbl:'Departure e-Channels',sub:'Residents ('+Math.round(TP.resEChannel*100)+'%)',sub2:'1 ICO per 5 units',color:'var(--accent)'},
-      {val:pkRes.totalCounters,lbl:'Total Counters',sub:'Both directions combined',sub2:'',color:'var(--gold)',big:true},
-      {val:pkRes.totalECh,  lbl:'Total e-Channels',sub:'Both directions combined',sub2:'',color:'#7c6af7',big:true},
-    ];
-    push('<div class="ctr-grid">');
-    ctrs.forEach(ct=>{
-      push('<div class="ctr-card'+(ct.big?' style="border-color:var(--border)"':'')+'">');
-      push('<div class="ctr-val" style="color:'+ct.color+'">'+ct.val+'</div>');
-      push('<div class="ctr-lbl">'+ct.lbl+'</div>');
-      push('<div class="ctr-sub">'+ct.sub+'</div>');
-      if(ct.sub2) push('<div class="ctr-sub2">'+ct.sub2+'</div>');
-      push('</div>');
-    });
-    push('</div></div></div>');
   }
 
   push('</div>'); // af-wrap
@@ -1157,7 +1225,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   const ws={};
   const merges=[];
   let R=0;
-  const NC=13; // columns A-M
+  const NC=9; // columns A-I (no counter cols)
   ws['!rows']=[];
 
   function c(r,col,v,s){ws[XLSX.utils.encode_cell({r,c:col})]={v:v===null||v===undefined?'':v,t:typeof v==='number'?'n':'s',s:s||{}};}
@@ -1245,7 +1313,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     R++;R++;
 
     // Day-by-day table
-    ['Date','Occasion','Proj. Arrival','Proj. Departure','Proj. Total','Counter Arr','e-Ch Arr','Counter Dep','e-Ch Dep'].forEach((h,i)=>
+    ['Date','Occasion (PH Status)','Proj. Arrival','Proj. Departure','Proj. Total'].forEach((h,i)=>
       hdr(R,i,h,'B8860B','FFFFFF',true,9,1));
     R++;
     Object.entries(f.dayProfiles||{}).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp],i)=>{
@@ -1262,18 +1330,14 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       dataCell(R,2,projArr,bg,isPostCovid?'1A6B8A':'1A6B3A',true);ws[XLSX.utils.encode_cell({r:R,c:2})].s.numFmt='#,##0';
       dataCell(R,3,projDep,bg,isPostCovid?'5B3D9E':'3D4E9E',true);ws[XLSX.utils.encode_cell({r:R,c:3})].s.numFmt='#,##0';
       dataCell(R,4,dp.projTotal,bg,'B8860B',true);ws[XLSX.utils.encode_cell({r:R,c:4})].s.numFmt='#,##0';
-      dataCell(R,5,res.arrCounter,'E3F2FD',isPostCovid?'0D47A1':'1B5E20',true);
-      dataCell(R,6,res.arrECh,'E0F7FA','00838F',true);
-      dataCell(R,7,res.depCounter,isPostCovid?'EDE7F6':'E8EAF6',isPostCovid?'5B3D9E':'3D4E9E',true);
-      dataCell(R,8,res.depECh,'E0F7FA','00838F',true);
       R++;
     });
 
     // Hourly profile
     R+=2;
-    hdr(R,0,'EASTER HOURLY PROFILE + COUNTER/e-CHANNEL FORECAST (2026)',isPostCovid?'0097A7':'1A6B3A','FFFFFF',true,11,NC);
+    hdr(R,0,'EASTER HOURLY PROFILE — 2026 PROJECTION',isPostCovid?'0097A7':'1A6B3A','FFFFFF',true,11,NC);
     ws['!rows'][R]={hpt:18};R++;
-    ['Time','Arr R','Arr V','Arr Total','Dep R','Dep V','Dep Total','Total','2026 Forecast','Ctr Arr','e-Ch Arr','Ctr Dep','e-Ch Dep'].forEach((h,i)=>
+    ['Time','Arr R (Hist)','Arr V (Hist)','Arr Total (Hist)','Dep R (Hist)','Dep V (Hist)','Dep Total (Hist)','Total (Hist)','2026 Proj.'].forEach((h,i)=>
       hdr(R,i,h,isPostCovid?'0097A7':'1A6B3A','FFFFFF',true,9,1));
     R++;
     const _refDayXL = f.dayProfiles ? (f.dayProfiles['0']||f.dayProfiles['-2']||Object.values(f.dayProfiles)[0]) : null;
@@ -1288,10 +1352,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       const res=estimateResources(arrRes,arrVis,depRes,depVis);
       const bg=isPeak?'FFF8DC':(i%2===0?'FFFFFF':(isPostCovid?'F0F8FF':'F0FFF4'));
       const tfg=isPeak?'B8860B':'333333';
-      [hr.time,hr.arr_res,hr.arr_vis,hr.arr_tot,hr.dep_res,hr.dep_vis,hr.dep_tot,hr.ad_tot,proj,
-       res.arrCounter,res.arrECh,res.depCounter,res.depECh].forEach((v,ci)=>{
-        dataCell(R,ci,v,bg,ci===8?'B8860B':ci>=9?'0D47A1':tfg,isPeak||ci>=9);
-        if(typeof v==='number'&&ci>=1&&ci<=8)ws[XLSX.utils.encode_cell({r:R,c:ci})].s.numFmt='#,##0';
+      [hr.time,hr.arr_res,hr.arr_vis,hr.arr_tot,hr.dep_res,hr.dep_vis,hr.dep_tot,hr.ad_tot,proj].forEach((v,ci)=>{
+        dataCell(R,ci,v,bg,ci===8?'B8860B':tfg,isPeak||ci===8);
+        if(typeof v==='number'&&ci>=1)ws[XLSX.utils.encode_cell({r:R,c:ci})].s.numFmt='#,##0';
       });
       R++;
     });
@@ -1352,11 +1415,15 @@ function exportExcel(){
   C.dimText = {rgb:'333333'};
 
   const border={
-    thin:{style:'thin',color:{rgb:'BBCCE0'}},
-    med:{style:'medium',color:{rgb:'2C3E6B'}},
+    thin:{style:'thin',color:{rgb:'D0D8E8'}},    // subtler grid lines
+    med:{style:'medium',color:{rgb:'5B7AB8'}},    // section dividers
+    none:{style:'thin',color:{rgb:'FFFFFF'}},     // invisible (white)
   };
-  const allBorders={top:border.thin,bottom:border.thin,left:border.thin,right:border.thin};
-  const topBorders={top:border.med,bottom:border.thin,left:border.thin,right:border.thin};
+  // Clean border philosophy: bottom lines only for data, no cage effect
+  const allBorders={bottom:border.thin};                                  // data cells: bottom line only
+  const allBordersAlt={bottom:{style:'thin',color:{rgb:'C8D4E8'}}};       // alt rows slightly lighter
+  const topBorders={top:border.med,bottom:border.thin};                   // first data row: strong top
+  const hdrBorders={bottom:border.med};                                   // column header: strong bottom
 
   function font(opts={}){return{name:'Calibri',sz:opts.sz||10,bold:opts.bold||false,color:opts.color||C.black,italic:opts.italic||false};}
   function fill(rgb){return{type:'pattern',pattern:'solid',fgColor:rgb};}
@@ -1367,30 +1434,30 @@ function exportExcel(){
     mainTitle: {font:font({sz:14,bold:true,color:C.white}),    fill:fill(C.navyDark), alignment:align('center'), border:{bottom:border.med}},
     subTitle:  {font:font({sz:10,color:{rgb:'CCDDFF'}}),         fill:fill(C.navyDark), alignment:align('center')},
     secTitle:  {font:font({sz:11,bold:true,color:C.white}),      fill:fill(C.navy),     alignment:align('left'),   border:{top:border.med,bottom:border.med,left:border.med,right:border.med}},
-    colHdr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('center'), border:allBorders},
-    colHdrL:   {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('center'), border:allBorders},
-    grpArr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.grpArr),   alignment:align('center'), border:allBorders},
-    grpDep:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.grpDep),   alignment:align('center'), border:allBorders},
-    rank1:     {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:allBorders, numFmt:'#,##0'},
-    rank1L:    {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:allBorders},
-    rank1Tot:  {font:font({sz:10,bold:true,color:C.navyMid}),    fill:fill(C.goldBg),   alignment:align('center'), border:allBorders, numFmt:'#,##0'},
+    colHdr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('center'), border:hdrBorders},
+    colHdrL:   {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.navyMid),  alignment:align('center'), border:hdrBorders},
+    grpArr:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.grpArr),   alignment:align('center'), border:hdrBorders},
+    grpDep:    {font:font({sz:9,bold:true,color:C.white}),       fill:fill(C.grpDep),   alignment:align('center'), border:hdrBorders},
+    rank1:     {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:topBorders, numFmt:'#,##0'},
+    rank1L:    {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:topBorders},
+    rank1Tot:  {font:font({sz:10,bold:true,color:C.navyMid}),    fill:fill(C.goldBg),   alignment:align('center'), border:topBorders, numFmt:'#,##0'},
     rankN:     {font:font({sz:10,color:C.dimText}),              fill:fill(C.white),    alignment:align('center'), border:allBorders, numFmt:'#,##0'},
     rankNL:    {font:font({sz:10,color:C.dimText}),              fill:fill(C.white),    alignment:align('center'), border:allBorders},
-    rankNAlt:  {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('center'), border:allBorders, numFmt:'#,##0'},
-    rankNAltL: {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('center'), border:allBorders},
+    rankNAlt:  {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('center'), border:allBordersAlt, numFmt:'#,##0'},
+    rankNAltL: {font:font({sz:10,color:C.dimText}),              fill:fill(C.altRow),   alignment:align('center'), border:allBordersAlt},
     rankNum:   {font:font({sz:10,bold:true,color:C.dimText}),    fill:fill(C.white),    alignment:align('center'), border:allBorders},
-    rankNumAlt:{font:font({sz:10,bold:true,color:C.dimText}),    fill:fill(C.altRow),   alignment:align('center'), border:allBorders},
-    rankNum1:  {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:allBorders},
+    rankNumAlt:{font:font({sz:10,bold:true,color:C.dimText}),    fill:fill(C.altRow),   alignment:align('center'), border:allBordersAlt},
+    rankNum1:  {font:font({sz:10,bold:true,color:C.gold}),       fill:fill(C.goldBg),   alignment:align('center'), border:topBorders},
     totalN:    {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.totalBg),  alignment:align('center'), border:allBorders, numFmt:'#,##0'},
-    totalNAlt: {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.totalBg),  alignment:align('center'), border:allBorders, numFmt:'#,##0'},
-    blank:     {font:font(),                                     fill:fill(C.white),    border:{left:border.thin,right:border.thin}},
+    totalNAlt: {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.totalBg),  alignment:align('center'), border:allBordersAlt, numFmt:'#,##0'},
+    blank:     {font:font(),                                     fill:fill(C.white),    border:{}},
     // ── SORT KEY HIGHLIGHT ──
-    sortHdr:   {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{top:border.med,bottom:border.med,left:border.med,right:border.med}},
-    sortHdrL:  {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{top:border.med,bottom:border.med,left:border.med,right:border.med}},
-    sort1:     {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{top:border.med,bottom:border.med,left:border.med,right:border.med}, numFmt:'#,##0'},
-    sort1L:    {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{top:border.med,bottom:border.med,left:border.med,right:border.med}},
-    sortN:     {font:font({sz:10,bold:true,color:C.navyDark}),  fill:fill({rgb:isPostCovid?'BBDEFB':'C8F0D8'}), alignment:align('center'), border:{top:border.thin,bottom:border.thin,left:border.med,right:border.med}, numFmt:'#,##0'},
-    sortNAlt:  {font:font({sz:10,bold:true,color:C.navyDark}),  fill:fill({rgb:isPostCovid?'90CAF9':'A8E8C0'}), alignment:align('center'), border:{top:border.thin,bottom:border.thin,left:border.med,right:border.med}, numFmt:'#,##0'},
+    sortHdr:   {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.med,left:{style:'thin',color:{rgb:'AABBDD'}}}},
+    sortHdrL:  {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.med,left:{style:'thin',color:{rgb:'AABBDD'}}}},
+    sort1:     {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.thin}, numFmt:'#,##0'},
+    sort1L:    {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.thin}},
+    sortN:     {font:font({sz:10,bold:true,color:C.navyDark}),  fill:fill({rgb:isPostCovid?'BBDEFB':'C8F0D8'}), alignment:align('center'), border:{bottom:border.thin}, numFmt:'#,##0'},
+    sortNAlt:  {font:font({sz:10,bold:true,color:C.navyDark}),  fill:fill({rgb:isPostCovid?'90CAF9':'A8E8C0'}), alignment:align('center'), border:{bottom:border.thin}, numFmt:'#,##0'},
   };
 
   // ── SHEET BUILDER ─────────────────────────────────────────────────────────
@@ -1550,10 +1617,7 @@ function exportExcel(){
         font:{name:'Calibri',sz:10,bold:true,color:{rgb:'FFFFFF'}},
         fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secAccent}},
         alignment:{horizontal:'center',vertical:'center'},
-        border:{top:{style:'medium',color:{rgb:secAccent}},
-                bottom:{style:'medium',color:{rgb:secAccent}},
-                left:{style:'medium',color:{rgb:secAccent}},
-                right:{style:'thin',color:{rgb:'FFFFFF'}}}
+        border:{bottom:{style:'medium',color:{rgb:secAccent}}}
       }};
 
       // Title cells (col 1 .. nc-2) — light tint bg, dark bold text
@@ -1561,10 +1625,7 @@ function exportExcel(){
         font:{name:'Calibri',sz:11,bold:true,color:{rgb:secAccent}},
         fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secTint}},
         alignment:{horizontal:'left',vertical:'center'},
-        border:{top:{style:'medium',color:{rgb:secAccent}},
-                bottom:{style:'medium',color:{rgb:secAccent}},
-                left:{style:'thin',color:{rgb:'FFFFFF'}},
-                right:{style:'thin',color:{rgb:'FFFFFF'}}}
+        border:{bottom:{style:'medium',color:{rgb:secAccent}}}
       };
       ws[XLSX.utils.encode_cell({r:R,c:1})] = {v: sec.title, t:'s', s:titleStyle};
       for(let col=2; col<nc-1; col++){
@@ -1578,10 +1639,7 @@ function exportExcel(){
           font:{name:'Calibri',sz:9,bold:false,italic:true,color:{rgb:'FFFFFF'}},
           fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secAccent}},
           alignment:{horizontal:'center',vertical:'center'},
-          border:{top:{style:'medium',color:{rgb:secAccent}},
-                  bottom:{style:'medium',color:{rgb:secAccent}},
-                  left:{style:'thin',color:{rgb:'FFFFFF'}},
-                  right:{style:'medium',color:{rgb:secAccent}}}
+          border:{bottom:{style:'medium',color:{rgb:secAccent}}}
         }};
       }
       R++;
@@ -1907,29 +1965,48 @@ function avgHourlyProfile(days){
 }
 
 // ─── Year-over-year analysis ───────────────────────────────────────────────
+// Border closure threshold: days with fewer than this many passengers
+// are considered "operationally closed" and excluded from averages.
+// LSC was closed 2020-02-04 to 2023-01-07 during COVID.
+const MIN_OPERATIONAL_PAX = 5000;
+
 function yoyAnalysis(days){
-  // Compare same calendar period across years (Jan 1 to as-at date MM-DD)
-  // so YoY is apples-to-apples, not affected by how many months are loaded
+  // Compare same calendar period across years (Jan 1 → as-at MM-DD)
+  // so YoY is apples-to-apples.
+  // IMPORTANT: Exclude operationally-closed days (ad_tot < MIN_OPERATIONAL_PAX)
+  // so COVID closure (2020-02 to 2023-01) doesn't drag down "Since Commissioning" averages.
   if(!days.length) return [];
-  const latestDate = days[days.length-1].date; // e.g. '2026-03-29'
-  const asAtMMDD = latestDate.substring(5);    // e.g. '03-29'
+
+  // Use actual max date (sort guarantees last element, but be explicit)
+  const sortedDates = days.map(d=>d.date).sort();
+  const latestDate = sortedDates[sortedDates.length-1];
+  const asAtMMDD = latestDate.substring(5); // 'MM-DD'
+
   const byYear={};
   for(const d of days){
-    const y=d.date.substring(0,4);
-    const mmdd=d.date.substring(5);
-    // Only include days up to the same MM-DD as the latest date (same-period comparison)
-    if(mmdd>asAtMMDD) continue;
-    if(!byYear[y])byYear[y]={total:0,arr:0,dep:0,res:0,vis:0,count:0};
-    byYear[y].total+=(d.dt.ad_tot||0);
-    byYear[y].arr+=(d.dt.arr_tot||0);
-    byYear[y].dep+=(d.dt.dep_tot||0);
-    byYear[y].res+=(d.dt.ad_res||0);
-    byYear[y].vis+=(d.dt.ad_vis||0);
+    const y = d.date.substring(0,4);
+    const mmdd = d.date.substring(5);
+    // Same-period filter: only count Jan 1 → asAtMMDD in each year
+    if(mmdd > asAtMMDD) continue;
+    // Exclude closed / near-zero days from averages
+    // (keeps 'Since Commissioning' stats meaningful despite COVID closure)
+    const pax = d.dt.ad_tot||0;
+    if(!byYear[y]) byYear[y]={total:0,arr:0,dep:0,res:0,vis:0,count:0,closedDays:0};
+    if(pax < MIN_OPERATIONAL_PAX){
+      byYear[y].closedDays++;   // count but exclude from avg
+      continue;
+    }
+    byYear[y].total += pax;
+    byYear[y].arr   += (d.dt.arr_tot||0);
+    byYear[y].dep   += (d.dt.dep_tot||0);
+    byYear[y].res   += (d.dt.ad_res||0);
+    byYear[y].vis   += (d.dt.ad_vis||0);
     byYear[y].count++;
   }
-  return Object.entries(byYear).map(([y,v])=>({year:y,...v,
-    avgDaily:v.count?Math.round(v.total/v.count):0,
-    note:'Jan 1 – '+asAtMMDD  // shown in table tooltip
+  return Object.entries(byYear).map(([y,v])=>({
+    year:y, ...v,
+    avgDaily: v.count ? Math.round(v.total/v.count) : 0,
+    asAt: asAtMMDD,
   })).sort((a,b)=>a.year.localeCompare(b.year));
 }
 
@@ -2361,8 +2438,17 @@ const SR = {
   echV:  360,  // Visitor e-channel:   6.0 pax/min × 60 (less familiar with system)
 };
 const HALL_CAPACITY = 2500; // arrival hall capacity pax — load baseline
-// Service pledge (minutes)
-const PLEDGE = { R: 15, V: 30 };
+// Service pledge — Immigration Dept performance pledge
+// HKR: 98% within 15 min | Visitor: 95% within 30 min
+const PLEDGE = {
+  R: 15, V: 30,          // time targets (minutes)
+  pctR: 98, pctV: 95,    // compliance % targets
+};
+// Floor plan queue capacity (from arrival hall floor plan)
+// Green arrow ~60 pax depth × entire e-channel bank width
+// E-channel queuing zone capacity (per channel × usable depth factor)
+const ECH_QUEUE_DEPTH = 60;   // pax per e-channel lane (from floor plan)
+const CTR_QUEUE_DEPTH = 20;   // pax per counter lane
 // Manpower ratios
 const ICO_PER_CTR = 1;
 const ICO_PER_ECH = 4.77;  // Staff Required: ⌈e-channels / 4.77⌉
@@ -2394,6 +2480,34 @@ function waitTime(lambda, c, mu){
   const Ec = erlangC(c, rho);
   const Wq = Ec / (c * mu * (1 - rho)); // hours
   return Math.round(Wq * 60 * 10) / 10;  // minutes, 1dp
+}
+
+// ── Percentile-based pledge compliance (M/M/c queue) ───────────────────────────
+// Performance Pledge:
+//   HKR:     98% of pax processed within 15 min
+//   Visitor: 95% of pax processed within 30 min
+//
+// P(W > t) = erlangC(c, rho) × exp(-(c×μ - λ)×t_hours)
+// Compliance = 1 - P(W > t) expressed as %
+function pledgeCompliance(lambda, c, mu, tMinutes){
+  if(lambda <= 0) return 100;
+  if(c <= 0 || mu <= 0) return 0;
+  const rho = lambda / (c * mu);
+  if(rho >= 0.99) return 0;
+  const Ec = erlangC(c, rho);
+  const t = tMinutes / 60; // hours
+  const excessRate = c * mu - lambda; // pax/hr excess capacity
+  const pExceed = Ec * Math.exp(-excessRate * t);
+  return Math.max(0, Math.min(100, Math.round((1 - pExceed) * 1000) / 10));
+}
+
+// Expected queue length (pax waiting, not being served) — Lq
+function queueLength(lambda, c, mu){
+  if(lambda <= 0 || c <= 0) return 0;
+  const rho = lambda / (c * mu);
+  if(rho >= 0.99) return 9999;
+  const Ec = erlangC(c, rho);
+  return Math.round(Ec * rho / (1 - rho) * 10) / 10; // Lq = Ec×ρ/(1-ρ) for M/M/c
 }
 
 // Throughput capacity pax/hr for a stream
@@ -2430,240 +2544,338 @@ var EST = {
   depEchR: 53, depEchV: 0,
 };
 
+
 function buildEstimatorHTML(){
   return '<div id="estimatorRoot"></div>';
 }
 
+// ══════════════════════════════════════════════════════════════════════════
+// THROUGHPUT ESTIMATOR — REDESIGN v3
+//
+// Purpose: Given a scenario volume + resource config, answer:
+//   1. Will immigration service pledges be met?
+//   2. How many staff (SIA) are needed?
+//   3. What is the optimal R/V resource split?
+//   4. Is the hall likely to be congested?
+//   5. Can we save staff vs full deployment?
+// ══════════════════════════════════════════════════════════════════════════
+
 function renderEstimator(){
-  const root=document.getElementById('estimatorRoot');
-  if(!root)return;
-  const d=EST;
-  const isArr=d.dir==='arr';
-  const volR=isArr?d.arrR:d.depR;
-  const volV=isArr?d.arrV:d.depV;
-  const total=volR+volV;
-  // Use direction-specific resource counts
+  const root = document.getElementById('estimatorRoot');
+  if(!root) return;
+  const d = EST;
+  const isArr = d.dir === 'arr';
+
   const ctrR=isArr?d.ctrR:d.depCtrR, ctrV=isArr?d.ctrV:d.depCtrV;
   const echR=isArr?d.echR:d.depEchR, echV=isArr?d.echV:d.depEchV;
-  const capR=ctrR*SR.ctrR+echR*SR.echR;
-  const capV=ctrV*SR.ctrV+echV*SR.echV;
-  const capTotal=capR+capV;
-  const sR=ctrR+echR, sV=ctrV+echV;
-  const muR=sR>0?capR/sR:SR.ctrR, muV=sV>0?capV/sV:SR.ctrV;
-  const wtR=sR>0?waitTime(volR,sR,muR):999;
-  const wtV=sV>0?waitTime(volV,sV,muV):999;
-  const uR=capR>0?Math.min(Math.round(volR/capR*100),999):0;
-  const uV=capV>0?Math.min(Math.round(volV/capV*100),999):0;
-  const uT=capTotal>0?Math.min(Math.round(total/capTotal*100),999):0;
-  const pR=wtR<=PLEDGE.R, pV=wtV<=PLEDGE.V;
-  const allMet=pR&&pV;
-  // Simple Average Wait = (HKR Wait + Visitor Wait) / 2
-  const avgWait = (wtR>=999||wtV>=999) ? 999 : Math.round((wtR+wtV)/2*10)/10;
-  const avgWaitMet = avgWait <= (PLEDGE.R+PLEDGE.V)/2; // avg target = (15+30)/2 = 22.5 min
-  const ico=icoCount(ctrR,ctrV,echR,echV);
-  const eff=ico>0?Math.round(capTotal/ico):0;  // Efficiency = Total Capacity / SIA Staff
-  function nt(v){return Number(v).toLocaleString();}
-  function uc(u){return u<70?'#4ade80':u<90?'#f5c842':'#f87171';}
-  function wc(w,p){return w>=999?'wt-fail':w>p?'wt-warn':'wt-ok';}
-  function sc(met){return met?'spill-met':'spill-fail';}
-
-  const html=[];
-  const p=s=>html.push(s);
-
-  p('<div class="tp-layout">');
-
-  // ── LEFT: Controls ────────────────────────────────────────────────────────
-  p('<div>');
-  p('<div class="tp-ctrl">');
-  p('<div class="tp-ctrl-hdr"><h3>⚙ Parameter Control</h3></div>');
-  p('<div class="tp-ctrl-body">');
-
-  // Direction
-  p('<div class="dir-tog">');
-  p('<button class="dir-tog-btn'+(isArr?' act-arr':'')+'" onclick="EST.dir=\'arr\';renderEstimator()">▲ ARRIVAL</button>');
-  p('<button class="dir-tog-btn'+(!isArr?' act-dep':'')+'" onclick="EST.dir=\'dep\';renderEstimator()">▼ DEPARTURE</button>');
-  p('</div>');
-
-  // Presets
-  p('<div style="font-size:9px;font-family:\'Space Mono\',monospace;color:var(--muted);letter-spacing:.08em;margin-bottom:7px;text-transform:uppercase">Quick Scenarios</div>');
-  p('<div class="scen-row">');
-  [{k:'normal',l:'Normal'},{k:'summer',l:'Summer Sat'},{k:'easter',l:'Easter'},{k:'golden',l:'Golden Week'}].forEach(s=>{
-    p('<button class="scen-pill" onclick="applyScenario(\''+s.k+'\')">'+s.l+'</button>');
-  });
-  p('</div>');
-
-  // Volume sliders
-  const vKey=isArr?'arrR':'depR', vKeyV=isArr?'arrV':'depV';
-  p('<div class="tp-sec-lbl">Passenger Volume (pax/hr)</div>');
-  p('<div class="sl-row">');
-  p('<div class="sl-badge r">R</div>');
-  p('<span class="sl-lbl">HKR</span>');
-  p('<input type="range" class="tpsl" min="0" max="25000" step="200" value="'+volR+'" style="accent-color:#0097A7" oninput="EST.'+vKey+'=+this.value;document.getElementById(\'vRv\').textContent=Number(this.value).toLocaleString();renderEstimator()">');
-  p('<span class="sl-val" id="vRv" style="color:#0097A7">'+nt(volR)+'</span>');
-  p('</div>');
-  p('<div class="sl-row">');
-  p('<div class="sl-badge v">V</div>');
-  p('<span class="sl-lbl">Visitor</span>');
-  p('<input type="range" class="tpsl" min="0" max="12000" step="100" value="'+volV+'" style="accent-color:#f5c842" oninput="EST.'+vKeyV+'=+this.value;document.getElementById(\'vVv\').textContent=Number(this.value).toLocaleString();renderEstimator()">');
-  p('<span class="sl-val" id="vVv" style="color:#f5c842">'+nt(volV)+'</span>');
-  p('</div>');
-
-  // Counters: total capped at 28. When R moves, V auto-adjusts.
-  const maxCtr=28, maxEch=isArr?47:53;
   const ctrRk=isArr?'ctrR':'depCtrR', ctrVk=isArr?'ctrV':'depCtrV';
   const echRk=isArr?'echR':'depEchR', echVk=isArr?'echV':'depEchV';
-  const ctrUsed=ctrR+ctrV, echUsed=echR+echV;
+  const volR=isArr?d.arrR:d.depR, volV=isArr?d.arrV:d.depV;
+  const totalVol=volR+volV;
+  const maxCtr=28, maxEch=isArr?47:53;
+  const visRatio = totalVol>0 ? Math.round(volV/totalVol*100) : 0;
+  const hkrRatio = 100-visRatio;
 
-  p('<div class="tp-sec-lbl">Manned Counters <span style="font-size:8px;color:var(--muted);font-weight:400;letter-spacing:0">(total max 28 · '+ctrUsed+'/28 used)</span></div>');
-  p('<div class="sl-row">');
-  p('<div class="sl-badge r">R</div>');
-  p('<span class="sl-lbl">HKR</span>');
-  p('<input type="range" class="tpsl" min="0" max="28" step="1" value="'+ctrR+'" style="accent-color:#0097A7" id="slCtrR" oninput="linkedSlider(this,\''+ctrRk+'\',\''+ctrVk+'\',28,\'cRv\',\'cVv\')">');
-  p('<span class="sl-val" id="cRv" style="color:#0097A7">'+ctrR+'</span>');
-  p('</div>');
-  p('<div class="sl-hint">'+SR.ctrR+' pax/hr · 1 ICO · V auto-adjusts ↕</div>');
-  p('<div class="sl-row">');
-  p('<div class="sl-badge v">V</div>');
-  p('<span class="sl-lbl">Visitor</span>');
-  p('<input type="range" class="tpsl" min="0" max="28" step="1" value="'+ctrV+'" style="accent-color:#f5c842" id="slCtrV" oninput="linkedSlider(this,\''+ctrVk+'\',\''+ctrRk+'\',28,\'cVv\',\'cRv\')">');
-  p('<span class="sl-val" id="cVv" style="color:#f5c842">'+ctrV+'</span>');
-  p('</div>');
-  p('<div class="sl-hint">'+SR.ctrV+' pax/hr (3 pax/min) · 1 ICO · R auto-adjusts ↕</div>');
+  // Capacities
+  const capR = ctrR*SR.ctrR + echR*SR.echR;
+  const capV = ctrV*SR.ctrV + echV*SR.echV;
+  const capTotal = capR+capV;
+  const sR=ctrR+echR, sV=ctrV+echV;
+  const muR=sR>0?capR/sR:SR.ctrR, muV=sV>0?capV/sV:SR.ctrV;
 
-  p('<div class="tp-sec-lbl">e-Channels <span style="font-size:8px;color:var(--muted);font-weight:400;letter-spacing:0">(max '+maxEch+' · '+echUsed+'/'+maxEch+' used)</span></div>');
-  p('<div class="sl-row">');
-  p('<div class="sl-badge r">R</div>');
-  p('<span class="sl-lbl">HKR</span>');
-  p('<input type="range" class="tpsl" min="0" max="'+maxEch+'" step="1" value="'+echR+'" style="accent-color:var(--accent)" id="slEchR" oninput="linkedSlider(this,\''+echRk+'\',\''+echVk+'\','+maxEch+',\'eRv\',\'eVv\')">');
-  p('<span class="sl-val" id="eRv" style="color:var(--accent)">'+echR+'</span>');
-  p('</div>');
-  p('<div class="sl-hint">'+SR.echR+' pax/hr · SIA: ⌈units÷4.77⌉ · V auto-adjusts ↕</div>');
-  p('<div class="sl-row">');
-  p('<div class="sl-badge v">V</div>');
-  p('<span class="sl-lbl">Visitor</span>');
-  p('<input type="range" class="tpsl" min="0" max="'+maxEch+'" step="1" value="'+echV+'" style="accent-color:#f5c842" id="slEchV" oninput="linkedSlider(this,\''+echVk+'\',\''+echRk+'\','+maxEch+',\'eVv\',\'eRv\')">');
-  p('<span class="sl-val" id="eVv" style="color:#f5c842">'+echV+'</span>');
-  p('</div>');
-  p('<div class="sl-hint">'+SR.echV+' pax/hr · SIA: ⌈units÷4.77⌉ · R auto-adjusts ↕</div>');
-  // Resource summary bar
-  const arrCtrTotal=d.ctrR+d.ctrV, arrEchTotal=d.echR+d.echV;
-  const ctrCap=isArr?28:28, echCap=isArr?47:53;
-  const ctrPct=Math.round(arrCtrTotal/ctrCap*100), echPct=Math.round(arrEchTotal/echCap*100);
-  var ctrColor=ctrPct>100?'#f87171':ctrPct>80?'#f5c842':'var(--res)';
-  var echColor=echPct>100?'#f87171':echPct>80?'#f5c842':'var(--accent)';
-  var ctrBarColor=ctrPct>100?'#f87171':ctrPct>80?'#f5c842':'#0097A7';
-  var echBarColor=echPct>100?'#f87171':echPct>80?'#f5c842':'var(--accent)';
-  p('<div style="background:var(--surface3);border-radius:6px;padding:10px 12px;margin-top:6px">');
-  p('<div style="font-size:9px;color:var(--muted);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">Resource Usage</div>');
-  p('<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-bottom:4px">');
-  p('<span>Counters</span>');
-  p('<span style="font-weight:700;color:'+ctrColor+'">'+arrCtrTotal+'/'+ctrCap+'</span>');
-  p('</div>');
-  p('<div class="util-bar" style="margin-bottom:8px"><div class="util-fill" style="width:'+Math.min(ctrPct,100)+'%;background:'+ctrBarColor+'"></div></div>');
-  p('<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-bottom:4px">');
-  p('<span>e-Channels</span>');
-  p('<span style="font-weight:700;color:'+echColor+'">'+arrEchTotal+'/'+echCap+'</span>');
-  p('</div>');
-  p('<div class="util-bar"><div class="util-fill" style="width:'+Math.min(echPct,100)+'%;background:'+echBarColor+'"></div></div>');
-  p('</div>');
-  p('</div></div>'); // ctrl-body, tp-ctrl
+  // Wait times & pledge compliance
+  const wtR = sR>0?waitTime(volR,sR,muR):999;
+  const wtV = sV>0?waitTime(volV,sV,muV):999;
+  const avgWait = (wtR<999&&wtV<999)?Math.round((wtR+wtV)/2*10)/10:999;
+  const compR = sR>0?pledgeCompliance(volR,sR,muR,PLEDGE.R):0;
+  const compV = sV>0?pledgeCompliance(volV,sV,muV,PLEDGE.V):0;
+  const pR=compR>=PLEDGE.pctR, pV=compV>=PLEDGE.pctV, allMet=pR&&pV;
 
-  p('</div>'); // left col
+  // Queue depths (Erlang-C Lq)
+  const LqR = sR>0?queueLength(volR,sR,muR):0;
+  const LqV = sV>0?queueLength(volV,sV,muV):0;
+  const echQCap=(echR+echV)*ECH_QUEUE_DEPTH, ctrQCap=(ctrR+ctrV)*CTR_QUEUE_DEPTH;
+  const hallFillPct = (echQCap+ctrQCap)>0?Math.min(Math.round((LqR+LqV)/(echQCap+ctrQCap)*100),100):0;
+  const hallFillColor = hallFillPct>80?'#f87171':hallFillPct>50?'#f5c842':'#4ade80';
 
-  // ── RIGHT: Results ────────────────────────────────────────────────────────
-  p('<div>');
+  // Utilisation
+  const uR=capR>0?Math.min(Math.round(volR/capR*100),999):0;
+  const uV=capV>0?Math.min(Math.round(volV/capV*100),999):0;
+  const uT=capTotal>0?Math.min(Math.round(totalVol/capTotal*100),999):0;
 
-  // KPI cards
-  p('<div class="tp-kpi-grid">');
+  // SIA
+  const echStaff=Math.ceil((echR+echV)/ICO_PER_ECH);
+  const ctrStaff=ctrR+ctrV;
+  const siaStaff=ctrStaff+echStaff;
+  const efficiency=siaStaff>0?Math.round(capTotal/siaStaff):0;
+
+  // Min staff needed to meet pledges (binary search)
+  function minStaffForPledge(){
+    // Try to find minimum split that meets both pledges
+    let bestSIA = siaStaff, found = false;
+    for(let tc=1; tc<=maxCtr; tc++){
+      for(let te=1; te<=maxEch; te++){
+        // Distribute R/V proportional to volume
+        const cR2=Math.max(1,Math.round(tc*volR/(totalVol||1)));
+        const cV2=Math.max(1,tc-cR2);
+        const eR2=Math.max(1,Math.round(te*volR/(totalVol||1)));
+        const eV2=Math.max(0,te-eR2);
+        const cap2R=cR2*SR.ctrR+eR2*SR.echR, cap2V=cV2*SR.ctrV+eV2*SR.echV;
+        const s2R=cR2+eR2, s2V=cV2+eV2;
+        const mu2R=s2R>0?cap2R/s2R:SR.ctrR, mu2V=s2V>0?cap2V/s2V:SR.ctrV;
+        const c2R=s2R>0?pledgeCompliance(volR,s2R,mu2R,PLEDGE.R):0;
+        const c2V=s2V>0?pledgeCompliance(volV,s2V,mu2V,PLEDGE.V):0;
+        if(c2R>=PLEDGE.pctR&&c2V>=PLEDGE.pctV){
+          const sia2=tc+Math.ceil(te/ICO_PER_ECH);
+          if(sia2<bestSIA){bestSIA=sia2;found=true;}
+        }
+      }
+    }
+    return{sia:bestSIA,possible:found||(siaStaff<=bestSIA)};
+  }
+
+  const nt=v=>Number(v).toLocaleString();
+  const cc=v=>v>=98?'#4ade80':v>=90?'#f5c842':'#f87171';
+  const uc=u=>u<70?'#4ade80':u<90?'#f5c842':'#f87171';
+  const ts=new Date().toLocaleTimeString('en-HK',{hour12:false});
+
+  const p=[];
+
+  // ── Terminal header ──────────────────────────────────────────────────────────
+  p.push('<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">');
+  p.push('<div style="display:flex;align-items:center;gap:14px">');
+  p.push('<div><div style="font-family:Space Mono,monospace;font-size:14px;font-weight:700;letter-spacing:.04em">LSC Operations Terminal</div>');
+  p.push('<div style="font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:1px">Arrival Hall Throughput Simulation</div></div>');
+  p.push('<div style="display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);border-radius:20px;padding:3px 12px">');
+  p.push('<div style="width:6px;height:6px;border-radius:50%;background:#4ade80"></div>');
+  p.push('<span style="font-size:10px;font-family:Space Mono,monospace;color:#4ade80">OPERATIONAL</span></div></div>');
+  p.push('<div style="display:flex;gap:8px">');
+  p.push('<button onclick="EST.dir=\'arr\';renderEstimator()" style="padding:7px 16px;border-radius:6px;border:1px solid '+(isArr?'var(--accent)':'var(--border)')+';background:'+(isArr?'rgba(0,212,184,.15)':'transparent')+';color:'+(isArr?'var(--accent)':'var(--muted)')+';cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700">▲ ARRIVAL</button>');
+  p.push('<button onclick="EST.dir=\'dep\';renderEstimator()" style="padding:7px 16px;border-radius:6px;border:1px solid '+(!isArr?'#7c6af7':'var(--border)')+';background:'+(!isArr?'rgba(124,106,247,.15)':'transparent')+';color:'+(!isArr?'#7c6af7':'var(--muted)')+';cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700">▼ DEPARTURE</button>');
+  p.push('</div></div>');
+
+  // ── MAIN GRID ────────────────────────────────────────────────────────────────
+  p.push('<div style="display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start">');
+
+  // ── LEFT: PARAMETER CONTROL ──────────────────────────────────────────────────
+  p.push('<div>');
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px">');
+  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.1em;text-transform:uppercase">⚙ Parameter Control</span></div>');
+  p.push('<div style="padding:14px">');
+
+  // Presets
+  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Operational Presets</div>');
+  p.push('<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">');
+  [{k:'normal',l:'Normal Day'},{k:'summer',l:'Summer Sat'},{k:'easter',l:'Easter'},{k:'golden',l:'Visitor Heavy'}].forEach(s=>{
+    p.push('<button onclick="applyScenario(\''+s.k+'\')" style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:9px;font-family:Space Mono,monospace;transition:all .15s" onmouseover="this.style.borderColor=\'var(--accent)\'" onmouseout="this.style.borderColor=\'var(--border)\'">'+s.l+'</button>');
+  });
+  p.push('</div>');
+
+  // Slider helper — big value on right like reference terminal
+  function SL(lbl, val, dispId, slId, oninput, ac, maxV, step, sub){
+    return '<div style="margin-bottom:14px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-family:Space Mono,monospace;color:var(--dim);letter-spacing:.06em;text-transform:uppercase">'+lbl+'</span>'
+      +'<span style="font-family:Space Mono,monospace;font-size:20px;font-weight:700;color:'+ac+'" id="'+dispId+'">'+(typeof val==='number'&&maxV>100?nt(val):val)+'</span>'
+      +'</div>'
+      +'<input type="range" class="tpsl" min="0" max="'+maxV+'" step="'+step+'" value="'+val+'" style="width:100%;accent-color:'+ac+'" id="'+slId+'" oninput="'+oninput+'">'
+      +(sub?'<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:3px">'+sub+'</div>':'')
+      +'</div>';
+  }
+
+  // Volume + HKR ratio
+  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">↗ Arrival Volume</div>');
+  const vRk=isArr?'arrR':'depR', vVk=isArr?'arrV':'depV';
+  p.push(SL('Total Volume', totalVol, 'volTv', 'slVolT',
+    'var _t=+this.value,_r='+(hkrRatio/100).toFixed(2)+',_vR=Math.round(_t*_r),_vV=_t-_vR;if(EST.dir===\'arr\'){EST.arrR=_vR;EST.arrV=_vV;}else{EST.depR=_vR;EST.depV=_vV;}document.getElementById(\'volTv\').textContent=Number(this.value).toLocaleString();renderEstimator()',
+    'var(--text)', 45000, 500,
+    '<span>LOW</span><span>PEAK SURGE</span>'
+  ));
+  p.push(SL('HKR Ratio', hkrRatio+'%', 'ratioV', 'slRatio',
+    'var _r=+this.value/100,_t='+totalVol+';var _vR=Math.round(_t*_r),_vV=_t-_vR;if(EST.dir===\'arr\'){EST.arrR=_vR;EST.arrV=_vV;}else{EST.depR=_vR;EST.depV=_vV;}document.getElementById(\'ratioV\').textContent=this.value+\'%\';renderEstimator()',
+    '#7c6af7', 100, 1,
+    '<span style="color:#0097A7">R: '+nt(volR)+'</span><span style="color:var(--gold)">V: '+nt(volV)+'</span>'
+  ));
+
+  // Counters (linked, max 28)
+  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Counters (max 28 · '+(ctrR+ctrV)+'/28 used)</div>');
+  p.push(SL('HKR Counters (R)', ctrR, 'cRv', 'slCtrR',
+    'linkedSlider(this,\''+ctrRk+'\',\''+ctrVk+'\',28,\'cRv\',\'cVv\')',
+    '#0097A7', 28, 1,
+    '<span style="color:#0097A7">R: <b>'+ctrR+'</b></span><span style="color:var(--gold)">V: <b>'+ctrV+'</b></span><span style="color:var(--muted)">V auto-adjusts ↕</span>'
+  ));
+  p.push(SL('Visitor Counters (V)', ctrV, 'cVv', 'slCtrV',
+    'linkedSlider(this,\''+ctrVk+'\',\''+ctrRk+'\',28,\'cVv\',\'cRv\')',
+    'var(--gold)', 28, 1, ''));
+
+  // e-Channels (linked, max 47/53)
+  p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">e-Channels (max '+maxEch+' · '+(echR+echV)+'/'+maxEch+' used)</div>');
+  p.push(SL('HKR e-Ch (R)', echR, 'eRv', 'slEchR',
+    'linkedSlider(this,\''+echRk+'\',\''+echVk+'\','+maxEch+',\'eRv\',\'eVv\')',
+    'var(--accent)', maxEch, 1,
+    '<span style="color:var(--accent)">R: <b>'+echR+'</b></span><span style="color:var(--gold)">V: <b>'+echV+'</b></span><span style="color:var(--muted)">V auto-adjusts ↕</span>'
+  ));
+  p.push(SL('Visitor e-Ch (V)', echV, 'eVv', 'slEchV',
+    'linkedSlider(this,\''+echVk+'\',\''+echRk+'\','+maxEch+',\'eVv\',\'eRv\')',
+    'var(--gold)', maxEch, 1, ''));
+
+  p.push('</div></div>'); // ctrl-body, ctrl
+
+  // Active units summary
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">');
+  p.push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Active Units</div>');
+  p.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">');
+  p.push('<div><div style="font-size:9px;color:var(--muted);margin-bottom:2px">COUNTERS</div><div style="font-family:Space Mono,monospace;font-size:30px;font-weight:700;line-height:1">'+(ctrR+ctrV)+'</div><div style="font-size:10px;color:var(--muted)">'+ctrR+'R / '+ctrV+'V</div></div>');
+  p.push('<div><div style="font-size:9px;color:var(--muted);margin-bottom:2px">E-CHANNELS</div><div style="font-family:Space Mono,monospace;font-size:30px;font-weight:700;line-height:1">'+(echR+echV)+'</div><div style="font-size:10px;color:var(--muted)">'+echR+'R / '+echV+'V</div></div>');
+  p.push('</div>');
+  p.push('<div style="border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;align-items:center">');
+  p.push('<div><div style="font-size:9px;color:var(--muted)">SIA STAFF</div><div style="font-family:Space Mono,monospace;font-size:22px;font-weight:700;color:#7c6af7">'+siaStaff+'</div><div style="font-size:9px;color:var(--muted)">'+ctrStaff+' ctr + '+echStaff+' e-ch</div></div>');
+  const fullDeploy = 28 + Math.ceil(maxEch/ICO_PER_ECH);
+  const saving = fullDeploy - siaStaff;
+  p.push('<div style="text-align:right"><div style="font-size:9px;color:var(--muted)">vs Full Deploy</div>');
+  if(saving>0) p.push('<div style="font-size:14px;font-weight:700;color:#4ade80">✂ −'+saving+' staff</div>');
+  else if(saving<0) p.push('<div style="font-size:14px;font-weight:700;color:#f87171">+'+(-saving)+' staff</div>');
+  else p.push('<div style="font-size:11px;color:var(--muted)">Full deploy</div>');
+  p.push('</div></div></div>');
+
+  p.push('</div>'); // end left col
+
+  // ── RIGHT: DASHBOARD ─────────────────────────────────────────────────────────
+  p.push('<div>');
+
+  // ── 5 KPI cards ──────────────────────────────────────────────────────────────
+  p.push('<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px">');
   [
-    {lbl:'Total Capacity',val:nt(capTotal)+' pax/hr',sub:'Combined all streams',cls:'tc-a',color:'var(--accent)'},
-    {lbl:'Pledge Compliance',val:allMet?'100%':(!pR&&!pV?'0%':'50%'),sub:allMet?'✓ Both met':'✗ Check streams',cls:'tc-g',color:allMet?'#4ade80':'#f87171'},
-    {lbl:'Avg Wait Time',val:(avgWait>=999?'∞':avgWait)+' min',sub:'Simple avg (HKR+Vis)÷2 · target 22.5min',cls:'tc-a',color:avgWait<=22.5?'#4ade80':avgWait<=30?'#f5c842':'#f87171'},
-    {lbl:'ICO Manpower',val:ico+' staff',sub:'Total deployed',cls:'tc-p',color:'#7c6af7'},
-    {lbl:'Efficiency Index',val:eff+' pax/staff/hr',sub:'Throughput per officer',cls:'tc-r',color:'var(--res)'},
+    {l:'Total Capacity',v:nt(capTotal)+' pax/hr',c:'var(--accent)',s:'All streams'},
+    {l:'HKR Pledge',v:compR.toFixed(1)+'%',c:cc(compR),s:(pR?'✓ ':'✗ ')+PLEDGE.pctR+'% target @'+PLEDGE.R+'min'},
+    {l:'Visitor Pledge',v:compV.toFixed(1)+'%',c:cc(compV),s:(pV?'✓ ':'✗ ')+PLEDGE.pctV+'% target @'+PLEDGE.V+'min'},
+    {l:'Avg Mean Wait',v:(avgWait>=999?'∞':avgWait)+' min',c:avgWait<=22.5?'#4ade80':avgWait<=30?'#f5c842':'#f87171',s:'(HKR+Vis)÷2 · tgt ≤22.5'},
+    {l:'Hall Fill',v:hallFillPct+'%',c:hallFillColor,s:nt(Math.round(LqR+LqV))+' pax queuing'},
   ].forEach(k=>{
-    p('<div class="tp-kc '+k.cls+'"><div class="tp-kc-lbl">'+k.lbl+'</div>');
-    p('<div class="tp-kc-val" style="color:'+k.color+'">'+k.val+'</div>');
-    p('<div class="tp-kc-sub">'+k.sub+'</div></div>');
+    p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;border-top:2px solid '+k.c+'">');
+    p.push('<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">'+k.l+'</div>');
+    p.push('<div style="font-family:Space Mono,monospace;font-size:18px;font-weight:700;color:'+k.c+'">'+k.v+'</div>');
+    p.push('<div style="font-size:9px;color:var(--muted);margin-top:2px">'+k.s+'</div></div>');
   });
-  p('</div>');
+  p.push('</div>');
 
-  // Stream table
-  p('<div class="af-card" style="margin-bottom:14px">');
-  p('<div class="af-card-hdr"><h3>Dual-Stream Flow Model</h3>');
-  p('<span class="kpi-sub">M/M/c Erlang-C · HKR ≤'+PLEDGE.R+'min · Visitor ≤'+PLEDGE.V+'min · Avg target ≤22.5min · SIA = Counters + ⌈e-Ch÷4.77⌉</span></div>');
-  p('<div style="overflow-x:auto">');
-  p('<table class="stt"><thead><tr>');
-  ['Stream','Volume','Counters','e-Ch','Capacity','Load','Est. Wait','Pledge','Status'].forEach(h=>p('<th>'+h+'</th>'));
-  p('</tr></thead><tbody>');
-
-  // HKR row
-  p('<tr>');
-  p('<td style="color:#0097A7">HKR <span style="font-size:9px;color:var(--muted);font-weight:400">(Resident)</span></td>');
-  p('<td>'+nt(volR)+'</td><td style="color:#0097A7">'+ctrR+'</td><td style="color:var(--accent)">'+echR+'</td>');
-  p('<td>'+nt(capR)+'</td>');
-  p('<td><div class="util-cell"><span class="util-pct" style="color:'+uc(uR)+'">'+uR+'%</span><div class="util-bar"><div class="util-fill" style="width:'+Math.min(uR,100)+'%;background:'+uc(uR)+'"></div></div></div></td>');
-  p('<td><span class="'+(wtR>=999?'wt-fail':wc(wtR,PLEDGE.R))+'">'+(wtR>=999?'∞':wtR)+' min</span></td>');
-  p('<td style="color:var(--muted);font-size:9px">≤'+PLEDGE.R+' min</td>');
-  p('<td><span class="spill '+sc(pR)+'">'+(pR?'MET':'FAIL')+'</span></td>');
-  p('</tr>');
-
-  // Visitor row
-  p('<tr>');
-  p('<td style="color:var(--gold)">Visitor</td>');
-  p('<td>'+nt(volV)+'</td><td style="color:var(--gold)">'+ctrV+'</td><td style="color:var(--gold)">'+echV+'</td>');
-  p('<td>'+nt(capV)+'</td>');
-  p('<td><div class="util-cell"><span class="util-pct" style="color:'+uc(uV)+'">'+uV+'%</span><div class="util-bar"><div class="util-fill" style="width:'+Math.min(uV,100)+'%;background:'+uc(uV)+'"></div></div></div></td>');
-  p('<td><span class="'+(wtV>=999?'wt-fail':wc(wtV,PLEDGE.V))+'">'+(wtV>=999?'∞':wtV)+' min</span></td>');
-  p('<td style="color:var(--muted);font-size:9px">≤'+PLEDGE.V+' min</td>');
-  p('<td><span class="spill '+sc(pV)+'">'+(pV?'MET':'FAIL')+'</span></td>');
-  p('</tr>');
-
-  // Total row
-  p('<tr class="stt-total">');
-  p('<td>TOTAL</td><td>'+nt(total)+'</td><td>'+(d.ctrR+d.ctrV)+'</td><td>'+(d.echR+d.echV)+'</td>');
-  p('<td>'+nt(capTotal)+'</td>');
-  p('<td><div class="util-cell"><span class="util-pct" style="color:'+uc(uT)+'">'+uT+'%</span><div class="util-bar"><div class="util-fill" style="width:'+Math.min(uT,100)+'%;background:'+uc(uT)+'"></div></div></div></td>');
-  p('<td>—</td><td>—</td>');
-  p('<td><span class="spill '+(allMet?'spill-met':'spill-fail')+'">'+(allMet?'ALL MET':'ACTION')+'</span></td>');
-  p('</tr>');
-  // Simple average wait row
-  p('<tr style="background:var(--surface3)">');
-  p('<td colspan="6" style="text-align:right;color:var(--muted);font-size:10px">Simple Average Wait (HKR + Visitor) ÷ 2</td>');
-  p('<td colspan="2" style="font-weight:700;font-size:13px;color:'+(avgWait<=22.5?'#4ade80':avgWait<=30?'#f5c842':'#f87171')+'">'+(avgWait>=999?'∞':avgWait)+' min</td>');
-  p('<td colspan="1" style="color:var(--muted);font-size:9px">target ≤22.5</td>');
-  p('<td><span class="spill '+(avgWait<=22.5?'spill-met':avgWait<=30?'spill-warn':'spill-fail')+'">'+(avgWait<=22.5?'MET':avgWait<=30?'NEAR':'FAIL')+'</span></td>');
-  p('</tr>');
-  p('</tbody></table></div></div>');
-
-  // ICO breakdown
-  p('<div class="af-card">');
-  p('<div class="af-card-hdr"><h3>ICO Manpower Breakdown</h3>');
-  p('<span class="kpi-sub">Total: <b style="color:#7c6af7">'+ico+'</b> staff · Efficiency: <b style="color:var(--res)">'+eff+'</b> pax/staff/hr</span></div>');
-  p('<div class="af-card-body">');
-  p('<div class="ico-grid2">');
-  [
-    {val:ctrR,lbl:'HKR Counters',sub:'Manned counter',detail:'1 ICO per counter',color:'#0097A7'},
-    {val:ctrV,lbl:'Visitor Counters',sub:'Manned counter',detail:'1 ICO per counter',color:'var(--gold)'},
-    {val:Math.ceil(echR/ICO_PER_ECH),lbl:'HKR e-Ch Staff',sub:'⌈'+echR+' ÷ 4.77⌉',detail:'SIA formula',color:'var(--accent)'},
-    {val:Math.ceil(echV/ICO_PER_ECH),lbl:'Visitor e-Ch Staff',sub:'⌈'+echV+' ÷ 4.77⌉',detail:'SIA formula',color:'var(--gold)'},
-    {val:ico,lbl:'Total Deployed',sub:'All streams',detail:'',color:'#7c6af7',big:true},
-    {val:eff,lbl:'Pax / Staff / Hr',sub:'Efficiency index',detail:'',color:'var(--res)',big:true},
-  ].forEach(c=>{
-    p('<div class="ico-c" style="'+(c.big?'background:var(--surface2)':'')+'">');
-    p('<div class="ico-c-num" style="color:'+c.color+'">'+c.val+'</div>');
-    p('<div class="ico-c-lbl">'+c.lbl+'</div>');
-    p('<div class="ico-c-sub">'+c.sub+'</div>');
-    if(c.detail) p('<div class="ico-c-sub" style="margin-top:3px">'+c.detail+'</div>');
-    p('</div>');
+  // ── Dual-stream table ────────────────────────────────────────────────────────
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px">');
+  p.push('<div style="padding:11px 16px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">');
+  p.push('<div><div style="font-family:Space Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--accent)">DUAL-STREAM FLOW MODEL</div>');
+  p.push('<div style="font-size:10px;color:var(--muted);margin-top:2px">HKR: '+PLEDGE.pctR+'%@'+PLEDGE.R+'min · Visitor: '+PLEDGE.pctV+'%@'+PLEDGE.V+'min · SIA = Counters + ⌈e-ch÷4.77⌉</div></div>');
+  p.push('<div style="background:'+(allMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)')+';border:1px solid '+(allMet?'rgba(74,222,128,.3)':'rgba(248,113,113,.3)')+';border-radius:20px;padding:4px 12px;font-size:9px;font-family:Space Mono,monospace;font-weight:700;color:'+(allMet?'#4ade80':'#f87171')+'">'+(allMet?'ALL PLEDGES MET':'PLEDGE BREACH')+'</div>');
+  p.push('</div><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:var(--surface2)">');
+  ['CATEGORY','VOLUME','CTRS','E-CH','CAPACITY','UTIL','COMPLIANCE','MEAN WAIT','PLEDGE','STATUS'].forEach(h=>{
+    p.push('<th style="padding:8px 10px;font-family:Space Mono,monospace;font-size:8px;letter-spacing:.08em;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap">'+h+'</th>');
   });
-  p('</div></div></div>');
+  p.push('</tr></thead><tbody>');
 
-  p('</div>'); // right col
-  p('</div>'); // tp-layout
+  function streamRow(lbl, lc, vol, ctr, ech, cap, util, wt, comp, tComp, tWait, bot){
+    const wc2=wt>=999?'#f87171':wt>tWait?'#f5c842':'#4ade80';
+    const pledgeMet=comp>=tComp;
+    p.push('<tr'+(bot?' style="background:var(--surface2);border-top:1px solid var(--border)"':'')+'>');
+    p.push('<td style="padding:11px 10px;font-weight:700;color:'+lc+'">'+lbl+'</td>');
+    p.push('<td style="padding:11px 10px;font-family:Space Mono,monospace">'+nt(vol)+'</td>');
+    p.push('<td style="padding:11px 10px;color:#0097A7">'+ctr+'</td>');
+    p.push('<td style="padding:11px 10px;color:var(--accent)">'+ech+'</td>');
+    p.push('<td style="padding:11px 10px;font-family:Space Mono,monospace">'+nt(cap)+'</td>');
+    p.push('<td style="padding:11px 10px"><div style="font-family:Space Mono,monospace;font-size:11px;font-weight:700;color:'+( bot?'var(--text)':''+(util>90?'#f87171':util>70?'#f5c842':'#4ade80'))+'">'+util+'%</div><div style="width:50px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:3px"><div style="height:100%;width:'+Math.min(util,100)+'%;background:'+(util>90?'#f87171':util>70?'#f5c842':'#4ade80')+'"></div></div></td>');
+    if(bot){
+      p.push('<td style="padding:11px 10px;font-family:Space Mono,monospace;font-size:13px;font-weight:700;color:'+(avgWait<=22.5?'#4ade80':avgWait<=30?'#f5c842':'#f87171')+'">'+(avgWait>=999?'∞':avgWait)+'<span style="font-size:9px;color:var(--muted)"> avg</span></td>');
+      p.push('<td style="padding:11px 10px" colspan="2" style="color:var(--muted);font-size:9px">⌈'+(echR+echV)+'÷4.77⌉='+echStaff+' e-ch staff</td>');
+    } else {
+      p.push('<td style="padding:11px 10px"><div style="font-family:Space Mono,monospace;font-size:12px;font-weight:700;color:'+(cc(comp))+'">'+comp.toFixed(1)+'%</div><div style="width:50px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:3px"><div style="height:100%;width:'+Math.min(comp,100)+'%;background:'+cc(comp)+'"></div></div><div style="font-size:8px;color:var(--muted);margin-top:2px">tgt '+tComp+'%</div></td>');
+      p.push('<td style="padding:11px 10px;font-family:Space Mono,monospace;font-size:14px;font-weight:700;color:'+wc2+'">'+(wt>=999?'∞':wt)+'<span style="font-size:9px;color:var(--muted)"> min</span></td>');
+      p.push('<td style="padding:11px 10px;font-size:9px;color:var(--muted)">≤'+tWait+' min</td>');
+    }
+    p.push('<td style="padding:11px 10px"><span style="padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:Space Mono,monospace;background:'+(bot?(allMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)'):(pledgeMet?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)'))+';color:'+(bot?(allMet?'#4ade80':'#f87171'):(pledgeMet?'#4ade80':'#f87171'))+'">'+( bot?(allMet?'ALL MET':'ACTION'):(pledgeMet?'MET':'FAIL'))+'</span></td>');
+    p.push('</tr>');
+  }
 
-  root.innerHTML=html.join('');
+  streamRow('HKR (Resident)','#0097A7',volR,ctrR,echR,capR,uR,wtR,compR,PLEDGE.pctR,PLEDGE.R,false);
+  streamRow('Visitor','var(--gold)',volV,ctrV,echV,capV,uV,wtV,compV,PLEDGE.pctV,PLEDGE.V,false);
+  streamRow('TOTAL','var(--text)',totalVol,ctrR+ctrV,echR+echV,capTotal,uT,0,0,0,0,true);
+  p.push('</tbody></table></div>');
+
+  // ── Bottom row: Operational Summary + Insights ────────────────────────────────
+  p.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">');
+
+  // Operational Summary
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)">');
+  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase">Operational Summary</span></div>');
+  p.push('<div style="padding:14px">');
+
+  // KPI mini grid
+  p.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">');
+  [{l:'SIA Staff',v:siaStaff,c:'#7c6af7',s:'deployed now'},
+   {l:'Efficiency',v:nt(efficiency),c:'var(--res)',s:'pax/staff/hr'},
+   {l:'HKR Queue',v:nt(Math.round(LqR))+' pax',c:LqR>50?'#f87171':'#4ade80',s:'waiting now'},
+   {l:'Vis Queue',v:nt(Math.round(LqV))+' pax',c:LqV>30?'#f87171':'#4ade80',s:'waiting now'},
+  ].forEach(k=>{
+    p.push('<div style="background:var(--surface2);border-radius:6px;padding:10px"><div style="font-size:8px;font-family:Space Mono,monospace;color:var(--muted);margin-bottom:3px">'+k.l+'</div>');
+    p.push('<div style="font-family:Space Mono,monospace;font-size:18px;font-weight:700;color:'+k.c+'">'+k.v+'</div>');
+    p.push('<div style="font-size:9px;color:var(--muted)">'+k.s+'</div></div>');
+  });
+  p.push('</div>');
+
+  // Strategic recommendation
+  let stratTitle, stratBody, stratColor;
+  if(!allMet){
+    stratTitle='⚠ ACTION REQUIRED'; stratColor='#f87171';
+    stratBody='';
+    if(!pR) stratBody+='HKR pledge '+compR.toFixed(1)+'% below '+PLEDGE.pctR+'% target — add e-channels or R counters. ';
+    if(!pV) stratBody+='Visitor pledge '+compV.toFixed(1)+'% below '+PLEDGE.pctV+'% target — add V counters. ';
+  } else if(uT<55){
+    stratTitle='💡 OVER-RESOURCED'; stratColor='#f5c842';
+    const minSIA=Math.max(Math.round(siaStaff*uT/75),8);
+    stratBody='System only '+uT+'% utilised. Consider reducing to ~'+minSIA+' SIA staff (saving ~'+(siaStaff-minSIA)+' staff) while maintaining pledges.';
+  } else {
+    stratTitle='✓ OPTIMAL DEPLOYMENT'; stratColor='#4ade80';
+    stratBody='Balanced configuration. '+siaStaff+' staff across '+(ctrR+ctrV+echR+echV)+' active units. All service pledges met with '+uT+'% utilisation.';
+  }
+  p.push('<div style="border-top:1px solid var(--border);padding-top:12px">');
+  p.push('<div style="font-size:10px;font-weight:700;font-family:Space Mono,monospace;color:'+stratColor+';margin-bottom:6px">'+stratTitle+'</div>');
+  p.push('<div style="font-size:11px;color:var(--dim);line-height:1.6">'+stratBody+'</div>');
+  if(hallFillPct>50) p.push('<div style="font-size:10px;color:'+hallFillColor+';margin-top:6px">⚠ Hall queue '+hallFillPct+'% — '+nt(Math.round(LqR+LqV))+' pax waiting</div>');
+  p.push('</div></div></div>');
+
+  // Live feed
+  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
+  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">');
+  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase">Live Simulation Feed</span>');
+  p.push('<span style="font-size:9px;font-family:Space Mono,monospace;color:#4ade80;display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block"></span>LIVE</span></div>');
+  p.push('<div style="padding:12px 14px;font-family:Space Mono,monospace;font-size:9px;line-height:2;max-height:195px;overflow-y:auto">');
+
+  const feed=[
+    {c:'var(--muted)',t:'['+ts+'] Initializing LSC Terminal…'},
+    {c:'var(--muted)',t:'['+ts+'] HKR Processing Rate: 5.0 pax/min (e-Channel focus)'},
+    {c:'var(--muted)',t:'['+ts+'] VIS Processing Rate: 3.0 pax/min (Counter focus)'},
+    {c:'var(--accent)',t:'['+ts+'] Current Volume: '+nt(totalVol)+' pax/hr ('+hkrRatio+'% HKR / '+visRatio+'% Visitor)'},
+    {c:allMet?'#4ade80':'#f87171',t:'['+ts+'] Pledge Status: '+(allMet?'ALL MET ✓':'BREACH ✗ — action required')},
+    {c:cc(compR),t:'['+ts+'] HKR Compliance: '+compR.toFixed(1)+'% (target '+PLEDGE.pctR+'%) — Mean Wait: '+(wtR>=999?'∞':wtR)+'min'},
+    {c:cc(compV),t:'['+ts+'] VIS Compliance: '+compV.toFixed(1)+'% (target '+PLEDGE.pctV+'%) — Mean Wait: '+(wtV>=999?'∞':wtV)+'min'},
+    {c:'#7c6af7',t:'['+ts+'] SIA: '+ctrStaff+' counter + '+echStaff+' e-ch = '+siaStaff+' staff deployed'},
+    {c:'var(--res)',t:'['+ts+'] Efficiency: '+nt(efficiency)+' pax/staff/hr | Hall Queue: '+hallFillPct+'% full'},
+  ];
+  if(!pR) feed.push({c:'#f87171',t:'['+ts+'] ⚠ HKR pledge FAIL — add e-channels or R counters'});
+  if(!pV) feed.push({c:'#f87171',t:'['+ts+'] ⚠ Visitor pledge FAIL — add V counters'});
+  if(hallFillPct>80) feed.push({c:'#f87171',t:'['+ts+'] 🚨 Hall queue '+hallFillPct+'% — congestion risk'});
+  if(uT<55&&siaStaff>8) feed.push({c:'#f5c842',t:'['+ts+'] 💡 Only '+uT+'% util — consider reducing staff'});
+  if(allMet&&uT>=60) feed.push({c:'#4ade80',t:'['+ts+'] ✓ Optimal deployment confirmed'});
+
+  feed.forEach(f=>p.push('<div style="color:'+f.c+'">'+f.t+'</div>'));
+  p.push('</div></div>');
+
+  p.push('</div>'); // bottom row
+  p.push('</div>'); // right col
+  p.push('</div>'); // main grid
+
+  root.innerHTML=p.join('');
 }
+
 
 // Linked slider: when key moves, otherKey = max - key (total stays ≤ max)
 // Also updates the other slider's display value without full re-render
