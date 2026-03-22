@@ -2799,8 +2799,8 @@ function renderEstimator(){
   streamRow('TOTAL','var(--text)',totalVol,ctrR+ctrV,echR+echV,capTotal,uT,0,0,0,0,true);
   p.push('</tbody></table></div>');
 
-  // ── Bottom row: Operational Summary + Insights ────────────────────────────────
-  p.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">');
+  // ── Bottom row: Operational Summary (full width) ─────────────────────────────
+  p.push('<div>');
 
   // Operational Summary
   p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
@@ -2841,33 +2841,6 @@ function renderEstimator(){
   p.push('<div style="font-size:11px;color:var(--dim);line-height:1.6">'+stratBody+'</div>');
   if(hallFillPct>50) p.push('<div style="font-size:10px;color:'+hallFillColor+';margin-top:6px">⚠ Hall queue '+hallFillPct+'% — '+nt(Math.round(LqR+LqV))+' pax waiting</div>');
   p.push('</div></div></div>');
-
-  // Live feed
-  p.push('<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">');
-  p.push('<div style="padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">');
-  p.push('<span style="font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase">Live Simulation Feed</span>');
-  p.push('<span style="font-size:9px;font-family:Space Mono,monospace;color:#4ade80;display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block"></span>LIVE</span></div>');
-  p.push('<div style="padding:12px 14px;font-family:Space Mono,monospace;font-size:9px;line-height:2;max-height:195px;overflow-y:auto">');
-
-  const feed=[
-    {c:'var(--muted)',t:'['+ts+'] Initializing LSC Terminal…'},
-    {c:'var(--muted)',t:'['+ts+'] HKR Processing Rate: 5.0 pax/min (e-Channel focus)'},
-    {c:'var(--muted)',t:'['+ts+'] VIS Processing Rate: 3.0 pax/min (Counter focus)'},
-    {c:'var(--accent)',t:'['+ts+'] Current Volume: '+nt(totalVol)+' pax/hr ('+hkrRatio+'% HKR / '+visRatio+'% Visitor)'},
-    {c:allMet?'#4ade80':'#f87171',t:'['+ts+'] Pledge Status: '+(allMet?'ALL MET ✓':'BREACH ✗ — action required')},
-    {c:cc(compR),t:'['+ts+'] HKR Compliance: '+compR.toFixed(1)+'% (target '+PLEDGE.pctR+'%) — Mean Wait: '+(wtR>=999?'∞':wtR)+'min'},
-    {c:cc(compV),t:'['+ts+'] VIS Compliance: '+compV.toFixed(1)+'% (target '+PLEDGE.pctV+'%) — Mean Wait: '+(wtV>=999?'∞':wtV)+'min'},
-    {c:'#7c6af7',t:'['+ts+'] SIA: '+ctrStaff+' counter + '+echStaff+' e-ch = '+siaStaff+' staff deployed'},
-    {c:'var(--res)',t:'['+ts+'] Efficiency: '+nt(efficiency)+' pax/staff/hr | Hall Queue: '+hallFillPct+'% full'},
-  ];
-  if(!pR) feed.push({c:'#f87171',t:'['+ts+'] ⚠ HKR pledge FAIL — add e-channels or R counters'});
-  if(!pV) feed.push({c:'#f87171',t:'['+ts+'] ⚠ Visitor pledge FAIL — add V counters'});
-  if(hallFillPct>80) feed.push({c:'#f87171',t:'['+ts+'] 🚨 Hall queue '+hallFillPct+'% — congestion risk'});
-  if(uT<55&&siaStaff>8) feed.push({c:'#f5c842',t:'['+ts+'] 💡 Only '+uT+'% util — consider reducing staff'});
-  if(allMet&&uT>=60) feed.push({c:'#4ade80',t:'['+ts+'] ✓ Optimal deployment confirmed'});
-
-  feed.forEach(f=>p.push('<div style="color:'+f.c+'">'+f.t+'</div>'));
-  p.push('</div></div>');
 
   p.push('</div>'); // bottom row
   p.push('</div>'); // right col
