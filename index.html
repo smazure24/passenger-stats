@@ -1849,7 +1849,8 @@ const WINTER_SOLSTICE = {
 };
 
 // Returns a detailed remark for use in Excel exports — includes Mainland holiday context
-function getDetailedRemarks(dateStr){
+function getDetailedRemarks(dateStr){ return getRemarks(dateStr); }
+function _unusedDetailedRemarks(dateStr){
   if(!dateStr) return '';
   const base = getRemarks(dateStr) || '';
   const d = new Date(dateStr+'T00:00:00');
