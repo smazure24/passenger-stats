@@ -1390,6 +1390,22 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   ws['!rows'] = [];
 
   // ── helpers ──────────────────────────────────────────────────────────────
+  // Draw thick black outer border around a rectangular region
+  function boxBorder(r1, r2, c1, c2){
+    const blk = {style:'medium', color:{rgb:'000000'}};
+    for(let r=r1; r<=r2; r++){
+      for(let c=c1; c<=c2; c++){
+        const addr = XLSX.utils.encode_cell({r,c});
+        if(!ws[addr]) ws[addr]={v:'',t:'s',s:{border:{}}};
+        if(!ws[addr].s) ws[addr].s={};
+        if(!ws[addr].s.border) ws[addr].s.border={};
+        if(c===c1) ws[addr].s.border.left   = blk;
+        if(c===c2) ws[addr].s.border.right  = blk;
+        if(r===r1) ws[addr].s.border.top    = blk;
+        if(r===r2) ws[addr].s.border.bottom = blk;
+      }
+    }
+  }
   const blank = (rgb) => ({v:'',t:'s',s:{font:{name:'Calibri',sz:9},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:rgb||'FFFFFF'}},border:{}}});
   const fmtNum = (cell) => { cell.s.numFmt='#,##0'; return cell; };
   const fmtPct = (cell) => { cell.s.numFmt='0.0%'; return cell; };
@@ -1479,7 +1495,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
   ws['!rows'][R]={hpt:28};
   for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navyBg}},border:{}}};
-  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'LAND BOUNDARY CONTROL POINT',t:'s',s:{font:{name:'Calibri',sz:14,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navyBg}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'LSC',t:'s',s:{font:{name:'Calibri',sz:14,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navyBg}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
   merge(R,0,R,5);
   ws[XLSX.utils.encode_cell({r:R,c:6})]={v:'ANALYSIS & FORECAST REPORT',t:'s',s:{font:{name:'Calibri',sz:10,color:{rgb:isPostCovid?'90CAF9':'A8E6C0'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'0A2F6B':'0A2E1A'}},alignment:{horizontal:'right',vertical:'center'},border:{}}};
   merge(R,6,R,NC-1); R++;
@@ -1497,6 +1513,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   // ─────────────────────────────────────────────────────────────────────────
   // SECTION 1: YoY TREND — SAME PERIOD
   // ─────────────────────────────────────────────────────────────────────────
+  const _s1Start=R;
   ws['!rows'][R]={hpt:20};
   const s1Hdrs=['YEAR-OVER-YEAR TREND — SAME PERIOD (1 Jan – '+periodLabel+' each year)'];
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell(s1Hdrs[0],navyBg,'FFFFFF',11,true,'left');
@@ -1534,13 +1551,14 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   });
 
   // Note row
-  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'Note: "Op. Days" excludes border closure period (2020-02-04 to 2023-01-07). "Excl." = number of closure days within the Jan–'+periodLabel+' window.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
+  // s1 box applied above (2020-02-04 to 2023-01-07). "Excl." = number of closure days within the Jan–'+periodLabel+' window.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
   merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
   // SECTION 2: FULL YEAR TREND
   // ─────────────────────────────────────────────────────────────────────────
+  const _s2Start=R;
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('ANNUAL TRAFFIC — FULL YEAR',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
@@ -1573,6 +1591,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   // ─────────────────────────────────────────────────────────────────────────
   // SECTION 3: WEEKDAY vs WEEKEND/PH BENCHMARK
   // ─────────────────────────────────────────────────────────────────────────
+  const _s3Start=R;
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('TRAFFIC BENCHMARK — WEEKDAY vs WEEKEND / PUBLIC HOLIDAY',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
@@ -1600,11 +1619,13 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',row.bg,'999999',false,10,9,_bi,true);
     ws['!rows'][R]={hpt:16}; R++;
   });
+  boxBorder(_s3Start,R-1,0,NC-1);
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
   // SECTION 4: HOLIDAY TYPE ANALYSIS
   // ─────────────────────────────────────────────────────────────────────────
+  const _s4Start=R;
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY HOLIDAY / DAY TYPE  (Top '+Math.min(holidays.length,20)+')',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
@@ -1656,13 +1677,15 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999',false,10,9,_hf,true);
     ws['!rows'][R]={hpt:14}; R++;
   });
+  boxBorder(_s4Start,R-1,0,NC-1);
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
   // SECTION 5: DAY OF WEEK
   // ─────────────────────────────────────────────────────────────────────────
+  const _s5Start=R;
   ws['!rows'][R]={hpt:20};
-  ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY DAY OF WEEK',navyBg,'FFFFFF',11,true,'left');
+  ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY DAY OF WEEK  (last 12 months)',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
   merge(R,0,R,NC-1); R++;
   ws['!rows'][R]={hpt:14};
@@ -1683,6 +1706,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     for(let j=5;j<NC;j++) ws[XLSX.utils.encode_cell({r:R,c:j})]=dataC('',bg,'999999',false,10,j,_df,j===NC-1);
     ws['!rows'][R]={hpt:14}; R++;
   });
+  boxBorder(_s5Start,R-1,0,NC-1);
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1953,8 +1977,8 @@ function exportExcel(){
     for(let col=0;col<maxCols;col++) ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',11,false,'FFFFFF',hdrBg);
     // org name left
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
-      'LAND BOUNDARY CONTROL POINT',
-      14,true,isPostCovid?'B8D4FF':'A8E6C0',hdrBg,'left'
+      'LSC',
+      16,true,isPostCovid?'B8D4FF':'A8E6C0',hdrBg,'left'
     );
     const orgCols = Math.floor(maxCols*0.6);
     merges.push({s:{r:R,c:0},e:{r:R,c:orgCols-1}});
@@ -2008,6 +2032,7 @@ function exportExcel(){
     R++;
 
     sections.forEach((sec,secIdx)=>{
+      const _secStartR = R; // track where this section begins
       const nc=sec.headers.length;
       // ── Section title classification ─────────────────────────────────────────
       const titleIsArrival = sec.title.toLowerCase().includes('arrival') ||
@@ -2201,52 +2226,14 @@ function exportExcel(){
     const ws=buildSheet(
       `Record High — Total Traffic`,
       [
-        {title:'Record High on Total Passenger Traffic',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpArr9,grpDep9,grpTotal,grpRem],
-         headers:['Rank','Date','Day','Arr HKR','Arr V','Dep HKR','Dep V','Total','Remarks'],
-         sortCol:7, totalCols:[7],
-         rows:topN(days,d=>d.dt.ad_tot).map(daily9col)},
-        {title:'Record High on Arrival (Inbound) Passengers',
-         headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
-         sortCol:5, totalCols:[5],
-         rows:topN(days,d=>d.dt.arr_tot).map((x,i)=>daily7col(x,i,true))},
-        {title:'Record High on Departure (Outbound) Passengers',
-         headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
-         sortCol:5, totalCols:[5],
-         rows:topN(days,d=>d.dt.dep_tot).map((x,i)=>daily7col(x,i,false))},
+        {title:'Record High on Total Traffic',
+         headers:['Rank','Date','Day','Total Pax','Remarks'],
+         sortCol:3, totalCols:[3],
+         rows:topN(days,d=>d.dt.ad_tot).map((x,i)=>[i+1,fDate(x.day.date),dayOfWeek(x.day.date),x.day.dt.ad_tot,getRemarks(x.day.date)])},
       ],
-      [6,13,5,14,14,14,14,13,32]
+      [6,13,5,16,32]
     );
-    // ── Patch: merge col G:H for Inbound & Outbound rows (7-col tables in a 9-col sheet) ──
-    // Layout: row0=accentStripe, row1=eraBadge, row2=subtitle, row3=blank
-    // Sec1(Total Traffic 9-col): row4=secTitle, row5=groupHdr, row6=colHdr, rows7-11=data, row12=blank, row13=blank
-    // Sec2(Inbound 7-col): row14=secTitle, row15=colHdr, rows16-20=data, row21=blank, row22=blank
-    // Sec3(Outbound 7-col): row23=secTitle, row24=colHdr, rows25-29=data
-    // Merge G:H (col6:col7) for all Inbound rows (15-21) and Outbound rows (24-30)
-    const blankCellStyle={font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{right:{style:'medium',color:C.navyDark}}};
-    const blankCellStyleAlt={font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'E3F2FD':'EBF7EE'}},border:{right:{style:'medium',color:C.navyDark}}};
-    // Header = 6 rows (R0-R5). Sec1(9-col with groups): secTitle=R6, grpHdr=R7, colHdr=R8, data=R9-13, blank=R14, spacer=R15
-    // Sec2(Inbound 7-col): secTitle=R16, colHdr=R17, data=R18-22, blank=R23, spacer=R24
-    // Sec3(Outbound 7-col): secTitle=R25, colHdr=R26, data=R27-31, blank=R32
-    for(let r=16;r<=24;r++){  // Inbound: secTitle through spacer
-      const isAlt=(r-18)%2===1;
-      const addr=XLSX.utils.encode_cell({r,c:7});
-      ws[addr]={v:'',t:'s',s:r<=23?(isAlt?blankCellStyleAlt:blankCellStyle):S.blank};
-      ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
-    }
-    for(let r=25;r<=33;r++){  // Outbound: secTitle through end
-      const isAlt=(r-27)%2===1;
-      const addr=XLSX.utils.encode_cell({r,c:7});
-      ws[addr]={v:'',t:'s',s:r<=32?(isAlt?blankCellStyleAlt:blankCellStyle):S.blank};
-      ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
-    }
-    // Extend Inbound/Outbound section title merges from col 6 to col 8
-    ws['!merges']=ws['!merges'].map(m=>{
-      if((m.s.r===16||m.s.r===25)&&m.e.c===6){
-        return{s:m.s,e:{r:m.e.r,c:8}};
-      }
-      return m;
-    });
+    // Total Traffic sheet — simplified to single section, no patch needed
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
 
@@ -2488,13 +2475,21 @@ function fullYearAnalysis(days){
 
 
 // ─── Day-of-week analysis ──────────────────────────────────────────────────
-function dowAnalysis(days){
+function dowAnalysis(days, limitYears){
+  // Only use the last 3 calendar years for recency — avoids early-reopen 2023 diluting pattern
+  limitYears = limitYears || 1;
+  const maxYear = days.length ? Math.max(...days.map(d=>+d.date.substring(0,4))) : new Date().getFullYear();
+  const cutoffYear = maxYear - limitYears + 1;
+  const filtered = days.filter(d => +d.date.substring(0,4) >= cutoffYear);
+  const src = filtered.length >= 30 ? filtered : days; // fallback if too little data
+  const usedYears = [...new Set(src.map(d=>d.date.substring(0,4)))].sort();
+
   const dow=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const dowMap=[1,2,3,4,5,6,0]; // Mon=1...Sun=0 in JS getDay()
+  const dowMap=[1,2,3,4,5,6,0];
   const buckets=dow.map(d=>({day:d,totals:[],arr:[],dep:[]}));
-  for(const d of days){
-    const jsDay=new Date(d.date+'T00:00:00').getDay(); // 0=Sun,6=Sat
-    const wd=dowMap.indexOf(jsDay); // remap to Mon-first index
+  for(const d of src){
+    const jsDay=new Date(d.date+'T00:00:00').getDay();
+    const wd=dowMap.indexOf(jsDay);
     if(wd>=0){ buckets[wd].totals.push(d.dt.ad_tot||0); buckets[wd].arr.push(d.dt.arr_tot||0); buckets[wd].dep.push(d.dt.dep_tot||0); }
   }
   return buckets.map(b=>({
@@ -2502,6 +2497,7 @@ function dowAnalysis(days){
     avg:b.totals.length?Math.round(b.totals.reduce((a,c)=>a+c,0)/b.totals.length):0,
     avgArr:b.arr.length?Math.round(b.arr.reduce((a,c)=>a+c,0)/b.arr.length):0,
     avgDep:b.dep.length?Math.round(b.dep.reduce((a,c)=>a+c,0)/b.dep.length):0,
+    usedYears, cutoffYear,
   }));
 }
 
@@ -3959,7 +3955,7 @@ function exportPPTX(){
 
   const pres = new PptxGenJS();
   pres.layout = 'LAYOUT_16x9';
-  pres.title = 'Land Boundary Control Point — Passenger Statistics';
+  pres.title = 'LSC — Passenger Statistics';
   pres.author = 'Immigration Department';
   pres.subject = 'Record High Analysis & Forecast';
 
@@ -4031,7 +4027,7 @@ function exportPPTX(){
   // Background panel right
   s1.addShape(pres.shapes.RECTANGLE, { x:6.8, y:0, w:3.2, h:5.625, fill:{color:C.panel}, line:{color:C.border,width:1} });
   // Title
-  s1.addText('LAND BOUNDARY\nCONTROL POINT', { x:0.3, y:1.0, w:6.2, h:1.6, fontSize:36, bold:true, color:C.white, fontFace:'Calibri', lineSpacingMultiple:1.1 });
+  s1.addText('LSC', { x:0.3, y:1.0, w:6.2, h:1.6, fontSize:36, bold:true, color:C.white, fontFace:'Calibri', lineSpacingMultiple:1.1 });
   s1.addText('Passenger Statistics — Record High Analysis', { x:0.3, y:2.75, w:6.2, h:0.5, fontSize:16, color:C.accent, fontFace:'Calibri' });
   s1.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.32, w:3.2, h:0.04, fill:{color:C.gold}, line:{color:C.gold} });
   s1.addText(era+' Era  ·  As at '+fDate(latestDate), { x:0.3, y:3.45, w:6.2, h:0.38, fontSize:12, color:C.gold, fontFace:'Calibri' });
@@ -4134,7 +4130,7 @@ function exportPPTX(){
   // SLIDE 5 — DAY-OF-WEEK PROFILE
   // ══════════════════════════════════════════════════════════════════
   const s4 = pres.addSlide();
-  addHeader(s4, 'TRAFFIC PROFILE BY DAY OF WEEK', 'Average pax/day · arrival vs departure breakdown');
+  addHeader(s4, 'TRAFFIC PROFILE BY DAY OF WEEK  (last 12 months)', 'Average pax/day · arrival vs departure breakdown');
   if(dow.length){
     const maxAvg=Math.max(...dow.map(d=>d.avg))||1;
     // Chart left
