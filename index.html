@@ -731,7 +731,7 @@ function getRemarks(dateStr){
   const isWeekend = dow===0||dow===6;
   const isSat = dow===6;
   const isSun = dow===0;
-  const isSummer = month>=6&&month<=9;
+  const isSummer = month>=7&&month<=8; // Summer = Jul & Aug only
 
   // ── 2. Fixed-date public holidays (algorithmic fallback for other years) ──
   if(month===1&&day===1) return "New Year's Day";
@@ -980,7 +980,7 @@ function buildAnalysisHTML(days){
   // Day of week
   const maxDow = Math.max(...dow.map(d=>d.avg))||1;
   push('<div class="af-card">');
-  push('<div class="af-card-hdr"><h3>Average by Day of Week</h3><span class="kpi-sub">All loaded days</span></div>');
+  push('<div class="af-card-hdr"><h3>Average by Day of Week</h3><span class="kpi-sub" style="color:var(--accent)">Last 12 months</span></div>');
   push('<div class="af-card-body">');
   dow.forEach(d=>{
     const w=pct(d.avg,maxDow);
@@ -1432,9 +1432,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       font:{name:'Calibri',sz:sz||9,bold:bold!==false,color:{rgb:fg||'FFFFFF'}},
       fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||navyBg}},
       alignment:{horizontal:halign||'center',vertical:'center',wrapText:wrap||false,indent:halign==='left'?1:0},
-      border:{top:{style:'medium',color:{rgb:isPostCovid?'1A3570':'0F3018'}},
-              bottom:{style:'medium',color:{rgb:isPostCovid?'1A3570':'0F3018'}},
-              left: leftBorder, right: rightBorder}
+      border:{bottom:{style:'medium',color:{rgb:isPostCovid?'1A3570':'0F3018'}}}
     }};
   }
   // ── Cell border sets ──────────────────────────────────────────────────────
@@ -1476,13 +1474,14 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       font:{name:'Calibri',sz:sz||10,bold:bold||false,color:{rgb:fg||'333333'}},
       fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||'FFFFFF'}},
       alignment:{horizontal:halign, vertical:'center', indent: colIdx===0?1:0},
-      border: borders
+      border: {}
     }};
   }
   function numC(v, bg, fg, bold, col, isFirst, isLast){
     const c = dataC(v, bg, fg, bold, 10, col||1, isFirst, isLast);
     c.s.numFmt='#,##0';
     c.s.alignment.horizontal='center';
+    c.s.border={};
     return c;
   }
   function pctC(v, bg, fg, bold){ const c=dataC(v+'%',bg,fg,bold); return c; }
@@ -1619,7 +1618,6 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',row.bg,'999999',false,10,9,_bi,true);
     ws['!rows'][R]={hpt:16}; R++;
   });
-  boxBorder(_s3Start,R-1,0,NC-1);
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1631,29 +1629,10 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
   merge(R,0,R,NC-1); R++;
 
-  // ── BENCHMARK REFERENCE BLOCK ─────────────────────────────────────────────
-  // Show baseline values so "vs Weekday Avg" column is self-explanatory
-  const refBg  = isPostCovid?'F0F8FF':'F4FFF8';
-  const refBg2 = isPostCovid?'EBF2FF':'EEFBF3';
-  ws['!rows'][R]={hpt:13};
-  // Label cell
-  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'📌 BASELINE FOR "vs Weekday Avg" COLUMN:',t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:isPostCovid?'0F1F4A':'0A1F0E'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'left',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
-  merge(R,0,R,1);
-  // Weekday avg block
-  ws[XLSX.utils.encode_cell({r:R,c:2})]={v:'Avg Weekday (non-PH) =',t:'s',s:{font:{name:'Calibri',sz:9,bold:false,color:{rgb:'555555'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'right',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
-  ws[XLSX.utils.encode_cell({r:R,c:3})]={v:ww.weekday.avgTotal,t:'n',s:{font:{name:'Calibri',sz:10,bold:true,color:{rgb:isPostCovid?'1565C0':'2E7D52'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg2}},alignment:{horizontal:'right',vertical:'center'},numFmt:'#,##0',border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
-  ws[XLSX.utils.encode_cell({r:R,c:4})]={v:'pax/day ('+ww.weekday.count+' days)',t:'s',s:{font:{name:'Calibri',sz:8,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'left',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
-  // Wknd/PH avg block
-  ws[XLSX.utils.encode_cell({r:R,c:5})]={v:'Avg Weekend / PH =',t:'s',s:{font:{name:'Calibri',sz:9,bold:false,color:{rgb:'555555'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'right',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
-  ws[XLSX.utils.encode_cell({r:R,c:6})]={v:ww.phwk.avgTotal,t:'n',s:{font:{name:'Calibri',sz:10,bold:true,color:{rgb:'8B6914'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFBEA'}},alignment:{horizontal:'right',vertical:'center'},numFmt:'#,##0',border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
-  ws[XLSX.utils.encode_cell({r:R,c:7})]={v:'pax/day ('+ww.phwk.count+' days)  ·  Weekend/PH is ×'+(ww.weekday.avgTotal>0?(ww.phwk.avgTotal/ww.weekday.avgTotal).toFixed(2):'—')+' the weekday avg',t:'s',s:{font:{name:'Calibri',sz:8,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'left',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
-  merge(R,7,R,NC-1);
-  // Fill remaining cells in this row
-  for(let i of [1,8,9]) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
-  R++;
+  // Baseline reference row removed (vs Weekday Avg column no longer shown)
 
   ws['!rows'][R]={hpt:14};
-  ['Holiday / Day Type','Occurrences','Avg Total','▲ Avg Arrival','▼ Avg Departure','Avg HKR','Avg Visitors','vs Weekday Avg','Peak Recorded',''].forEach((h,i,a)=>{
+  ['Holiday / Day Type','Occurrences','Avg Total','▲ Avg Arrival','▼ Avg Departure','Avg HKR','Avg Visitors','Peak Recorded','',''].forEach((h,i,a)=>{
     ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell(i===0?'Holiday / Day Type':h,navy3,'FFFFFF',9,true,i===0?'left':'center',true,i,a.length);
   }); R++;
   const wdAvg = ww.weekday.avgTotal||1;
@@ -1677,7 +1656,6 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999',false,10,9,_hf,true);
     ws['!rows'][R]={hpt:14}; R++;
   });
-  boxBorder(_s4Start,R-1,0,NC-1);
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1706,7 +1684,6 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     for(let j=5;j<NC;j++) ws[XLSX.utils.encode_cell({r:R,c:j})]=dataC('',bg,'999999',false,10,j,_df,j===NC-1);
     ws['!rows'][R]={hpt:14}; R++;
   });
-  boxBorder(_s5Start,R-1,0,NC-1);
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1955,7 +1932,20 @@ function exportExcel(){
     }
     function blank(bgRgb){return hCell('',9,false,'FFFFFF',bgRgb);}
 
-    // ── ROW 0: Thin accent bar ───────────────────────────────────────────────────
+    // ── ROW 0: Era identification banner (mirrors Analysis sheet) ───────────────
+    ws['!rows'][R]={hpt:7};
+    const eraBannerBg2 = isPostCovid ? '29B6F6' : '43A047';
+    const eraBannerFg2 = isPostCovid ? '0D2B6B' : '0A2218';
+    for(let col=0;col<maxCols;col++)
+      ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',8,false,eraBannerFg2,eraBannerBg2,'center');
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
+      (isPostCovid?'POST-COVID':'SINCE COMMISSIONING')+'  ●',
+      8,true,eraBannerFg2,eraBannerBg2,'left'
+    );
+    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
+    R++;
+
+    // ── ROW 1: Thin accent bar ───────────────────────────────────────────────────
     ws['!rows'][R]={hpt:5};
     const accentBarCol = isPostCovid ? '1565C0' : '2E7D52';
     for(let col=0;col<maxCols;col++)
@@ -2119,7 +2109,7 @@ function exportExcel(){
         for(const g of sec.groups){
           const gs=JSON.parse(JSON.stringify(g.style||S.colHdr));
           gs.alignment={horizontal:'center',vertical:'center'};
-          gs.border={left:col===0?_BK:_BT,right:col+g.span-1===lastGC?_BK:_BT,top:_BK,bottom:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}}};
+          gs.border={bottom:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}}};
           ws[XLSX.utils.encode_cell({r:R,c:col})]={v:g.label,t:'s',s:gs};
           for(let c=1;c<g.span;c++) ws[XLSX.utils.encode_cell({r:R,c:col+c})]={v:'',t:'s',s:JSON.parse(JSON.stringify(gs))};
           if(g.span>1) merges.push({s:{r:R,c:col},e:{r:R,c:col+g.span-1}});
@@ -2135,9 +2125,6 @@ function exportExcel(){
         let hs=JSON.parse(JSON.stringify(isSort?S.sortHdr:S.colHdr));
         hs.alignment={horizontal:isLastH?'left':'center',vertical:'center',indent:isLastH?1:0};
         hs.border={
-          left:  c===0   ?_BK:_BT,
-          right: isLastH ?_BK:_BT,
-          top:   _BK,
           bottom:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}},
         };
         ws[XLSX.utils.encode_cell({r:R,c})]={v:sec.headers[c]+(isSort?' ▼':''),t:'s',s:hs};
@@ -2182,13 +2169,7 @@ function exportExcel(){
             ?{horizontal:'left',vertical:'center',indent:1}
             :{horizontal:'center',vertical:'center'};
           if(isNum) s.numFmt='#,##0';
-          // Consistent cage + black outer border
-          s.border={
-            left:  c===0    ?_BK:_BT,
-            right: isRemark ?_BK:_BT,
-            top:   isFirst  ?_BK:_BT,
-            bottom:isLast   ?_BK:_BT,
-          };
+          s.border={}; // borderless data rows
           ws[XLSX.utils.encode_cell({r:R,c})]={v:val===null||val===undefined?'':val,t:isNum?'n':'s',s};
         }
         R++;
