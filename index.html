@@ -1659,8 +1659,8 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     });
     R++; // spacer
 
-    // Hourly profile per day (Good Friday and Easter Monday as the two most significant)
-    const keyDays = ['-2','1']; // Good Friday, Easter Monday
+    // Hourly profile for ALL 5 days of the Easter period
+    const keyDays = ['-2','-1','0','1','2']; // Good Fri, Easter Sat, Easter Sun, Easter Mon, Day After
     keyDays.forEach(off=>{
       const dp = f.dayProfiles[off];
       if(!dp||!dp.profile.length) return;
@@ -2459,10 +2459,12 @@ function holidayAnalysis(days){
     else if(r.includes('Buddha'))cat="Buddha's Birthday";
     else if(r.includes('Ching Ming'))cat='Ching Ming Festival';
     else if(r.includes('HKSAR'))cat='HKSAR Establishment Day';
-    if(!groups[cat])groups[cat]={vals:[],arrVals:[],depVals:[]};
+    if(!groups[cat])groups[cat]={vals:[],arrVals:[],depVals:[],resVals:[],visVals:[]};
     groups[cat].vals.push(d.dt.ad_tot||0);
     groups[cat].arrVals.push(d.dt.arr_tot||0);
     groups[cat].depVals.push(d.dt.dep_tot||0);
+    groups[cat].resVals.push(d.dt.ad_res||0);
+    groups[cat].visVals.push(d.dt.ad_vis||0);
   }
   return Object.entries(groups).map(([cat,v])=>({
     cat,count:v.vals.length,
@@ -2470,6 +2472,8 @@ function holidayAnalysis(days){
     max:Math.max(...v.vals),
     avgArr:Math.round(v.arrVals.reduce((a,b)=>a+b,0)/v.arrVals.length),
     avgDep:Math.round(v.depVals.reduce((a,b)=>a+b,0)/v.depVals.length),
+    avgRes:Math.round(v.resVals.reduce((a,b)=>a+b,0)/v.resVals.length),
+    avgVis:Math.round(v.visVals.reduce((a,b)=>a+b,0)/v.visVals.length),
   })).sort((a,b)=>b.avg-a.avg);
 }
 
