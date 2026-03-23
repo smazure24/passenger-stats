@@ -1482,7 +1482,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   function numC(v, bg, fg, bold, col, isFirst, isLast){
     const c = dataC(v, bg, fg, bold, 10, col||1, isFirst, isLast);
     c.s.numFmt='#,##0';
-    c.s.alignment.horizontal='right';
+    c.s.alignment.horizontal='center';
     return c;
   }
   function pctC(v, bg, fg, bold){ const c=dataC(v+'%',bg,fg,bold); return c; }
@@ -1770,12 +1770,10 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
       const hrs=dp.profile.filter(h=>/^\d{4}/.test(h.time||''));
       const peakH=hrs.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a,hrs[0]||{time:'',ad_tot:0});
-      let dayTotH=0, dayTotP=0;
       hrs.forEach((hr,i)=>{
         const isPk=hr.time===peakH.time;
         const proj=Math.round((hr.ad_tot||0)*f.factor);
         const bg=isPk?'FFF8DC':(i%2===0?'FFFFFF':'F0F8FF');
-        dayTotH+=hr.ad_tot||0; dayTotP+=proj;
         ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(hr.time+(isPk?' ★':''),bg,'333333',isPk);
         ws[XLSX.utils.encode_cell({r:R,c:1})]=numC(hr.arr_res||0,bg,arrCol);
         ws[XLSX.utils.encode_cell({r:R,c:2})]=numC(hr.arr_vis||0,bg,'B8860B');
@@ -1788,12 +1786,6 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
         ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999');
         ws['!rows'][R]={hpt:12}; R++;
       });
-      // Day total row
-      ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'DAY TOTAL',t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}},alignment:{horizontal:'left',vertical:'center'},border:{top:{style:'medium',color:{rgb:'0097A7'}}}}};
-      [1,2,3,4,5,6,7,8,9].forEach(j=>{ ws[XLSX.utils.encode_cell({r:R,c:j})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}},border:{}}}; });
-      ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(dayTotH,'0097A7','FFFFFF',true); ws[XLSX.utils.encode_cell({r:R,c:7})].s.fill={type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}}; ws[XLSX.utils.encode_cell({r:R,c:7})].s.font.color={rgb:'FFFFFF'};
-      ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(dayTotP,'FFF8DC','B8860B',true);
-      ws['!rows'][R]={hpt:14}; R++;
       R++;
     });
 
@@ -2036,11 +2028,7 @@ function exportExcel(){
       const nc=sec.headers.length;
       // ── Section title classification ─────────────────────────────────────────
       const titleIsArrival = sec.title.toLowerCase().includes('arrival') ||
-                             sec.title.toLowerCase().includes('inbound') ||
-                             sec.title.toLowerCase().includes('total passenger') ||
-                             sec.title.toLowerCase().includes('total number') ||
-                             sec.title.toLowerCase().includes('total hkr') ||
-                             sec.title.toLowerCase().includes('total visitor');
+                             sec.title.toLowerCase().includes('inbound');
       const titleIsDeparture = sec.title.toLowerCase().includes('departure') ||
                                sec.title.toLowerCase().includes('outbound');
 
@@ -2060,7 +2048,18 @@ function exportExcel(){
       const secTint = secTintMap[secAccent] || 'F5F5F5';
 
       // Direction label
-      const dirLabel = titleIsDeparture ? 'DEPARTURE' : titleIsArrival ? 'ARRIVAL / TOTAL' : 'SUMMARY';
+      // "total number/traffic" → TOTAL; arrival-only → ARRIVAL; departure → DEPARTURE
+      const titleIsTotal = sec.title.toLowerCase().includes('total number') ||
+                           sec.title.toLowerCase().includes('total passenger') ||
+                           sec.title.toLowerCase().includes('total traffic') ||
+                           sec.title.toLowerCase().includes('total hkr') ||
+                           sec.title.toLowerCase().includes('total visitor');
+      const titleIsArrivalOnly = !titleIsTotal && (sec.title.toLowerCase().includes('arrival') ||
+                                                    sec.title.toLowerCase().includes('inbound'));
+      const dirLabel = titleIsDeparture ? 'DEPARTURE'
+                     : titleIsArrivalOnly ? 'ARRIVAL'
+                     : titleIsTotal ? 'TOTAL'
+                     : 'ARRIVAL / TOTAL';
 
       // ── SUB-ROW A: Thin top accent bar for this section ──────────────────
       ws['!rows'][R] = {hpt: 4};
@@ -2114,40 +2113,51 @@ function exportExcel(){
       // Group headers (optional)
       if(sec.groups){
         let col=0;
+        const lastGC=sec.groups.reduce((s,g)=>s+g.span,0)-1;
         for(const g of sec.groups){
-          const gs=g.style||S.colHdr;
+          const gs=JSON.parse(JSON.stringify(g.style||S.colHdr));
+          gs.alignment={horizontal:'center',vertical:'center'};
+          gs.border={left:col===0?_BK:_BT,right:col+g.span-1===lastGC?_BK:_BT,top:_BK,bottom:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}}};
           ws[XLSX.utils.encode_cell({r:R,c:col})]={v:g.label,t:'s',s:gs};
-          for(let c=1;c<g.span;c++) ws[XLSX.utils.encode_cell({r:R,c:col+c})]={v:'',t:'s',s:{...gs}};
+          for(let c=1;c<g.span;c++) ws[XLSX.utils.encode_cell({r:R,c:col+c})]={v:'',t:'s',s:JSON.parse(JSON.stringify(gs))};
           if(g.span>1) merges.push({s:{r:R,c:col},e:{r:R,c:col+g.span-1}});
           col+=g.span;
         }
         R++;
       }
 
-      // Column headers
+      // Column headers — centre all; Remarks (last col) left; black outer border
       for(let c=0;c<nc;c++){
-        const isLeft=c<=2||c===nc-1;
+        const isLastH=c===nc-1;
         const isSort=sec.sortCol!==undefined&&c===sec.sortCol;
-        let hdrStyle=isSort?(isLeft?S.sortHdrL:S.sortHdr):(isLeft?S.colHdrL:S.colHdr);
-        ws[XLSX.utils.encode_cell({r:R,c})]={v:sec.headers[c]+(isSort?' ▼':''),t:'s',s:hdrStyle};
+        let hs=JSON.parse(JSON.stringify(isSort?S.sortHdr:S.colHdr));
+        hs.alignment={horizontal:isLastH?'left':'center',vertical:'center',indent:isLastH?1:0};
+        hs.border={
+          left:  c===0   ?_BK:_BT,
+          right: isLastH ?_BK:_BT,
+          top:   _BK,
+          bottom:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}},
+        };
+        ws[XLSX.utils.encode_cell({r:R,c})]={v:sec.headers[c]+(isSort?' ▼':''),t:'s',s:hs};
       }
       R++;
 
       // Data rows
+      const _BK={style:'medium',color:{rgb:'000000'}};
+      const _BT={style:'thin',color:{rgb:'D0D8E4'}};
       sec.rows.forEach((row,ri)=>{
         const isFirst=ri===0;
+        const isLast=ri===sec.rows.length-1;
         const isAlt=ri%2===1;
         for(let c=0;c<nc;c++){
           const val=row[c];
           const isNum=typeof val==='number';
           const isRank=c===0;
-          const isDate=c===1||c===2||c===3;
           const isTotal=sec.totalCols&&sec.totalCols.includes(c);
           const isRemark=c===nc-1;
           const isSort=sec.sortCol!==undefined&&c===sec.sortCol;
           let s;
           if(isSort){
-            // Sort key column always gets gold highlight regardless of rank
             s=isFirst?S.sort1:(isAlt?S.sortNAlt:S.sortN);
           } else if(isFirst){
             if(isRank)s=S.rankNum1;
@@ -2166,7 +2176,20 @@ function exportExcel(){
           } else {
             s=isAlt?S.rankNAltL:S.rankNL;
           }
-          ws[XLSX.utils.encode_cell({r:R,c})]={v:val===null||val===undefined?'':val, t:isNum?'n':'s', s};
+          s=JSON.parse(JSON.stringify(s));
+          // Centre everything; left only for Remarks
+          s.alignment=isRemark
+            ?{horizontal:'left',vertical:'center',indent:1}
+            :{horizontal:'center',vertical:'center'};
+          if(isNum) s.numFmt='#,##0';
+          // Consistent cage + black outer border
+          s.border={
+            left:  c===0    ?_BK:_BT,
+            right: isRemark ?_BK:_BT,
+            top:   isFirst  ?_BK:_BT,
+            bottom:isLast   ?_BK:_BT,
+          };
+          ws[XLSX.utils.encode_cell({r:R,c})]={v:val===null||val===undefined?'':val,t:isNum?'n':'s',s};
         }
         R++;
       });
@@ -2226,14 +2249,44 @@ function exportExcel(){
     const ws=buildSheet(
       `Record High — Total Traffic`,
       [
-        {title:'Record High on Total Traffic',
-         headers:['Rank','Date','Day','Total Pax','Remarks'],
-         sortCol:3, totalCols:[3],
-         rows:topN(days,d=>d.dt.ad_tot).map((x,i)=>[i+1,fDate(x.day.date),dayOfWeek(x.day.date),x.day.dt.ad_tot,getRemarks(x.day.date)])},
+        {title:'Record High on Total Passenger Traffic',
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpArr9,grpDep9,grpTotal,grpRem],
+         headers:['Rank','Date','Day','Arr HKR','Arr V','Dep HKR','Dep V','Total','Remarks'],
+         sortCol:7, totalCols:[7],
+         rows:topN(days,d=>d.dt.ad_tot).map(daily9col)},
+        {title:'Record High on Arrival (Inbound) Passengers',
+         headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
+         sortCol:5, totalCols:[5],
+         rows:topN(days,d=>d.dt.arr_tot).map((x,i)=>daily7col(x,i,true))},
+        {title:'Record High on Departure (Outbound) Passengers',
+         headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
+         sortCol:5, totalCols:[5],
+         rows:topN(days,d=>d.dt.dep_tot).map((x,i)=>daily7col(x,i,false))},
       ],
-      [6,13,5,16,32]
+      [6,13,5,14,14,14,14,13,32]
     );
-    // Total Traffic sheet — simplified to single section, no patch needed
+    // Patch: sections 2 & 3 are 7-col tables in a 9-col sheet — fill+merge cols 6-7 for those rows
+    // Sheet header = 6 rows (R0-R5)
+    // Sec1 (9-col, has groups): accent=R6, title=R7, groups=R8, colHdr=R9, data=R10-14, spacer=R15, spacer=R16
+    // Sec2 (7-col): accent=R17, title=R18, colHdr=R19, data=R20-24, spacer=R25, spacer=R26
+    // Sec3 (7-col): accent=R27, title=R28, colHdr=R29, data=R30-34, spacer=R35
+    const _blkW={font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{right:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}}}};
+    const _blkA={font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'F4F8FF':'F4FFF8'}},border:{right:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}}}};
+    for(let r=17;r<=26;r++){
+      const addr=XLSX.utils.encode_cell({r,c:7});
+      ws[addr]={v:'',t:'s',s:(r>=20&&r<=24&&(r-20)%2===1)?_blkA:_blkW};
+      if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6)) ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
+    }
+    for(let r=27;r<=36;r++){
+      const addr=XLSX.utils.encode_cell({r,c:7});
+      ws[addr]={v:'',t:'s',s:(r>=30&&r<=34&&(r-30)%2===1)?_blkA:_blkW};
+      if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6)) ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
+    }
+    // Extend sec2+sec3 title merges to col 8
+    ws['!merges']=ws['!merges'].map(m=>{
+      if((m.s.r===18||m.s.r===28)&&m.e.c===6) return{s:m.s,e:{r:m.e.r,c:8}};
+      return m;
+    });
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
 
