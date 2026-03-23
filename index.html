@@ -1562,6 +1562,28 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY HOLIDAY / DAY TYPE  (Top '+Math.min(holidays.length,20)+')',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
   merge(R,0,R,NC-1); R++;
+
+  // ── BENCHMARK REFERENCE BLOCK ─────────────────────────────────────────────
+  // Show baseline values so "vs Weekday Avg" column is self-explanatory
+  const refBg  = isPostCovid?'EBF3FB':'EBF7EE';
+  const refBg2 = isPostCovid?'D4E6FF':'C8F0D8';
+  ws['!rows'][R]={hpt:13};
+  // Label cell
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'📌 BASELINE FOR "vs Weekday Avg" COLUMN:',t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:isPostCovid?'0F1F4A':'0A1F0E'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'left',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
+  merge(R,0,R,1);
+  // Weekday avg block
+  ws[XLSX.utils.encode_cell({r:R,c:2})]={v:'Avg Weekday (non-PH) =',t:'s',s:{font:{name:'Calibri',sz:9,bold:false,color:{rgb:'555555'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'right',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
+  ws[XLSX.utils.encode_cell({r:R,c:3})]={v:ww.weekday.avgTotal,t:'n',s:{font:{name:'Calibri',sz:10,bold:true,color:{rgb:isPostCovid?'0097C4':'00A86B'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg2}},alignment:{horizontal:'right',vertical:'center'},numFmt:'#,##0',border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
+  ws[XLSX.utils.encode_cell({r:R,c:4})]={v:'pax/day ('+ww.weekday.count+' days)',t:'s',s:{font:{name:'Calibri',sz:8,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'left',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
+  // Wknd/PH avg block
+  ws[XLSX.utils.encode_cell({r:R,c:5})]={v:'Avg Weekend / PH =',t:'s',s:{font:{name:'Calibri',sz:9,bold:false,color:{rgb:'555555'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'right',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
+  ws[XLSX.utils.encode_cell({r:R,c:6})]={v:ww.phwk.avgTotal,t:'n',s:{font:{name:'Calibri',sz:10,bold:true,color:{rgb:'B8860B'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFF8DC'}},alignment:{horizontal:'right',vertical:'center'},numFmt:'#,##0',border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
+  ws[XLSX.utils.encode_cell({r:R,c:7})]={v:'pax/day ('+ww.phwk.count+' days)  ·  Weekend/PH is ×'+(ww.weekday.avgTotal>0?(ww.phwk.avgTotal/ww.weekday.avgTotal).toFixed(2):'—')+' the weekday avg',t:'s',s:{font:{name:'Calibri',sz:8,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},alignment:{horizontal:'left',vertical:'center'},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
+  merge(R,7,R,NC-1);
+  // Fill remaining cells in this row
+  for(let i of [1,8,9]) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:refBg}},border:{top:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}},bottom:{style:'thin',color:{rgb:isPostCovid?'3E9BFF':'2ECC71'}}}}};
+  R++;
+
   ws['!rows'][R]={hpt:14};
   ['Holiday / Day Type','Occurrences','Avg Total','▲ Avg Arrival','▼ Avg Departure','Avg HKR','Avg Visitors','vs Weekday Avg','Peak Recorded',''].forEach((h,i)=>{
     ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navy3}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:{bottom:{style:'medium',color:{rgb:navy3}}}}};
