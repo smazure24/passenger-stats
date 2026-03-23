@@ -1859,23 +1859,18 @@ function getDetailedRemarks(dateStr){
   const dow = d.getDay();
   const isSat = dow===6, isSun = dow===0, isWeekend = isSat||isSun;
 
-  // PH status
-  const isHKPH = HK_GAZETTE_PH[dateStr] ||
-    (base && base!=='Saturday' && base!=='Sunday' &&
-     !base.includes('Summer') && !base.includes('Weekday') &&
-     !base.includes('Pre-Lunar') && base!=='');
-  const phTag = isHKPH ? ' (PH)' : isWeekend ? ' (Wknd)' : '';
+  // (PH indicator not shown in remarks)
 
   // Mid-Autumn Festival
-  if(MID_AUTUMN[year]===dateStr){ const _isWknd2=dow===0||dow===6; return 'Mid-Autumn Festival (中秋節) — Mainland PH'+(_isWknd2?' (Wknd)':''); }
+  if(MID_AUTUMN[year]===dateStr){ const _isWknd2=dow===0||dow===6; return 'Mid-Autumn Festival (中秋節) — Mainland PH'; }
 
   // Winter Solstice
-  if(WINTER_SOLSTICE[year]===dateStr) return 'Winter Solstice (冬至)'+phTag;
+  if(WINTER_SOLSTICE[year]===dateStr) return 'Winter Solstice (冬至)';
 
   // National Day context — add Mainland flag for Golden Week range
   if(month===10&&day>=1&&day<=7){
     if(base) return base + ' — Mainland PH';
-    return 'National Day Golden Week — Mainland PH'+(isWeekend?' (Wknd)':'');
+    return 'National Day Golden Week — Mainland PH';
   }
 
   // Labour Day / Week context
@@ -1895,7 +1890,7 @@ function getDetailedRemarks(dateStr){
   if(base&&base.includes('Chung Yeung')) return base+' (HK PH)';
 
   // All other cases: return base with PH tag
-  if(base) return base + (isHKPH&&!base.includes('(PH)')&&!base.includes('PH')&&!base.includes('Holiday')?phTag:'');
+  if(base) return base;
 
   // Weekends with no remark
   if(isSat) return 'Saturday';
