@@ -731,7 +731,7 @@ function getRemarks(dateStr){
   const isWeekend = dow===0||dow===6;
   const isSat = dow===6;
   const isSun = dow===0;
-  const isSummer = month>=7&&month<=8; // Summer = Jul & Aug only
+  const isSummer = (month===7&&day>=15) || month===8; // Summer = Jul 15 – Aug 31
 
   // ── 2. Fixed-date public holidays (algorithmic fallback for other years) ──
   if(month===1&&day===1) return "New Year's Day";
@@ -1060,16 +1060,19 @@ function buildAnalysisHTML(days){
   push('<div class="af-card">');
   push('<div class="af-card-hdr"><h3>Holiday Type Detail</h3><span class="kpi-sub">avg / max / count</span></div>');
   push('<div class="af-card-body" style="padding:0">');
-  push('<table class="af-table"><thead><tr><th>Type</th><th>Days</th><th>Avg Total</th><th>Peak</th><th>Avg Arr</th><th>Avg Dep</th></tr></thead><tbody>');
+  push('<table class="af-table"><thead><tr><th>Type</th><th>Days</th><th>Avg Total</th><th>Avg Arr</th><th>Avg Dep</th><th style="color:var(--muted)">vs Avg Weekday</th></tr></thead><tbody>');
+  const _wdBase = wwData.weekday.avgTotal||1;
   holidays2.slice(0,10).forEach(h=>{
     const isE=h.cat.includes('Easter');
+    const _vs=_wdBase>0?((h.avg-_wdBase)/_wdBase*100):0;
+    const _vsCol=_vs>=0?'var(--res)':'#f87171';
     push('<tr>');
     push('<td style="max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'+(isE?';font-weight:700;color:var(--gold)':'')+'">'+h.cat+'</td>');
     push('<td>'+h.count+'</td>');
     push('<td class="'+(isE?'hi':'')+'">'+nt(h.avg)+'</td>');
-    push('<td style="color:var(--gold)">'+nt(h.max)+'</td>');
     push('<td class="arr-c">'+nt(h.avgArr)+'</td>');
     push('<td class="dep-c">'+nt(h.avgDep)+'</td>');
+    push('<td style="font-weight:700;color:'+_vsCol+'">'+ (_vs>=0?'+':'')+_vs.toFixed(1)+'%</td>');
     push('</tr>');
   });
   push('</tbody></table></div></div>');
@@ -1147,7 +1150,7 @@ function buildAnalysisHTML(days){
     push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Historical Easter Data — Actual Figures</div>');
     push('<div style="overflow-x:auto">');
     push('<table class="af-table"><thead><tr>');
-    push('<th>Year</th><th>Day</th><th>Date</th><th>Occasion</th><th>PH?</th><th>Arr HKR</th><th>Arr Vis</th><th>▲ Arrival</th><th>Dep HKR</th><th>Dep Vis</th><th>▼ Departure</th><th>Total</th></tr></thead><tbody>');
+    push('<th>Year</th><th>Day</th><th>Date</th><th>Occasion</th><th>Arr HKR</th><th>Arr Vis</th><th>▲ Arrival</th><th>Dep HKR</th><th>Dep Vis</th><th>▼ Departure</th><th>Total</th></tr></thead><tbody>');
     // Sort all Easter days by date
     const sortedEaster=[...f.easterDays].sort((a,b)=>a.date.localeCompare(b.date));
     var _prevEY='';
@@ -1161,13 +1164,7 @@ function buildAnalysisHTML(days){
       push('<td>'+dayOfWeek(d.date)+'</td>');
       push('<td>'+fDate(d.date)+'</td>');
       push('<td style="font-size:10px">'+getRemarks(d.date)+'</td>');
-      var _rem=getRemarks(d.date)||'';
-      var _dow2=new Date(d.date+'T00:00:00').getDay();
-      var _isPH=HK_GAZETTE_PH[d.date]||(_rem!==''&&_rem!=='Saturday'&&_rem!=='Sunday');
-      var _isWknd=_dow2===0||_dow2===6;
-      var _phLabel=_isPH?'PH':(_isWknd?'Wknd':'—');
-      var _phColor=_isPH?'var(--gold)':(_isWknd?'var(--accent)':'var(--muted)');
-      push('<td style="font-size:10px;font-weight:700;color:'+_phColor+'">'+_phLabel+'</td>');
+
       push('<td class="arr-c">'+nt(d.dt.arr_res||0)+'</td>');
       push('<td>'+nt(d.dt.arr_vis||0)+'</td>');
       push('<td class="arr-c hi">'+nt(d.dt.arr_tot||0)+'</td>');
@@ -1704,7 +1701,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
     // Day-by-day table
     ws['!rows'][R]={hpt:14};
-    ['Date','Day','Occasion','PH?','Hist. Avg','Proj. Arrival','Proj. Departure','Proj. Total','vs Avg Weekday','vs Avg Wknd/PH'].forEach((h,i)=>{
+    ['Date','Day','Occasion','Hist. Avg','Proj. Arrival','Proj. Departure','Proj. Total','vs Avg Weekday','vs Avg Wknd/PH',''].forEach((h,i)=>{
       ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'B8860B'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:'B8860B'}}}}};
     }); R++;
 
@@ -1720,13 +1717,13 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(fDate(dp.date),bg,'B8860B',true);
       ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC(new Date(dp.date+'T00:00:00').toLocaleDateString('en-HK',{weekday:'short'}),bg,'555555');
       ws[XLSX.utils.encode_cell({r:R,c:2})]=dataC(dp.label.replace(/ \(.*\)/,''),bg,'333333');
-      ws[XLSX.utils.encode_cell({r:R,c:3})]=dataC(isPH?'PH':'Non-PH',bg,isPH?'B8860B':'666666',isPH);
-      ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(dp.avgTotal,bg,'555555');
-      ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(projArr,bg,arrCol,true);
-      ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(projDep,bg,depCol,true);
-      ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(dp.projTotal,bg,'B8860B',true);
-      ws[XLSX.utils.encode_cell({r:R,c:8})]=dataC((vsWD>=0?'+':'')+vsWD.toFixed(1)+'%',bg,vsWD>=0?'1B5E20':'C62828',true);
-      ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC((vsPH>=0?'+':'')+vsPH.toFixed(1)+'%',bg,vsPH>=0?'1B5E20':'C62828',true);
+      ws[XLSX.utils.encode_cell({r:R,c:3})]=numC(dp.avgTotal,bg,'555555');
+      ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(projArr,bg,arrCol,true);
+      ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(projDep,bg,depCol,true);
+      ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(dp.projTotal,bg,'B8860B',true);
+      ws[XLSX.utils.encode_cell({r:R,c:7})]=dataC((vsWD>=0?'+':'')+vsWD.toFixed(1)+'%',bg,vsWD>=0?'1B5E20':'C62828',true);
+      ws[XLSX.utils.encode_cell({r:R,c:8})]=dataC((vsPH>=0?'+':'')+vsPH.toFixed(1)+'%',bg,vsPH>=0?'1B5E20':'C62828',true);
+      ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999');
       ws['!rows'][R]={hpt:14}; R++;
     });
     R++; // spacer
@@ -1741,7 +1738,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('','0097A7','FFFFFF',10,true,'left');
       merge(R,0,R,NC-1); R++;
       ws['!rows'][R]={hpt:13};
-      ['Time','Arr HKR (H)','Arr Vis (H)','Arr Total (H)','Dep HKR (H)','Dep Vis (H)','Dep Total (H)','Total (H)','Proj. Total','Day Total'].forEach((h,i)=>{
+      ['Time','Arr HKR (H)','Arr Vis (H)','Arr Total (H)','Dep HKR (H)','Dep Vis (H)','Dep Total (H)','Total (H)','Proj. Total',''].forEach((h,i)=>{
         ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:'0097A7'}}}}};
       }); R++;
 
@@ -1772,7 +1769,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('','7B6000','FFFFFF',10,true,'left');
     merge(R,0,R,NC-1); R++;
     ws['!rows'][R]={hpt:13};
-    ['Date','Day','Occasion','PH?','▲ HKR Arr','▲ Vis Arr','▲ Arrival','▼ HKR Dep','▼ Vis Dep','Total'].forEach((h,i)=>{
+    ['Date','Day','Occasion','▲ HKR Arr','▲ Vis Arr','▲ Arrival','▼ HKR Dep','▼ Vis Dep','Total',''].forEach((h,i)=>{
       ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'7B6000'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:'7B6000'}}}}};
     }); R++;
     let prevEY='';
@@ -1786,13 +1783,13 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(fDate(d.date),bg,'B8860B',true);
       ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC(new Date(d.date+'T00:00:00').toLocaleDateString('en-HK',{weekday:'short'}),bg,'555555');
       ws[XLSX.utils.encode_cell({r:R,c:2})]=dataC(rem||'—',bg,'333333',false,9);
-      ws[XLSX.utils.encode_cell({r:R,c:3})]=dataC(isPH?'PH':'Non-PH',bg,isPH?'B8860B':'666666',isPH);
-      ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(d.dt.arr_res||0,bg,arrCol);
-      ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(d.dt.arr_vis||0,bg,'B8860B');
-      ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(d.dt.arr_tot||0,bg,arrCol,true);
-      ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(d.dt.dep_res||0,bg,depCol);
-      ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(d.dt.dep_vis||0,bg,'B8860B');
-      ws[XLSX.utils.encode_cell({r:R,c:9})]=numC(d.dt.ad_tot||0,bg,'333333',true);
+      ws[XLSX.utils.encode_cell({r:R,c:3})]=numC(d.dt.arr_res||0,bg,arrCol);
+      ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(d.dt.arr_vis||0,bg,'B8860B');
+      ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(d.dt.arr_tot||0,bg,arrCol,true);
+      ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(d.dt.dep_res||0,bg,depCol);
+      ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(d.dt.dep_vis||0,bg,'B8860B');
+      ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(d.dt.ad_tot||0,bg,'333333',true);
+      ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999');
       if(isNew){
         for(let j=0;j<NC;j++){
           const cell=ws[XLSX.utils.encode_cell({r:R,c:j})];
@@ -2211,10 +2208,12 @@ function exportExcel(){
       (x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0),getRemarks(x.day.date)];
   }
   function hourlyRow(x,i){
+    // col 10 = true total (arr_tot + dep_tot), NOT sort value
+    const hrTotal = (x.hr.arr_tot||0) + (x.hr.dep_tot||0);
     return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),x.hr.time,
       x.hr.arr_res,x.hr.arr_vis,x.hr.arr_tot,
       x.hr.dep_res,x.hr.dep_vis,x.hr.dep_tot,
-      x.value,getRemarks(x.day.date)];
+      hrTotal,getRemarks(x.day.date)];
   }
 
   const grpArr9={label:'ARRIVAL (Inbound)',span:2,style:S.grpArr};
