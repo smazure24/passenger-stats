@@ -2023,6 +2023,8 @@ function exportExcel(){
     ws['!rows'][R]={hpt:8};
     R++;
 
+    const _BK={style:'medium',color:{rgb:'000000'}};
+    const _BT={style:'thin',color:{rgb:'D0D8E4'}};
     sections.forEach((sec,secIdx)=>{
       const _secStartR = R; // track where this section begins
       const nc=sec.headers.length;
@@ -2143,8 +2145,6 @@ function exportExcel(){
       R++;
 
       // Data rows
-      const _BK={style:'medium',color:{rgb:'000000'}};
-      const _BT={style:'thin',color:{rgb:'D0D8E4'}};
       sec.rows.forEach((row,ri)=>{
         const isFirst=ri===0;
         const isLast=ri===sec.rows.length-1;
