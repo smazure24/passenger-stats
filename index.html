@@ -1744,10 +1744,14 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
       const hrs=dp.profile.filter(h=>/^\d{4}/.test(h.time||''));
       const peakH=hrs.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a,hrs[0]||{time:'',ad_tot:0});
+      let _sumArrR=0,_sumArrV=0,_sumArrT=0,_sumDepR=0,_sumDepV=0,_sumDepT=0,_sumHist=0,_sumProj=0;
       hrs.forEach((hr,i)=>{
         const isPk=hr.time===peakH.time;
         const proj=Math.round((hr.ad_tot||0)*f.factor);
         const bg=isPk?'FFF8DC':(i%2===0?'FFFFFF':'F0F8FF');
+        _sumArrR+=hr.arr_res||0; _sumArrV+=hr.arr_vis||0; _sumArrT+=hr.arr_tot||0;
+        _sumDepR+=hr.dep_res||0; _sumDepV+=hr.dep_vis||0; _sumDepT+=hr.dep_tot||0;
+        _sumHist+=hr.ad_tot||0; _sumProj+=proj;
         ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(hr.time+(isPk?' ★':''),bg,'333333',isPk);
         ws[XLSX.utils.encode_cell({r:R,c:1})]=numC(hr.arr_res||0,bg,arrCol);
         ws[XLSX.utils.encode_cell({r:R,c:2})]=numC(hr.arr_vis||0,bg,'B8860B');
@@ -1760,6 +1764,21 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
         ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999');
         ws['!rows'][R]={hpt:12}; R++;
       });
+      // ── Day Total row ─────────────────────────────────────────────────────────
+      const _totBg = isPostCovid?'1A3A7A':'1B4A2A';
+      const _totSty = (v,fmt) => ({v,t:'n',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_totBg}},alignment:{horizontal:'center',vertical:'center'},numFmt:fmt||'#,##0',border:{}}});
+      const _lblSty = {v:'DAY TOTAL',t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_totBg}},alignment:{horizontal:'left',vertical:'center',indent:1},border:{}}};
+      ws[XLSX.utils.encode_cell({r:R,c:0})]=_lblSty;
+      ws[XLSX.utils.encode_cell({r:R,c:1})]=_totSty(_sumArrR);
+      ws[XLSX.utils.encode_cell({r:R,c:2})]=_totSty(_sumArrV);
+      ws[XLSX.utils.encode_cell({r:R,c:3})]=_totSty(_sumArrT);
+      ws[XLSX.utils.encode_cell({r:R,c:4})]=_totSty(_sumDepR);
+      ws[XLSX.utils.encode_cell({r:R,c:5})]=_totSty(_sumDepV);
+      ws[XLSX.utils.encode_cell({r:R,c:6})]=_totSty(_sumDepT);
+      ws[XLSX.utils.encode_cell({r:R,c:7})]=_totSty(_sumHist);
+      ws[XLSX.utils.encode_cell({r:R,c:8})]=_totSty(_sumProj);
+      ws[XLSX.utils.encode_cell({r:R,c:9})]=({v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_totBg}},border:{}}});
+      ws['!rows'][R]={hpt:14}; R++;
       R++;
     });
 
@@ -1782,7 +1801,8 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       const rowStyle=isNew?{top:{style:'medium',color:{rgb:'AAAAAA'}}}:{};
       ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(fDate(d.date),bg,'B8860B',true);
       ws[XLSX.utils.encode_cell({r:R,c:1})]=dataC(new Date(d.date+'T00:00:00').toLocaleDateString('en-HK',{weekday:'short'}),bg,'555555');
-      ws[XLSX.utils.encode_cell({r:R,c:2})]=dataC(rem||'—',bg,'333333',false,9);
+      const _phSuffix = isPH?' — PH':' — Non-PH';
+      ws[XLSX.utils.encode_cell({r:R,c:2})]=dataC((rem||'—')+_phSuffix,bg,'333333',false,9);
       ws[XLSX.utils.encode_cell({r:R,c:3})]=numC(d.dt.arr_res||0,bg,arrCol);
       ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(d.dt.arr_vis||0,bg,'B8860B');
       ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(d.dt.arr_tot||0,bg,arrCol,true);
@@ -1808,6 +1828,81 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
 
 // ─── PDF EXPORT ──────────────────────────────────────────────────────────────
+
+// ── Mid-Autumn Festival actual dates (day before the HK PH "Day following") ──
+const MID_AUTUMN = {
+  2003:'2003-09-11',2004:'2004-09-28',2005:'2005-09-18',2006:'2006-10-06',
+  2007:'2007-09-25',2008:'2008-09-14',2009:'2009-10-03',2010:'2010-09-22',
+  2011:'2011-09-12',2012:'2012-09-30',2013:'2013-09-19',2014:'2014-09-08',
+  2015:'2015-09-27',2016:'2016-09-15',2017:'2017-10-04',2018:'2018-09-24',
+  2019:'2019-09-13',2020:'2020-10-01',2021:'2021-09-21',2022:'2022-09-10',
+  2023:'2023-09-29',2024:'2024-09-17',2025:'2025-10-06',2026:'2026-09-25',
+};
+// Winter Solstice dates (冬至) — significant cross-border family visit day
+const WINTER_SOLSTICE = {
+  2003:'2003-12-22',2004:'2004-12-21',2005:'2005-12-22',2006:'2006-12-22',
+  2007:'2007-12-22',2008:'2008-12-21',2009:'2009-12-22',2010:'2010-12-22',
+  2011:'2011-12-22',2012:'2012-12-21',2013:'2013-12-22',2014:'2014-12-22',
+  2015:'2015-12-22',2016:'2016-12-21',2017:'2017-12-22',2018:'2018-12-22',
+  2019:'2019-12-22',2020:'2020-12-21',2021:'2021-12-22',2022:'2022-12-22',
+  2023:'2023-12-22',2024:'2024-12-21',2025:'2025-12-22',2026:'2026-12-22',
+};
+
+// Returns a detailed remark for use in Excel exports — includes Mainland holiday context
+function getDetailedRemarks(dateStr){
+  if(!dateStr) return '';
+  const base = getRemarks(dateStr) || '';
+  const d = new Date(dateStr+'T00:00:00');
+  const year = d.getFullYear();
+  const month = d.getMonth()+1;
+  const day = d.getDate();
+  const dow = d.getDay();
+  const isSat = dow===6, isSun = dow===0, isWeekend = isSat||isSun;
+
+  // PH status
+  const isHKPH = HK_GAZETTE_PH[dateStr] ||
+    (base && base!=='Saturday' && base!=='Sunday' &&
+     !base.includes('Summer') && !base.includes('Weekday') &&
+     !base.includes('Pre-Lunar') && base!=='');
+  const phTag = isHKPH ? ' (PH)' : isWeekend ? ' (Wknd)' : '';
+
+  // Mid-Autumn Festival
+  if(MID_AUTUMN[year]===dateStr){ const _isWknd2=dow===0||dow===6; return 'Mid-Autumn Festival (中秋節) — Mainland PH'+(_isWknd2?' (Wknd)':''); }
+
+  // Winter Solstice
+  if(WINTER_SOLSTICE[year]===dateStr) return 'Winter Solstice (冬至)'+phTag;
+
+  // National Day context — add Mainland flag for Golden Week range
+  if(month===10&&day>=1&&day<=7){
+    if(base) return base + ' — Mainland PH';
+    return 'National Day Golden Week — Mainland PH'+(isWeekend?' (Wknd)':'');
+  }
+
+  // Labour Day / Week context
+  if(month===5&&day===1) return 'Labour Day (勞動節) — HK & Mainland PH';
+  if(month===5&&day>=2&&day<=7) return (base||'Labour Week')+' — Mainland Labour Golden Week';
+
+  // LNY — add Mainland context
+  if(base&&base.includes('Lunar New Year')) return base+' — HK & Mainland PH';
+
+  // Ching Ming — Mainland PH
+  if(base&&base.includes('Ching Ming')) return base+' — HK & Mainland PH';
+
+  // Dragon Boat — Mainland PH
+  if(base&&base.includes('Dragon Boat')||base&&base.includes('Tuen Ng')) return base+' — HK & Mainland PH';
+
+  // Chung Yeung — HK PH (not Mainland)
+  if(base&&base.includes('Chung Yeung')) return base+' (HK PH)';
+
+  // All other cases: return base with PH tag
+  if(base) return base + (isHKPH&&!base.includes('(PH)')&&!base.includes('PH')&&!base.includes('Holiday')?phTag:'');
+
+  // Weekends with no remark
+  if(isSat) return 'Saturday';
+  if(isSun) return 'Sunday';
+  return '';
+}
+
 function exportExcel(){
   const days=eraFilter(allDays);
   const era=currentEra==='postcovid'?'Post-COVID':'Since Commissioning';
@@ -2189,31 +2284,30 @@ function exportExcel(){
   function daily9col(x,i){
     return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),
       x.day.dt.arr_res,x.day.dt.arr_vis,x.day.dt.dep_res,x.day.dt.dep_vis,x.day.dt.ad_tot,
-      getRemarks(x.day.date)];
+      getDetailedRemarks(x.day.date)];
   }
   function daily7col(x,i,arr){
     const res=arr?x.day.dt.arr_res:x.day.dt.dep_res;
     const vis=arr?x.day.dt.arr_vis:x.day.dt.dep_vis;
     const tot=arr?x.day.dt.arr_tot:x.day.dt.dep_tot;
-    return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),res,vis,tot,getRemarks(x.day.date)];
+    return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),res,vis,tot,getDetailedRemarks(x.day.date)];
   }
   function hkr7col(x,i){
     return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),
       x.day.dt.arr_res,x.day.dt.dep_res,
-      (x.day.dt.arr_res||0)+(x.day.dt.dep_res||0),getRemarks(x.day.date)];
+      (x.day.dt.arr_res||0)+(x.day.dt.dep_res||0),getDetailedRemarks(x.day.date)];
   }
   function vis7col(x,i){
     return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),
       x.day.dt.arr_vis,x.day.dt.dep_vis,
-      (x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0),getRemarks(x.day.date)];
+      (x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0),getDetailedRemarks(x.day.date)];
   }
   function hourlyRow(x,i){
-    // col 10 = true total (arr_tot + dep_tot), NOT sort value
     const hrTotal = (x.hr.arr_tot||0) + (x.hr.dep_tot||0);
     return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),x.hr.time,
       x.hr.arr_res,x.hr.arr_vis,x.hr.arr_tot,
       x.hr.dep_res,x.hr.dep_vis,x.hr.dep_tot,
-      hrTotal,getRemarks(x.day.date)];
+      hrTotal,getDetailedRemarks(x.day.date)];
   }
 
   const grpArr9={label:'ARRIVAL (Inbound)',span:2,style:S.grpArr};
