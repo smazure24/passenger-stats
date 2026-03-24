@@ -648,7 +648,7 @@ const HK_GAZETTE_PH = {
   '2025-12-26': 'First Weekday after Christmas',
   // 2026 (note: Ching Ming on Sun → Mon sub; clashes with Easter Mon → extra Tue PH)
   '2026-01-01': "New Year's Day",
-  '2026-01-02': 'Day after New Year\'s Day — Mainland Public Holiday',
+  '2026-01-02': 'Mainland Public Holiday',
   '2026-02-17': 'Lunar New Year (Day 1)',
   '2026-02-18': 'Lunar New Year (Day 2)',
   '2026-02-19': 'Lunar New Year (Day 3)',
@@ -741,7 +741,7 @@ function getRemarks(dateStr){
   // ── 2. Fixed-date public holidays (algorithmic fallback for other years) ──
   if(month===1&&day===1) return "New Year's Day";
   if(month===1&&day===2&&dow===1) return "New Year's Day Holiday (Sub)";
-  if(month===1&&day===2) return 'Day after New Year\'s Day — Mainland Public Holiday';
+  if(month===1&&day===2) return 'Mainland Public Holiday';
   if(month===5&&day===1) return 'Labour Day';
   if(month===5&&day===2&&dow===1) return 'Labour Day Holiday';
   if(month===7&&day===1) return 'HKSAR Establishment Day';
@@ -1492,7 +1492,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   ws['!rows'][R]={hpt:6};
   for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'43A047'}},border:{}}};
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:(isPostCovid?'POST-COVID':'SINCE COMMISSIONING')+'  ●',t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:isPostCovid?'0D2B6B':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'43A047'}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
-  merge(R,0,R,NC-1); R++;
+  merge(R,0,R,9); R++;
 
   ws['!rows'][R]={hpt:28};
   for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:navyBg}},border:{}}};
@@ -1506,7 +1506,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_metaBg2}},border:{}}};
   const metaStr='Era: '+(isPostCovid?'Post-COVID (from '+POST_COVID_DATE+')':'Since Commissioning (from '+COMM_DATE+')')+'   |   As at: '+fDate(latestDate)+'   |   Operational days: '+days.filter(d=>!isBorderClosed(d.date)).length+' days';
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:metaStr,t:'s',s:{font:{name:'Calibri',sz:9,color:{rgb:isPostCovid?'0D2A5E':'0A2A14'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_metaBg2}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
-  merge(R,0,R,NC-1); R++;
+  merge(R,0,R,9); R++;
 
   // spacer
   ws['!rows'][R]={hpt:6}; for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=blank('F5F7FA'); R++;
@@ -1519,7 +1519,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   const s1Hdrs=['YEAR-OVER-YEAR TREND — SAME PERIOD (1 Jan – '+periodLabel+' each year)'];
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell(s1Hdrs[0],navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
-  merge(R,0,R,NC-1); R++;
+  merge(R,0,R,9); R++;
 
   const yoyHdrs=['Year','Period','Op. Days','Excl.','Avg Daily','▲ Arrival','▼ Departure','HKR (Res.)','Visitors','YoY Growth'];
   ws['!rows'][R]={hpt:14};
@@ -1550,9 +1550,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   // Notes at bottom of YoY same-period table
   const _yoyNote1='YoY Growth = (This Year Avg Daily − Prior Year Avg Daily) ÷ Prior Year Avg Daily. Op. Days excludes border closure period (2020-02-04 to 2023-01-07). Excl. = closure days within Jan–'+periodLabel+'.';
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:_yoyNote1,t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
-  merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
+  merge(R,0,R,9); ws['!rows'][R]={hpt:12}; R++;
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'⚠ 2023: Border reopened 8 Jan 2023 after COVID closure. Public remained cautious in early months — traffic ramped up gradually. 2023 figures understate true demand and should be treated as a lower-bound reference.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:warnFg}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:warnBg}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
-  merge(R,0,R,NC-1); ws['!rows'][R]={hpt:18}; R++;
+  merge(R,0,R,9); ws['!rows'][R]={hpt:18}; R++;
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1562,7 +1562,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('ANNUAL TRAFFIC — FULL YEAR',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
-  merge(R,0,R,NC-1); R++;
+  merge(R,0,R,9); R++;
   ws['!rows'][R]={hpt:14};
   ['Year','Type','Op. Days','Excl.','Total Traffic','Avg Daily','▲ Arrival','▼ Departure','HKR (Res.)','YoY Growth'].forEach((h,i,a)=>{
     ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell(h,navy3,'FFFFFF',9,true,'center',false,i,a.length);
@@ -1591,9 +1591,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   // Notes at bottom of Full Year table
   const _fyNote='YoY Growth = (This Year Avg Daily − Prior Year Avg Daily) ÷ Prior Year Avg Daily. Uses Avg Daily so partial years are comparable. Closed/excluded days not counted in Avg Daily.';
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:_fyNote,t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
-  merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
+  merge(R,0,R,9); ws['!rows'][R]={hpt:12}; R++;
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'⚠ 2023: Border reopened 8 Jan 2023. Traffic ramped gradually — 2023 understates structural demand. † 2024 vs 2023 YoY is overstated because the 2023 baseline was suppressed by cautious post-reopening behaviour.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:warnFg}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:warnBg}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
-  merge(R,0,R,NC-1); ws['!rows'][R]={hpt:18}; R++;
+  merge(R,0,R,9); ws['!rows'][R]={hpt:18}; R++;
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1603,7 +1603,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('TRAFFIC BENCHMARK — WEEKDAY vs WEEKEND / PUBLIC HOLIDAY',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
-  merge(R,0,R,NC-1); R++;
+  merge(R,0,R,9); R++;
   ws['!rows'][R]={hpt:14};
   ['Category','Days','Avg Total','▲ Avg Arrival','▼ Avg Departure','Avg HKR','Avg Visitors','HKR Share %','Visitor Share %',''].forEach((h,i,a)=>{
     ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell(i===0?'Category':h,navy3,'FFFFFF',9,true,i===0?'left':'center',false,i,a.length);
@@ -1636,7 +1636,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY HOLIDAY / DAY TYPE  (Top '+Math.min(holidays.length,20)+')',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
-  merge(R,0,R,NC-1); R++;
+  merge(R,0,R,9); R++;
 
   // Baseline reference row removed (vs Weekday Avg column no longer shown)
 
@@ -1672,7 +1672,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY DAY OF WEEK  (last 12 months)',navyBg,'FFFFFF',11,true,'left');
   for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('',navyBg,'FFFFFF',11,true,'left');
-  merge(R,0,R,NC-1); R++;
+  merge(R,0,R,9); R++;
   ws['!rows'][R]={hpt:14};
   ['Day','Avg Total','▲ Avg Arrival','▼ Avg Departure','Relative to Mon','','','','',''].forEach((h,i,a)=>{
     ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell(i===0?'Day':h,navy3,'FFFFFF',9,true,i===0?'left':'center',false,i,a.length);
@@ -1702,12 +1702,12 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     ws['!rows'][R]={hpt:20};
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell(tLabel.toUpperCase()+' FORECAST','B8860B','FFFFFF',11,true,'left');
     for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('','B8860B','FFFFFF',11,true,'left');
-    merge(R,0,R,NC-1); R++;
+    merge(R,0,R,9); R++;
 
     // Methodology row
     const meth='Projection method: '+f.growthMethod+' | Growth rate: '+(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'% | Historical baseline: '+f.postCovidEasterCount+' post-COVID Easter days | All projections ×'+((1+f.growthRate).toFixed(3));
     ws[XLSX.utils.encode_cell({r:R,c:0})]={v:meth,t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'6B5200'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFF8DC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
-    merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
+    merge(R,0,R,9); ws['!rows'][R]={hpt:12}; R++;
 
     // Day-by-day table
     ws['!rows'][R]={hpt:14};
@@ -1794,7 +1794,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       for(let i=0;i<NHC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr('','0097A7','FFFFFF',10);
       ws[XLSX.utils.encode_cell({r:R,c:0})]=hHdr(_titleText,'0097A7','FFFFFF',10);
       ws[XLSX.utils.encode_cell({r:R,c:0})].s.alignment={horizontal:'left',vertical:'center',indent:1};
-      mrg.push({s:{r:R,c:0},e:{r:R,c:NHC-1}}); R++;
+      mrg.push({s:{r:R,c:0},e:{r:R,c:11}}); R++;  // title spans cols 0-11 only
 
       // ── Group header row ────────────────────────────────────────────────────
       ws['!rows'][R]={hpt:14};
@@ -1810,7 +1810,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       ws[XLSX.utils.encode_cell({r:R,c:9})]=hHdr(tLabel+' PROJECTION',_cProj,'FFFFFF',8);
       for(let i=10;i<=11;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr('',_cProj,'FFFFFF');
       mrg.push({s:{r:R,c:9},e:{r:R,c:11}});
-      ws[XLSX.utils.encode_cell({r:R,c:12})]=hHdr('',_cProj,'FFFFFF');
+      // col 12 intentionally empty (no fill)
       R++;
 
       // ── Column header row ────────────────────────────────────────────────────
@@ -1821,7 +1821,8 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
        '▲ Arrival','▼ Dep','Total',                                            // projection
        ''
       ].forEach((h,i)=>{
-        const _bg = i===0?'444444':i<=7?_c2025:i===8?_cHist:i<=11?_cProj:'333333';
+        if(i===12){ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{border:{}}};return;}
+        const _bg = i===0?'444444':i<=7?_c2025:i===8?_cHist:i<=11?_cProj:'444444';
         ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr(h,_bg,'FFFFFF',8);
       }); R++;
 
@@ -1873,7 +1874,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
         ws[XLSX.utils.encode_cell({r:R,c:9})] = hNum(projArr,_bgP,arrCol,true);
         ws[XLSX.utils.encode_cell({r:R,c:10})]= hNum(projDep,_bgP,depCol,true);
         ws[XLSX.utils.encode_cell({r:R,c:11})]= hNum(projTot,_bgP,_cProj==='1A3A7A'?'1A3A7A':'1B4A2A',true);
-        ws[XLSX.utils.encode_cell({r:R,c:12})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_bgP}},border:{}}};
+        ws[XLSX.utils.encode_cell({r:R,c:12})]={v:'',t:'s',s:{border:{}}};
         ws['!rows'][R]={hpt:12}; R++;
       });
 
@@ -1898,7 +1899,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       ws[XLSX.utils.encode_cell({r:R,c:9})] =_tSty(_sProjArr,_cProj);
       ws[XLSX.utils.encode_cell({r:R,c:10})]=_tSty(_sProjDep,_cProj);
       ws[XLSX.utils.encode_cell({r:R,c:11})]=_tSty(_sProjTot,_cProj);
-      ws[XLSX.utils.encode_cell({r:R,c:12})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_cProj}},border:{}}};
+      ws[XLSX.utils.encode_cell({r:R,c:12})]={v:'',t:'s',s:{border:{}}};
       ws['!rows'][R]={hpt:14}; R++;
       R++;
     });
@@ -1907,7 +1908,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     ws['!rows'][R]={hpt:18};
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('HISTORICAL EASTER DATA — ACTUAL FIGURES ('+easterDays.length+' days)','7B6000','FFFFFF',10,true,'left');
     for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('','7B6000','FFFFFF',10,true,'left');
-    merge(R,0,R,NC-1); R++;
+    merge(R,0,R,9); R++;
     ws['!rows'][R]={hpt:13};
     ['Date','Day','Occasion','▲ HKR Arr','▲ Vis Arr','▲ Arrival','▼ HKR Dep','▼ Vis Dep','Total',''].forEach((h,i)=>{
       ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'7B6000'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:'7B6000'}}}}};
@@ -1943,7 +1944,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
   ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R+2,c:NC-1}});
   ws['!merges']=mrg;
-  ws['!cols']=[{wch:14},{wch:11},{wch:9},{wch:11},{wch:11},{wch:9},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:9}]; // 13 cols
+  ws['!cols']=[{wch:32},{wch:11},{wch:9},{wch:11},{wch:11},{wch:9},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:0}]; // 13 cols, A=32, last=hidden
   XLSX.utils.book_append_sheet(wb,ws,'Analysis & Forecast');
 }
 
