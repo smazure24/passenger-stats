@@ -393,11 +393,16 @@ function isTimeSlot(v){
   const s=String(v).trim();
   return /^\d{4}\s*[-–]\s*(\d{4}|[Cc]lose)/i.test(s)||/^CBS$/i.test(s);
 }
-function isDateRow(row){
-  return row.some(c=>{
-    const s=String(c||'').trim();
-    return s==='Date:'||/Date:\s*\d{4}[\/\-]/.test(s);
-  });
+function isDateRow(row, maxCol){
+  // maxCol: if given, only scan cols 0..maxCol-1 for "Date:" marker.
+  // This prevents the Hourly Average block (far right columns) from
+  // triggering a false break when reading the last day of the month.
+  const limit = (maxCol !== undefined) ? Math.min(maxCol, row.length) : row.length;
+  for(let i=0; i<limit; i++){
+    const s=String(row[i]||'').trim();
+    if(s==='Date:'||/Date:\s*\d{4}[\/\-]/.test(s)) return true;
+  }
+  return false;
 }
 function extractDate(row){
   for(let i=0;i<row.length;i++){
@@ -432,7 +437,7 @@ function parseSheet(ws,fileName,sheetName){
     for(let i=r+1;i<raw.length;i++){
       const row=raw[i];
       const cell=String(row[tc]||'').trim();
-      if(isDateRow(row))break;
+      if(isDateRow(row, tc+2))break; // only left-side Date: breaks; Hourly Avg block ignored
       if(/^Total$/i.test(cell)){totalRow=row;break;}
       if(isTimeSlot(cell)){
         hrs.push({
@@ -643,7 +648,7 @@ const HK_GAZETTE_PH = {
   '2025-12-26': 'First Weekday after Christmas',
   // 2026 (note: Ching Ming on Sun → Mon sub; clashes with Easter Mon → extra Tue PH)
   '2026-01-01': "New Year's Day",
-  '2026-01-02': 'Day after New Year\'s Day',
+  '2026-01-02': 'Day after New Year\'s Day — Mainland Public Holiday',
   '2026-02-17': 'Lunar New Year (Day 1)',
   '2026-02-18': 'Lunar New Year (Day 2)',
   '2026-02-19': 'Lunar New Year (Day 3)',
@@ -736,7 +741,7 @@ function getRemarks(dateStr){
   // ── 2. Fixed-date public holidays (algorithmic fallback for other years) ──
   if(month===1&&day===1) return "New Year's Day";
   if(month===1&&day===2&&dow===1) return "New Year's Day Holiday (Sub)";
-  if(month===1&&day===2) return 'Day after New Year\'s Day'; // elevated return traffic
+  if(month===1&&day===2) return 'Day after New Year\'s Day — Mainland Public Holiday';
   if(month===5&&day===1) return 'Labour Day';
   if(month===5&&day===2&&dow===1) return 'Labour Day Holiday';
   if(month===7&&day===1) return 'HKSAR Establishment Day';
@@ -2900,7 +2905,7 @@ function forecastEaster2026(days){
     const tot2=easterByYear[capY2].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
     if(tot1>0){
       dynamicCap=Math.max(0.05, (tot2-tot1)/tot1); // floor at 5%
-      dynamicCapNote=capY1+'→'+capY2+' Easter YoY: '+nt(tot1)+' → '+nt(tot2)+' = '+(dynamicCap*100).toFixed(1)+'%';
+      dynamicCapNote=capY1+'→'+capY2+' Easter YoY: '+Number(tot1).toLocaleString()+' → '+Number(tot2).toLocaleString()+' = '+(dynamicCap*100).toFixed(1)+'%';
     }
   }
 
