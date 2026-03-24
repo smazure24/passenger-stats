@@ -1388,7 +1388,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   const ws  = {};
   const mrg = [];
   let R = 0;
-  const NC = 10;
+  const NC = 13; // expanded to 13 for hourly profile (prev year + hist avg + projection)
   ws['!rows'] = [];
 
   // ── helpers ──────────────────────────────────────────────────────────────
@@ -1545,15 +1545,14 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     const gFg=g===null?'999999':g>=0?'1B5E20':'C62828';
     ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC(g===null?'—':(g>=0?'+':'')+g.toFixed(1)+'%',bg,gFg,true,10,9,_f,true);
     ws['!rows'][R]={hpt:14}; R++;
-    if(y.caveat==='early-reopen'){
-      ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'⚠ 2023: Border reopened Jan 2023 — early months reflect cautious travel behaviour; figures understate structural demand.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:warnFg}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:warnBg}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
-      merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
-    }
   });
 
-  // Note row
-  // s1 box applied above (2020-02-04 to 2023-01-07). "Excl." = number of closure days within the Jan–'+periodLabel+' window.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
+  // Notes at bottom of YoY same-period table
+  const _yoyNote1='YoY Growth = (This Year Avg Daily − Prior Year Avg Daily) ÷ Prior Year Avg Daily. Op. Days excludes border closure period (2020-02-04 to 2023-01-07). Excl. = closure days within Jan–'+periodLabel+'.';
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:_yoyNote1,t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
   merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'⚠ 2023: Border reopened 8 Jan 2023 after COVID closure. Public remained cautious in early months — traffic ramped up gradually. 2023 figures understate true demand and should be treated as a lower-bound reference.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:warnFg}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:warnBg}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
+  merge(R,0,R,NC-1); ws['!rows'][R]={hpt:18}; R++;
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1584,9 +1583,17 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(y.dep,bg,depCol,false,7,_fi,false);
     ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(y.res,bg,'2E7D52',false,8,_fi,false);
     const gFg=g===null?'999999':g>=0?'1B5E20':'C62828';
-    ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC(g===null?'—':(g>=0?'+':'')+g.toFixed(1)+'%',bg,gFg,true,10,9,_fi,true);
+    // Flag 2024 growth as overstated (2023 baseline was suppressed)
+    const gSuffix=(y.year==='2024'&&fullYoy2.find(x=>x.year==='2023'))?'  †':'';
+    ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC(g===null?'—':(g>=0?'+':'')+g.toFixed(1)+'%'+gSuffix,bg,gFg,true,10,9,_fi,true);
     ws['!rows'][R]={hpt:14}; R++;
   });
+  // Notes at bottom of Full Year table
+  const _fyNote='YoY Growth = (This Year Avg Daily − Prior Year Avg Daily) ÷ Prior Year Avg Daily. Uses Avg Daily so partial years are comparable. Closed/excluded days not counted in Avg Daily.';
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:_fyNote,t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
+  merge(R,0,R,NC-1); ws['!rows'][R]={hpt:12}; R++;
+  ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'⚠ 2023: Border reopened 8 Jan 2023. Traffic ramped gradually — 2023 understates structural demand. † 2024 vs 2023 YoY is overstated because the 2023 baseline was suppressed by cautious post-reopening behaviour.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:warnFg}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:warnBg}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
+  merge(R,0,R,NC-1); ws['!rows'][R]={hpt:18}; R++;
   R++; // spacer
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1800,7 +1807,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       // Hist Avg (col 8)
       ws[XLSX.utils.encode_cell({r:R,c:8})]=hHdr('HIST. AVG  ▶',_cHist,'FFFFFF',8);
       // Projection (cols 9-11)
-      ws[XLSX.utils.encode_cell({r:R,c:9})]=hHdr(tLabel+' PROJECTION  ×'+f.factor.toFixed(3),_cProj,'FFFFFF',8);
+      ws[XLSX.utils.encode_cell({r:R,c:9})]=hHdr(tLabel+' PROJECTION',_cProj,'FFFFFF',8);
       for(let i=10;i<=11;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr('',_cProj,'FFFFFF');
       mrg.push({s:{r:R,c:9},e:{r:R,c:11}});
       ws[XLSX.utils.encode_cell({r:R,c:12})]=hHdr('',_cProj,'FFFFFF');
@@ -1936,7 +1943,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
   ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R+2,c:NC-1}});
   ws['!merges']=mrg;
-  ws['!cols']=[{wch:14},{wch:11},{wch:9},{wch:11},{wch:11},{wch:9},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:9}];
+  ws['!cols']=[{wch:14},{wch:11},{wch:9},{wch:11},{wch:11},{wch:9},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:9}]; // 13 cols
   XLSX.utils.book_append_sheet(wb,ws,'Analysis & Forecast');
 }
 
@@ -2449,28 +2456,30 @@ function exportExcel(){
       ],
       [6,13,5,14,14,14,14,13,32]
     );
-    // Patch: sections 2 & 3 are 7-col tables in a 9-col sheet — fill+merge cols 6-7 for those rows
-    // Sheet header = 6 rows (R0-R5)
-    // Sec1 (9-col, has groups): accent=R6, title=R7, groups=R8, colHdr=R9, data=R10-14, spacer=R15, spacer=R16
-    // Sec2 (7-col): accent=R17, title=R18, colHdr=R19, data=R20-24, spacer=R25, spacer=R26
-    // Sec3 (7-col): accent=R27, title=R28, colHdr=R29, data=R30-34, spacer=R35
-    const _blkW={font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{right:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}}}};
-    const _blkA={font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'F4F8FF':'F4FFF8'}},border:{right:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}}}};
+    // Patch: sections 2 & 3 are 7-col tables in a 9-col sheet
+    // Col 6 (G): last data col (Remarks) — already written by buildSheet
+    // Col 7 (H): blank white filler — merged into col 6 so Remarks spans G:H
+    // Col 8 (I): plain white blank — NO colour, NO border
+    const _blkW={v:'',t:'s',s:{font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{}}};
+    const _blkA={v:'',t:'s',s:{font:{name:'Calibri',sz:10},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'F4F8FF':'F4FFF8'}},border:{}}};
+    const _blank9={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{}}};
+    // Sec2: rows 17-26 (accent, title, colHdr, 5 data, 2 spacers)
     for(let r=17;r<=26;r++){
-      const addr=XLSX.utils.encode_cell({r,c:7});
-      ws[addr]={v:'',t:'s',s:(r>=20&&r<=24&&(r-20)%2===1)?_blkA:_blkW};
+      const isDataRow=(r>=20&&r<=24);
+      const isAltData=isDataRow&&(r-20)%2===1;
+      ws[XLSX.utils.encode_cell({r,c:7})]=isAltData?_blkA:_blkW;
+      ws[XLSX.utils.encode_cell({r,c:8})]=_blank9; // col I always plain white
       if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6)) ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
     }
+    // Sec3: rows 27-36
     for(let r=27;r<=36;r++){
-      const addr=XLSX.utils.encode_cell({r,c:7});
-      ws[addr]={v:'',t:'s',s:(r>=30&&r<=34&&(r-30)%2===1)?_blkA:_blkW};
+      const isDataRow=(r>=30&&r<=34);
+      const isAltData=isDataRow&&(r-30)%2===1;
+      ws[XLSX.utils.encode_cell({r,c:7})]=isAltData?_blkA:_blkW;
+      ws[XLSX.utils.encode_cell({r,c:8})]=_blank9; // col I always plain white
       if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6)) ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
     }
-    // Extend sec2+sec3 title merges to col 8
-    ws['!merges']=ws['!merges'].map(m=>{
-      if((m.s.r===18||m.s.r===28)&&m.e.c===6) return{s:m.s,e:{r:m.e.r,c:8}};
-      return m;
-    });
+    // Title row merges stay at col 6 only (don't extend to col 8 to avoid colour bleed)
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
 
@@ -2671,6 +2680,22 @@ function yoyAnalysis(days){
     byYear[y].vis   += (d.dt.ad_vis||0);
     byYear[y].count++;
   }
+  // Recompute closedDays mathematically for each year:
+  // Count calendar days in [Jan 1 → asAtMMDD] that fall in the closure period,
+  // regardless of whether those days are present in the uploaded data.
+  for(const [y, v] of Object.entries(byYear)){
+    let closed=0;
+    const periodEnd = y+'-'+asAtMMDD;
+    const periodStart = y+'-01-01';
+    // Walk every day in [periodStart .. periodEnd] and check if it's in closure
+    const d0=new Date(periodStart+'T00:00:00'), d1=new Date(periodEnd+'T00:00:00');
+    for(let dt=new Date(d0); dt<=d1; dt.setDate(dt.getDate()+1)){
+      const iso=dt.toISOString().slice(0,10);
+      if(isBorderClosed(iso)) closed++;
+    }
+    v.closedDays=closed;
+  }
+
   return Object.entries(byYear).map(([y,v])=>({
     year:y, ...v,
     avgDaily: v.count ? Math.round(v.total/v.count) : 0,
@@ -2700,12 +2725,19 @@ function fullYearAnalysis(days){
     byYear[y].vis   += (d.dt.ad_vis||0);
     byYear[y].count++;
   }
+  // Recompute closedDays for full year mathematically
+  for(const [y, v] of Object.entries(byYear)){
+    let closed=0;
+    const d0=new Date(y+'-01-01T00:00:00'), d1=new Date(y+'-12-31T00:00:00');
+    for(let dt=new Date(d0); dt<=d1; dt.setDate(dt.getDate()+1)){
+      if(isBorderClosed(dt.toISOString().slice(0,10))) closed++;
+    }
+    v.closedDays=closed;
+  }
   return Object.entries(byYear).map(([y,v])=>({
     year:y, ...v,
     avgDaily: v.count ? Math.round(v.total/v.count) : 0,
     isPartial: y===currentYear,
-    // Early-2023 reopening caveat: reopened 2023-01-08, public cautious for ~3 months
-    // Flag 2023 as needing interpretation context
     caveat: y==='2023' ? 'early-reopen' : null,
   })).sort((a,b)=>a.year.localeCompare(b.year));
 }
