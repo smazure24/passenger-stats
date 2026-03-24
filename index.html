@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="color-scheme" content="dark"/>
 <title>Record High — Passenger Statistics</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
@@ -11,12 +12,13 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
+  color-scheme:dark;
   --bg:#07080b;--surface:#0d0f16;--surface2:#13151f;--surface3:#191c28;
   --border:#252836;--accent:#00d4b8;--gold:#f5c842;--red:#e05555;--blue:#4a9eff;
   --text:#dde1f0;--dim:#7c8099;--muted:#464a5e;
   --res:#4ade80;--vis:#facc15;--tot:#00d4b8;
 }
-html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+html,body{background:var(--bg);color:var(--text);color-scheme:dark;font-family:'DM Sans',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--surface)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
@@ -1554,7 +1556,10 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   });
 
   // Notes at bottom of YoY same-period table
-  const _yoyNote1='YoY Growth = (This Year Avg Daily − Prior Year Avg Daily) ÷ Prior Year Avg Daily. Op. Days excludes border closure period (2020-02-04 to 2023-01-07). Excl. = closure days within 1 Jan – '+periodLabel+'.';
+  const _yoyNote1='YoY Growth = (This Year Avg Daily − Prior Year Avg Daily) ÷ Prior Year Avg Daily. '
+    +'Avg Daily = Total pax in period ÷ operational days (excl. closure days). '
+    +'Same period = 1 Jan to '+periodLabel+' in each year. '
+    +'Excl. = border-closure days within that window (counted mathematically, not from uploaded data).';
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:_yoyNote1,t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
   merge(R,0,R,9); ws['!rows'][R]={hpt:12}; R++;
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'⚠ 2023: Border reopened 8 Jan 2023 after COVID closure. Public remained cautious in early months — traffic ramped up gradually. 2023 figures understate true demand and should be treated as a lower-bound reference.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:warnFg}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:warnBg}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
@@ -1595,7 +1600,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     ws['!rows'][R]={hpt:14}; R++;
   });
   // Notes at bottom of Full Year table
-  const _fyNote='YoY Growth = (This Year Avg Daily − Prior Year Avg Daily) ÷ Prior Year Avg Daily. Uses Avg Daily so partial years are comparable. Closed/excluded days not counted in Avg Daily.';
+  const _fyNote='YoY Growth = (This Year Avg Daily − Prior Year Avg Daily) ÷ Prior Year Avg Daily. '
+    +'Avg Daily = Full-year total pax ÷ operational days (border-closure days excluded). '
+    +'Current year ('+fullYoy2[fullYoy2.length-1].year+') is partial — avg daily is comparable because it uses the same per-day formula, not total traffic.';
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:_fyNote,t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:'777777'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{top:{style:'thin',color:{rgb:'D0D8E8'}}}}};
   merge(R,0,R,9); ws['!rows'][R]={hpt:12}; R++;
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:'⚠ 2023: Border reopened 8 Jan 2023. Traffic ramped gradually — 2023 understates structural demand. † 2024 vs 2023 YoY is overstated because the 2023 baseline was suppressed by cautious post-reopening behaviour.',t:'s',s:{font:{name:'Calibri',sz:8,italic:true,color:{rgb:warnFg}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:warnBg}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border:{}}};
@@ -1852,7 +1859,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
         const isPk=hr.time===peakH.time;
         const histTot=hr.ad_tot||0;
         const histShare=histTot/_sumHistHrs; // this hour's share of the day
-        const projTot=Math.round(dp.projTotal*histShare); // allocate from dp.projTotal
+        // Hourly uses full-year YoY factor; day totals use OLS factor
+        const _hrFactor=f.fullYearFactor||f.factor;
+        const projTot=Math.round(dp.baselineTotal*_hrFactor*histShare); // allocate from dp.projTotal
         const histArrFrac=(hr.arr_tot||0)/(histTot||1);
         const projArr=Math.round(projTot*histArrFrac);
         const projDep=projTot-projArr;
@@ -2126,8 +2135,8 @@ function exportExcel(){
     totalNAlt: {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.totalBg),  alignment:align('center'), border:allBordersAlt, numFmt:'#,##0'},
     blank:     {font:font(),                                     fill:fill(C.white),    border:{}},
     // ── SORT KEY HIGHLIGHT ──
-    sortHdr:   {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.med,left:{style:'thin',color:{rgb:'AABBDD'}}}},
-    sortHdrL:  {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.med,left:{style:'thin',color:{rgb:'AABBDD'}}}},
+    sortHdr:   {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.med}},
+    sortHdrL:  {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.med}},
     sort1:     {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.thin}, numFmt:'#,##0'},
     sort1L:    {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.thin}},
     sortN:     {font:font({sz:10,bold:true,color:C.navyDark}),  fill:fill({rgb:isPostCovid?'D4E6FF':'C8F0D8'}), alignment:align('center'), border:{bottom:border.thin}, numFmt:'#,##0'},
@@ -2398,7 +2407,8 @@ function exportExcel(){
             ?{horizontal:'left',vertical:'center',indent:1}
             :{horizontal:'center',vertical:'center'};
           if(isNum) s.numFmt='#,##0';
-          s.border={}; // borderless data rows
+          // Light bottom separator line for each data row
+          s.border={bottom:{style:'thin',color:{rgb:'E8ECF4'}}};
           ws[XLSX.utils.encode_cell({r:R,c})]={v:val===null||val===undefined?'':val,t:isNum?'n':'s',s};
         }
         // Fill trailing cols beyond nc with white blank
@@ -2491,24 +2501,32 @@ function exportExcel(){
     function _accentCell(col){ return {v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:col}},border:{}}}; }
 
     // Header=7 rows (R0-R6). Sec1 has groups → 11 rows (R7-R17). Sec2 starts R18. Sec3 starts R28.
-    // Tables 02/03 end at col G (index 6 = Remarks). Col H(7) and I(8) must be plain white.
+    // Merge G:H (cols 6-7) for rows 18-35 (Excel rows 19-36) so Remarks spans two columns.
+    // Col 8 (I) stays plain white.
     // Sec2: R18(accent) R19(title) R20(colHdr) R21-25(data) R26-27(gap)
     for(let r=18;r<=27;r++){
-      const isTitleRow=(r===19);
       const isDataRow=(r>=21&&r<=25);
       const isAltData=isDataRow&&(r-21)%2===1;
-      // Col 7 (H) and Col 8 (I) — always plain white, no colour extension
-      ws[XLSX.utils.encode_cell({r,c:7})]=_blkW;
+      // Col 7 (H) matches col 6 (G) style so the merge looks seamless
+      const _g=ws[XLSX.utils.encode_cell({r,c:6})];
+      ws[XLSX.utils.encode_cell({r,c:7})]=_g
+        ? JSON.parse(JSON.stringify({..._g,v:''}))
+        : (isAltData?_blkA:_blkW);
       ws[XLSX.utils.encode_cell({r,c:8})]=_blkW;
-      // Direction tag stays at col 6 only (G col) — no merge extension
-      if(isTitleRow && !ws['!merges'].find(m=>m.s.r===r&&m.s.c===6))
-        ws['!merges'].push({s:{r,c:6},e:{r,c:6}}); // single cell, no merge needed
+      if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6))
+        ws['!merges'].push({s:{r,c:6},e:{r,c:7}}); // G:H merged
     }
     // Sec3: R28(accent) R29(title) R30(colHdr) R31-35(data) R36-37(gap)
     for(let r=28;r<=37;r++){
       const isDataRow=(r>=31&&r<=35);
-      ws[XLSX.utils.encode_cell({r,c:7})]=_blkW;
+      const isAltData=isDataRow&&(r-31)%2===1;
+      const _g=ws[XLSX.utils.encode_cell({r,c:6})];
+      ws[XLSX.utils.encode_cell({r,c:7})]=_g
+        ? JSON.parse(JSON.stringify({..._g,v:''}))
+        : (isAltData?_blkA:_blkW);
       ws[XLSX.utils.encode_cell({r,c:8})]=_blkW;
+      if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6))
+        ws['!merges'].push({s:{r,c:6},e:{r,c:7}}); // G:H merged
     }
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
@@ -2938,82 +2956,62 @@ function forecastEaster2026(days){
     byOffset[off].push(d);
   }
 
-  // ── Growth rate: use multi-year linear regression for stable trend estimate ──
-  // Cap: derived dynamically from the most recent Easter-to-Easter YoY growth,
-  // so the ceiling reflects actual observed pace rather than a fixed number.
+  // ── Growth rate: OLS regression on post-COVID avg daily ─────────────────────
   const yoy=yoyAnalysis(days);
   let growthRate=0.05;
   let growthMethod='default 5%';
 
-  const postCovidYears = yoy.filter(y=>y.year>='2023'&&y.count>=30&&y.avgDaily>0);
-  const opYears = postCovidYears.length>0 ? postCovidYears :
-    yoy.filter(y=>y.count>=30&&y.avgDaily>0&&!isBorderClosed(y.year+'-06-01'));
+  const postCovidYears=yoy.filter(y=>y.year>='2023'&&y.count>=30&&y.avgDaily>0);
+  const opYears=postCovidYears.length>0?postCovidYears:yoy.filter(y=>y.count>=30&&y.avgDaily>0&&!isBorderClosed(y.year+'-06-01'));
 
-  // ── Dynamic cap: most recent Easter YoY (e.g. 2024→2025 Easter total change) ──
-  // Group Easter days by year, find the most recent two years with ≥3 days each
+  // Dynamic cap from most recent Easter-to-Easter YoY
   const easterByYear={};
-  for(const d of easterDays){
-    const ey=d.date.substring(0,4);
-    if(!easterByYear[ey]) easterByYear[ey]=[];
-    easterByYear[ey].push(d);
-  }
+  for(const d of easterDays){ const ey=d.date.substring(0,4); if(!easterByYear[ey])easterByYear[ey]=[]; easterByYear[ey].push(d); }
   const easterYearsSorted=Object.keys(easterByYear).filter(y=>easterByYear[y].length>=3).sort();
-  let dynamicCap=0.15; // fallback
-  let dynamicCapNote='fallback 15% (insufficient Easter data for dynamic cap)';
+  let dynamicCap=0.15,dynamicCapNote='fallback 15%';
   if(easterYearsSorted.length>=2){
-    const capY1=easterYearsSorted[easterYearsSorted.length-2];
-    const capY2=easterYearsSorted[easterYearsSorted.length-1];
-    const tot1=easterByYear[capY1].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
-    const tot2=easterByYear[capY2].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
-    if(tot1>0){
-      dynamicCap=Math.max(0.05, (tot2-tot1)/tot1); // floor at 5%
-      dynamicCapNote=capY1+'→'+capY2+' Easter YoY: '+Number(tot1).toLocaleString()+' → '+Number(tot2).toLocaleString()+' = '+(dynamicCap*100).toFixed(1)+'%';
-    }
+    const cy1=easterYearsSorted[easterYearsSorted.length-2],cy2=easterYearsSorted[easterYearsSorted.length-1];
+    const ct1=easterByYear[cy1].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
+    const ct2=easterByYear[cy2].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
+    if(ct1>0){ dynamicCap=Math.max(0.05,(ct2-ct1)/ct1); dynamicCapNote=cy1+'→'+cy2+' Easter YoY: '+(dynamicCap*100).toFixed(1)+'%'; }
+  }
+
+  // Full-year YoY — used for hourly profile projection factor
+  let fullYearFactor=1.05; // fallback
+  const _fy=fullYearAnalysis(days);
+  const _cfy=_fy.filter(y=>!y.isPartial&&y.avgDaily>0&&y.year>='2023');
+  let fullYearFactorNote='fallback 5%';
+  if(_cfy.length>=2){
+    const _p=_cfy[_cfy.length-2],_l=_cfy[_cfy.length-1];
+    fullYearFactor=_l.avgDaily/_p.avgDaily;
+    fullYearFactorNote=_p.year+'→'+_l.year+' full-year YoY: '+((fullYearFactor-1)*100).toFixed(1)+'% ('+Number(_p.avgDaily).toLocaleString()+' → '+Number(_l.avgDaily).toLocaleString()+' pax/day)';
   }
 
   let growthCalcSteps=[];
   if(opYears.length>=3){
     const n=opYears.length;
-    const xs=opYears.map((_,i)=>i);
-    const ys=opYears.map(y=>y.avgDaily);
-    const xMean=xs.reduce((a,b)=>a+b,0)/n;
-    const yMean=ys.reduce((a,b)=>a+b,0)/n;
+    const xs=opYears.map((_,i)=>i),ys=opYears.map(y=>y.avgDaily);
+    const xMean=xs.reduce((a,b)=>a+b,0)/n,yMean=ys.reduce((a,b)=>a+b,0)/n;
     const ssxy=xs.reduce((s,x,i)=>s+(x-xMean)*(ys[i]-yMean),0);
     const ssxx=xs.reduce((s,x)=>s+(x-xMean)**2,0);
     const slope=ssxx>0?ssxy/ssxx:0;
     growthRate=yMean>0?slope/yMean:0.05;
     growthMethod='linear regression ('+n+' operational years)';
     growthCalcSteps=[
-      'Method: Linear regression (OLS) on avg daily traffic across '+n+' post-COVID operational years',
-      'Years used: '+opYears.map(y=>y.year+' ('+Number(y.avgDaily).toLocaleString()+' pax/day)').join(', '),
-      'Mean avg daily (ȳ): '+Math.round(yMean).toLocaleString()+' pax/day',
-      'Trend slope (β): +'+Math.round(slope).toLocaleString()+' pax/day per year',
-      'Growth rate = slope ÷ mean = '+Math.round(slope).toLocaleString()+' ÷ '+Math.round(yMean).toLocaleString()+' = '+(growthRate*100).toFixed(1)+'% per year',
-      'Dynamic cap: '+dynamicCapNote,
-      'Cap applied: max −10% / +'+( dynamicCap*100).toFixed(1)+'% → final rate: '+(Math.max(-0.10,Math.min(dynamicCap,growthRate))*100).toFixed(1)+'%',
+      'Day-total projection: OLS regression on avg daily across '+n+' post-COVID years',
+      'Years: '+opYears.map(y=>y.year+' ('+Number(y.avgDaily).toLocaleString()+')').join(', '),
+      'Growth rate = '+(growthRate*100).toFixed(1)+'%, capped at '+(Math.max(-0.10,Math.min(dynamicCap,growthRate))*100).toFixed(1)+'% (cap: '+dynamicCapNote+')',
+      'Hourly profile projection: full-year YoY — '+fullYearFactorNote,
     ];
   } else if(opYears.length===2){
     const r=(opYears[1].avgDaily/opYears[0].avgDaily)-1;
-    growthRate=r;
-    growthMethod='CAGR (2 years)';
-    growthCalcSteps=[
-      'Method: Compound Annual Growth Rate (CAGR) — only 2 operational years available',
-      opYears[0].year+' avg daily: '+Number(opYears[0].avgDaily).toLocaleString()+' pax/day',
-      opYears[1].year+' avg daily: '+Number(opYears[1].avgDaily).toLocaleString()+' pax/day',
-      'CAGR = ('+Number(opYears[1].avgDaily).toLocaleString()+' ÷ '+Number(opYears[0].avgDaily).toLocaleString()+') − 1 = '+(r*100).toFixed(1)+'%',
-      'Dynamic cap: '+dynamicCapNote,
-      'Cap applied: max −10% / +'+( dynamicCap*100).toFixed(1)+'% → final rate: '+(Math.max(-0.10,Math.min(dynamicCap,r))*100).toFixed(1)+'%',
-    ];
+    growthRate=r; growthMethod='CAGR (2 years)';
+    growthCalcSteps=['Day-total: CAGR = '+(r*100).toFixed(1)+'%','Hourly: '+fullYearFactorNote];
   } else if(yoy.length>=2){
     const last=yoy[yoy.length-1],prev=yoy[yoy.length-2];
     if(prev.avgDaily>0) growthRate=(last.avgDaily-prev.avgDaily)/prev.avgDaily;
-    growthMethod='single YoY (limited data)';
-    growthCalcSteps=[
-      'Method: Single year-over-year change (limited data — fewer than 2 post-COVID operational years)',
-      'Prior year ('+prev.year+') avg daily: '+Number(prev.avgDaily).toLocaleString()+' pax/day',
-      'Latest year ('+last.year+') avg daily: '+Number(last.avgDaily).toLocaleString()+' pax/day',
-      'Growth = ('+Number(last.avgDaily).toLocaleString()+' − '+Number(prev.avgDaily).toLocaleString()+') ÷ '+Number(prev.avgDaily).toLocaleString()+' = '+(growthRate*100).toFixed(1)+'%',
-    ];
+    growthMethod='single YoY';
+    growthCalcSteps=['Day-total: single YoY = '+(growthRate*100).toFixed(1)+'%','Hourly: '+fullYearFactorNote];
   }
   growthRate=Math.max(-0.10,Math.min(dynamicCap,growthRate));
   const factor=1+growthRate;
@@ -3118,6 +3116,7 @@ function forecastEaster2026(days){
     growthMethod,
     growthCalcSteps,
     factor,
+    fullYearFactor,
     easterDays,
     byOffset,
     targetEasterLabel: (typeof targetEasterLabel!=='undefined'?targetEasterLabel:'Easter'),
