@@ -1844,11 +1844,16 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       let _s25ArrR=0,_s25ArrV=0,_s25ArrT=0,_s25DepR=0,_s25DepV=0,_s25DepT=0,_s25Tot=0;
       let _sHistT=0, _sProjArr=0,_sProjDep=0,_sProjTot=0;
 
+      // Pre-compute sum of all historical hourly totals for proportional allocation
+      const _sumHistHrs=hrs.reduce((s,h)=>s+(h.ad_tot||0),0)||1;
+      // Hourly projections must sum to dp.projTotal (the day-level projection)
+      // Use historical shape to allocate: each hour's share = hr.ad_tot / sumHistHrs
       hrs.forEach((hr,i)=>{
         const isPk=hr.time===peakH.time;
         const histTot=hr.ad_tot||0;
+        const histShare=histTot/_sumHistHrs; // this hour's share of the day
+        const projTot=Math.round(dp.projTotal*histShare); // allocate from dp.projTotal
         const histArrFrac=(hr.arr_tot||0)/(histTot||1);
-        const projTot=Math.round(histTot*f.factor);
         const projArr=Math.round(projTot*histArrFrac);
         const projDep=projTot-projArr;
 
@@ -1955,7 +1960,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
   ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R+2,c:NC-1}});
   ws['!merges']=mrg;
-  ws['!cols']=[{wch:32},{wch:11},{wch:9},{wch:11},{wch:11},{wch:9},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:0,hidden:true},{wch:0,hidden:true}]; // cols L-M hidden
+  ws['!cols']=[{wch:32},{wch:11},{wch:9},{wch:11},{wch:11},{wch:9},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:0,hidden:true}]; // col M hidden, col L=Proj Total visible
   XLSX.utils.book_append_sheet(wb,ws,'Analysis & Forecast');
 }
 
@@ -2486,35 +2491,24 @@ function exportExcel(){
     function _accentCell(col){ return {v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:col}},border:{}}}; }
 
     // Header=7 rows (R0-R6). Sec1 has groups → 11 rows (R7-R17). Sec2 starts R18. Sec3 starts R28.
+    // Tables 02/03 end at col G (index 6 = Remarks). Col H(7) and I(8) must be plain white.
     // Sec2: R18(accent) R19(title) R20(colHdr) R21-25(data) R26-27(gap)
     for(let r=18;r<=27;r++){
-      const isAccentBar=(r===18), isTitleRow=(r===19);
+      const isTitleRow=(r===19);
       const isDataRow=(r>=21&&r<=25);
       const isAltData=isDataRow&&(r-21)%2===1;
-      if(isAccentBar||isTitleRow){
-        ws[XLSX.utils.encode_cell({r,c:7})]=_accentCell(_sec2Acc);
-        ws[XLSX.utils.encode_cell({r,c:8})]=_accentCell(_sec2Acc);
-        if(isTitleRow) ws['!merges'].push({s:{r,c:6},e:{r,c:8}});
-      } else {
-        ws[XLSX.utils.encode_cell({r,c:7})]=isAltData?_blkA:_blkW;
-        ws[XLSX.utils.encode_cell({r,c:8})]=_blkW;
-        if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6)) ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
-      }
+      // Col 7 (H) and Col 8 (I) — always plain white, no colour extension
+      ws[XLSX.utils.encode_cell({r,c:7})]=_blkW;
+      ws[XLSX.utils.encode_cell({r,c:8})]=_blkW;
+      // Direction tag stays at col 6 only (G col) — no merge extension
+      if(isTitleRow && !ws['!merges'].find(m=>m.s.r===r&&m.s.c===6))
+        ws['!merges'].push({s:{r,c:6},e:{r,c:6}}); // single cell, no merge needed
     }
     // Sec3: R28(accent) R29(title) R30(colHdr) R31-35(data) R36-37(gap)
     for(let r=28;r<=37;r++){
-      const isAccentBar=(r===28), isTitleRow=(r===29);
       const isDataRow=(r>=31&&r<=35);
-      const isAltData=isDataRow&&(r-31)%2===1;
-      if(isAccentBar||isTitleRow){
-        ws[XLSX.utils.encode_cell({r,c:7})]=_accentCell(_sec3Acc);
-        ws[XLSX.utils.encode_cell({r,c:8})]=_accentCell(_sec3Acc);
-        if(isTitleRow) ws['!merges'].push({s:{r,c:6},e:{r,c:8}});
-      } else {
-        ws[XLSX.utils.encode_cell({r,c:7})]=isAltData?_blkA:_blkW;
-        ws[XLSX.utils.encode_cell({r,c:8})]=_blkW;
-        if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6)) ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
-      }
+      ws[XLSX.utils.encode_cell({r,c:7})]=_blkW;
+      ws[XLSX.utils.encode_cell({r,c:8})]=_blkW;
     }
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
