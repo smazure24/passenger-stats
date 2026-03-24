@@ -1415,7 +1415,14 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   function putCell(r,c2,v,s){
     ws[XLSX.utils.encode_cell({r,c:c2})]={v:v===null||v===undefined?'':v, t:typeof v==='number'?'n':'s', s:s||{}};
   }
-  function merge(r,c1,r2,c2){ mrg.push({s:{r,c:c1},e:{r:r2,c:c2}}); }
+  function merge(r,c1,r2,c2){
+    mrg.push({s:{r,c:c1},e:{r:r2,c:c2}});
+    // For section-wide merges (c1=0), also write white blanks in cols 10-12
+    // so they don't inherit adjacent cell styles
+    if(c1===0 && c2===9){
+      for(let _c=10;_c<13;_c++) ws[XLSX.utils.encode_cell({r,c:_c})]={v:'',t:'s',s:{border:{}}};
+    }
+  }
 
   // Style factories
   const navyBg  = isPostCovid?'1A3A7A':'1B4A2A';
@@ -2265,11 +2272,10 @@ function exportExcel(){
 
       // ── SUB-ROW A: Thin top accent bar for this section ──────────────────
       ws['!rows'][R] = {hpt: 4};
-      for(let col=0; col<nc; col++){
-        ws[XLSX.utils.encode_cell({r:R,c:col})] = {v:'', t:'s', s:{
-          fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secAccent}},
-          border:{}
-        }};
+      for(let col=0; col<maxCols; col++){
+        ws[XLSX.utils.encode_cell({r:R,c:col})] = col<nc
+          ? {v:'', t:'s', s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secAccent}},border:{}}}
+          : {v:'', t:'s', s:S.blank};
       }
       merges.push({s:{r:R,c:0},e:{r:R,c:nc-1}});
       R++;
@@ -2310,6 +2316,9 @@ function exportExcel(){
           border:{bottom:{style:'medium',color:{rgb:secAccent}}}
         }};
       }
+      // Fill trailing cols with white blank to prevent colour bleed
+      for(let col=nc; col<maxCols; col++)
+        ws[XLSX.utils.encode_cell({r:R,c:col})]={v:'',t:'s',s:S.blank};
       R++;
 
       // Group headers (optional)
@@ -2339,6 +2348,7 @@ function exportExcel(){
         };
         ws[XLSX.utils.encode_cell({r:R,c})]={v:sec.headers[c]+(isSort?' ▼':''),t:'s',s:hs};
       }
+      for(let c=nc;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.blank};
       R++;
 
       // Data rows
@@ -2382,12 +2392,15 @@ function exportExcel(){
           s.border={}; // borderless data rows
           ws[XLSX.utils.encode_cell({r:R,c})]={v:val===null||val===undefined?'':val,t:isNum?'n':'s',s};
         }
+        // Fill trailing cols beyond nc with white blank
+        for(let c=nc;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.blank};
         R++;
       });
 
-      // Gap row
-      for(let c=0;c<nc;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.blank};
+      // Gap row + fill any remaining cols (nc..maxCols-1) with white blanks
+      for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.blank};
       R++;
+      for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]={v:'',t:'s',s:S.blank};
       R++;
     }); // end sections.forEach
 
@@ -3036,21 +3049,41 @@ function forecastEaster2026(days){
     byOffsetPostCovid[off].push(d);
   }
 
-  // Build per-day hourly profile and projected total — always from post-COVID baseline
+  // Build per-day hourly profile and projected total
+  // BASELINE: use the MOST RECENT year's actual data (not average) as projection base.
+  // This guarantees projection > most recent year even with modest growth rates.
+  // If the most recent year isn't available for a specific offset, fall back to average.
+  const _sortedPostCovid = [...projectionBase].sort((a,b)=>b.date.localeCompare(a.date));
+  const _mostRecentYear = _sortedPostCovid.length ? _sortedPostCovid[0].date.substring(0,4) : null;
+
   const dayProfiles={};
   for(const [off,conf] of Object.entries(easter2026Dates)){
     const histDays=byOffsetPostCovid[parseInt(off)]||[];
-    const sourceDays=histDays.length>0?histDays:projectionBase;
-    const profile=avgHourlyProfile(sourceDays);
-    const avgTotal=sourceDays.length?
-      Math.round(sourceDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/sourceDays.length):0;
-    // histCount shows post-COVID years available for this specific day slot
+    // Try to get the most recent year's day at this offset
+    const recentDay = _mostRecentYear
+      ? histDays.find(d=>d.date.startsWith(_mostRecentYear))
+      : null;
+    // Profile: use most recent year if available, else average
+    const profileDays = recentDay ? [recentDay] : (histDays.length>0 ? histDays : projectionBase);
+    const profile = avgHourlyProfile(profileDays);
+    // Baseline total: most recent year if available, else post-COVID average
+    const baselineTotal = recentDay
+      ? (recentDay.dt.ad_tot||0)
+      : (histDays.length>0
+          ? Math.round(histDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/histDays.length)
+          : Math.round(projectionBase.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/projectionBase.length));
+    // avgTotal still shows the historical average for reference
+    const avgTotal = histDays.length>0
+      ? Math.round(histDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/histDays.length)
+      : Math.round(projectionBase.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/projectionBase.length);
     const allHistDays=byOffset[parseInt(off)]||[];
     dayProfiles[off]={
       ...conf,
       profile,
       avgTotal,
-      projTotal:Math.round(avgTotal*factor),
+      projTotal:Math.round(baselineTotal*factor),
+      baselineTotal,
+      baselineYear:recentDay?_mostRecentYear:'avg',
       histCount:histDays.length,
       allHistCount:allHistDays.length,
       isEstimated:histDays.length===0,
