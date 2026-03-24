@@ -1733,10 +1733,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     // Col 9-11: 2026 Projection (▲Arr, ▼Dep, Total)
     // Col 12:  [blank]
     const NHC = 13;
-    // Expand col widths to 13 for the hourly section
-    if(ws['!cols'].length < NHC){
-      while(ws['!cols'].length < NHC) ws['!cols'].push({wch:11});
-    }
+    // Ensure ws['!cols'] exists and has at least NHC entries
+    if(!ws['!cols']) ws['!cols']=[];
+    while(ws['!cols'].length < NHC) ws['!cols'].push({wch:11});
     // Colour palette for the three section groups
     const _c2025  = isPostCovid?'1A6B8A':'1E6B3A'; // teal/green — last year actual
     const _cHist  = '7B6000';                        // amber — historical avg
