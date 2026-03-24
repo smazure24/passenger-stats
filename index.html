@@ -2781,19 +2781,37 @@ function forecastEaster2026(days){
   }
 
   // ── Growth rate: use multi-year linear regression for stable trend estimate ──
-  // Single YoY is too volatile. LSC traffic has consistently hit record highs
-  // so we use a linear trend fitted to all operational post-COVID years.
+  // Cap: derived dynamically from the most recent Easter-to-Easter YoY growth,
+  // so the ceiling reflects actual observed pace rather than a fixed number.
   const yoy=yoyAnalysis(days);
   let growthRate=0.05;
   let growthMethod='default 5%';
 
-  // Always use post-COVID years for growth regression regardless of era.
-  // Pre-COVID (2003-2019) was a different traffic regime entirely — much lower volumes.
-  // Including those years would massively distort the trend used for projection.
-  // For Since Commissioning era with many pre-COVID years, this is the critical fix.
   const postCovidYears = yoy.filter(y=>y.year>='2023'&&y.count>=30&&y.avgDaily>0);
   const opYears = postCovidYears.length>0 ? postCovidYears :
     yoy.filter(y=>y.count>=30&&y.avgDaily>0&&!isBorderClosed(y.year+'-06-01'));
+
+  // ── Dynamic cap: most recent Easter YoY (e.g. 2024→2025 Easter total change) ──
+  // Group Easter days by year, find the most recent two years with ≥3 days each
+  const easterByYear={};
+  for(const d of easterDays){
+    const ey=d.date.substring(0,4);
+    if(!easterByYear[ey]) easterByYear[ey]=[];
+    easterByYear[ey].push(d);
+  }
+  const easterYearsSorted=Object.keys(easterByYear).filter(y=>easterByYear[y].length>=3).sort();
+  let dynamicCap=0.15; // fallback
+  let dynamicCapNote='fallback 15% (insufficient Easter data for dynamic cap)';
+  if(easterYearsSorted.length>=2){
+    const capY1=easterYearsSorted[easterYearsSorted.length-2];
+    const capY2=easterYearsSorted[easterYearsSorted.length-1];
+    const tot1=easterByYear[capY1].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
+    const tot2=easterByYear[capY2].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
+    if(tot1>0){
+      dynamicCap=Math.max(0.05, (tot2-tot1)/tot1); // floor at 5%
+      dynamicCapNote=capY1+'→'+capY2+' Easter YoY: '+nt(tot1)+' → '+nt(tot2)+' = '+(dynamicCap*100).toFixed(1)+'%';
+    }
+  }
 
   let growthCalcSteps=[];
   if(opYears.length>=3){
@@ -2813,7 +2831,8 @@ function forecastEaster2026(days){
       'Mean avg daily (ȳ): '+Math.round(yMean).toLocaleString()+' pax/day',
       'Trend slope (β): +'+Math.round(slope).toLocaleString()+' pax/day per year',
       'Growth rate = slope ÷ mean = '+Math.round(slope).toLocaleString()+' ÷ '+Math.round(yMean).toLocaleString()+' = '+(growthRate*100).toFixed(1)+'% per year',
-      'Cap applied: max −10% / +15% → final rate: '+(Math.max(-0.10,Math.min(0.15,growthRate))*100).toFixed(1)+'%',
+      'Dynamic cap: '+dynamicCapNote,
+      'Cap applied: max −10% / +'+( dynamicCap*100).toFixed(1)+'% → final rate: '+(Math.max(-0.10,Math.min(dynamicCap,growthRate))*100).toFixed(1)+'%',
     ];
   } else if(opYears.length===2){
     const r=(opYears[1].avgDaily/opYears[0].avgDaily)-1;
@@ -2824,7 +2843,8 @@ function forecastEaster2026(days){
       opYears[0].year+' avg daily: '+Number(opYears[0].avgDaily).toLocaleString()+' pax/day',
       opYears[1].year+' avg daily: '+Number(opYears[1].avgDaily).toLocaleString()+' pax/day',
       'CAGR = ('+Number(opYears[1].avgDaily).toLocaleString()+' ÷ '+Number(opYears[0].avgDaily).toLocaleString()+') − 1 = '+(r*100).toFixed(1)+'%',
-      'Cap applied: max −10% / +15% → final rate: '+(Math.max(-0.10,Math.min(0.15,r))*100).toFixed(1)+'%',
+      'Dynamic cap: '+dynamicCapNote,
+      'Cap applied: max −10% / +'+( dynamicCap*100).toFixed(1)+'% → final rate: '+(Math.max(-0.10,Math.min(dynamicCap,r))*100).toFixed(1)+'%',
     ];
   } else if(yoy.length>=2){
     const last=yoy[yoy.length-1],prev=yoy[yoy.length-2];
@@ -2837,7 +2857,7 @@ function forecastEaster2026(days){
       'Growth = ('+Number(last.avgDaily).toLocaleString()+' − '+Number(prev.avgDaily).toLocaleString()+') ÷ '+Number(prev.avgDaily).toLocaleString()+' = '+(growthRate*100).toFixed(1)+'%',
     ];
   }
-  growthRate=Math.max(-0.10,Math.min(0.15,growthRate));
+  growthRate=Math.max(-0.10,Math.min(dynamicCap,growthRate));
   const factor=1+growthRate;
 
   // ── Dynamically compute target Easter year from latest loaded date ──────────
