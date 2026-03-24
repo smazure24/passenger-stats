@@ -1726,77 +1726,169 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     });
     R++; // spacer
 
-    // Hourly profile for ALL 5 days of the Easter period
-    const keyDays = ['-2','-1','0','1','2']; // Good Fri, Easter Sat, Easter Sun, Easter Mon, Day After
+    // ── Hourly profile: 13-column layout ─────────────────────────────────────
+    // Col 0:   Time
+    // Col 1-7: Most Recent Year actual (ArrR, ArrV, ▲Arr, DepR, DepV, ▼Dep, Total)
+    // Col 8:   Historical Avg Total
+    // Col 9-11: 2026 Projection (▲Arr, ▼Dep, Total)
+    // Col 12:  [blank]
+    const NHC = 13;
+    // Expand col widths to 13 for the hourly section
+    if(ws['!cols'].length < NHC){
+      while(ws['!cols'].length < NHC) ws['!cols'].push({wch:11});
+    }
+    // Colour palette for the three section groups
+    const _c2025  = isPostCovid?'1A6B8A':'1E6B3A'; // teal/green — last year actual
+    const _cHist  = '7B6000';                        // amber — historical avg
+    const _cProj  = isPostCovid?'1A3A7A':'1B4A2A';  // navy — projection
+    const _c2025L = isPostCovid?'E6F7FB':'E6F7EE';  // light teal bg
+    const _cHistL = 'FFFBEA';                        // light amber bg
+    const _cProjL = isPostCovid?'EBF2FF':'EBF7EE';  // light navy bg
+
+    // Helper to build a header cell for group/col headers
+    function hHdr(v, bg, fg, sz){
+      return {v,t:'s',s:{font:{name:'Calibri',sz:sz||8,bold:true,color:{rgb:fg||'FFFFFF'}},
+        fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg}},
+        alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:bg}}}}};
+    }
+    function hNum(v, bg, fg, bold){
+      return {v:v||0,t:'n',s:{font:{name:'Calibri',sz:10,bold:bold||false,color:{rgb:fg||'333333'}},
+        fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg}},
+        alignment:{horizontal:'center',vertical:'center'},numFmt:'#,##0',border:{}}};
+    }
+    function hTxt(v, bg, fg, bold, sz){
+      return {v:v||'',t:'s',s:{font:{name:'Calibri',sz:sz||10,bold:bold||false,color:{rgb:fg||'333333'}},
+        fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg}},
+        alignment:{horizontal:'left',vertical:'center',indent:1},border:{}}};
+    }
+
+    const keyDays = ['-2','-1','0','1','2'];
     keyDays.forEach(off=>{
       const dp = f.dayProfiles[off];
       if(!dp||!dp.profile.length) return;
+
+      // ── Find most recent year's actual Easter data for this offset ──────────
+      const _allForOff = (f.byOffset[parseInt(off)]||[]).sort((a,b)=>b.date.localeCompare(a.date));
+      const _prevDay   = _allForOff.find(d=>d.date < dp.date); // most recent historical day at same offset
+      const _prevYear  = _prevDay ? _prevDay.date.substring(0,4) : null;
+      const _prevHrsRaw = (_prevDay && _prevDay.hrs) ? _prevDay.hrs.filter(h=>/^\d{4}/.test(h.time||'')) : [];
+      // Build a map: time → hourly row for prev year
+      const _prevMap = {};
+      _prevHrsRaw.forEach(h=>{ _prevMap[h.time]=h; });
+
+      // ── Section title bar ─────────────────────────────────────────────────────
       ws['!rows'][R]={hpt:18};
-      ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('HOURLY PROFILE: '+dp.label.toUpperCase().replace(/ \(.*\)/,'')+'  ('+fDate(dp.date)+') — HISTORICAL AVG + '+tLabel+' PROJECTION','0097A7','FFFFFF',10,true,'left');
-      for(let i=1;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hdrCell('','0097A7','FFFFFF',10,true,'left');
-      merge(R,0,R,NC-1); R++;
+      const _titleText = 'HOURLY PROFILE: '+dp.label.toUpperCase().replace(/ \(.*\)/,'')+
+        '  ('+fDate(dp.date)+') — '+(_prevYear||'N/A')+' ACTUAL  |  HIST. AVG  |  '+tLabel+' PROJECTION';
+      for(let i=0;i<NHC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr('','0097A7','FFFFFF',10);
+      ws[XLSX.utils.encode_cell({r:R,c:0})]=hHdr(_titleText,'0097A7','FFFFFF',10);
+      ws[XLSX.utils.encode_cell({r:R,c:0})].s.alignment={horizontal:'left',vertical:'center',indent:1};
+      mrg.push({s:{r:R,c:0},e:{r:R,c:NHC-1}}); R++;
+
+      // ── Group header row ────────────────────────────────────────────────────
+      ws['!rows'][R]={hpt:14};
+      // Time col
+      ws[XLSX.utils.encode_cell({r:R,c:0})]=hHdr('','444444','FFFFFF');
+      // 2025 Actual group (cols 1-7)
+      ws[XLSX.utils.encode_cell({r:R,c:1})]=hHdr((_prevYear||'Prev Year')+' ACTUAL  ▶',_c2025,'FFFFFF',9);
+      for(let i=2;i<=7;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr('',_c2025,'FFFFFF');
+      mrg.push({s:{r:R,c:1},e:{r:R,c:7}});
+      // Hist Avg (col 8)
+      ws[XLSX.utils.encode_cell({r:R,c:8})]=hHdr('HIST. AVG  ▶',_cHist,'FFFFFF',8);
+      // Projection (cols 9-11)
+      ws[XLSX.utils.encode_cell({r:R,c:9})]=hHdr(tLabel+' PROJECTION  ×'+f.factor.toFixed(3),_cProj,'FFFFFF',8);
+      for(let i=10;i<=11;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr('',_cProj,'FFFFFF');
+      mrg.push({s:{r:R,c:9},e:{r:R,c:11}});
+      ws[XLSX.utils.encode_cell({r:R,c:12})]=hHdr('',_cProj,'FFFFFF');
+      R++;
+
+      // ── Column header row ────────────────────────────────────────────────────
       ws['!rows'][R]={hpt:13};
-      ['Time','Arr HKR (H)','Arr Vis (H)','Arr Total (H)','Dep HKR (H)','Dep Vis (H)','Dep Total (H)','Total (H)','Proj. Total',''].forEach((h,i)=>{
-        ws[XLSX.utils.encode_cell({r:R,c:i})]={v:h,t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'0097A7'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'medium',color:{rgb:'0097A7'}}}}};
+      ['Time',
+       'Arr HKR','Arr Vis','▲ Arrival','Dep HKR','Dep Vis','▼ Dep','Total',  // prev year actual
+       'Hist Avg',                                                              // hist avg
+       '▲ Arrival','▼ Dep','Total',                                            // projection
+       ''
+      ].forEach((h,i)=>{
+        const _bg = i===0?'444444':i<=7?_c2025:i===8?_cHist:i<=11?_cProj:'333333';
+        ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr(h,_bg,'FFFFFF',8);
       }); R++;
 
+      // ── Data rows ────────────────────────────────────────────────────────────
       const hrs=dp.profile.filter(h=>/^\d{4}/.test(h.time||''));
       const peakH=hrs.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a,hrs[0]||{time:'',ad_tot:0});
-      let _sumArrR=0,_sumArrV=0,_sumArrT=0,_sumDepR=0,_sumDepV=0,_sumDepT=0,_sumHist=0,_sumProj=0;
+
+      // Accumulators for DAY TOTAL
+      let _s25ArrR=0,_s25ArrV=0,_s25ArrT=0,_s25DepR=0,_s25DepV=0,_s25DepT=0,_s25Tot=0;
+      let _sHistT=0, _sProjArr=0,_sProjDep=0,_sProjTot=0;
+
       hrs.forEach((hr,i)=>{
         const isPk=hr.time===peakH.time;
-        const proj=Math.round((hr.ad_tot||0)*f.factor);
-        const bg=isPk?'FFF8DC':(i%2===0?'FFFFFF':'F0F8FF');
-        _sumArrR+=hr.arr_res||0; _sumArrV+=hr.arr_vis||0; _sumArrT+=hr.arr_tot||0;
-        _sumDepR+=hr.dep_res||0; _sumDepV+=hr.dep_vis||0; _sumDepT+=hr.dep_tot||0;
-        _sumHist+=hr.ad_tot||0; _sumProj+=proj;
-        ws[XLSX.utils.encode_cell({r:R,c:0})]=dataC(hr.time+(isPk?' ★':''),bg,'333333',isPk);
-        ws[XLSX.utils.encode_cell({r:R,c:1})]=numC(hr.arr_res||0,bg,arrCol);
-        ws[XLSX.utils.encode_cell({r:R,c:2})]=numC(hr.arr_vis||0,bg,'B8860B');
-        ws[XLSX.utils.encode_cell({r:R,c:3})]=numC(hr.arr_tot||0,bg,arrCol,true);
-        ws[XLSX.utils.encode_cell({r:R,c:4})]=numC(hr.dep_res||0,bg,depCol);
-        ws[XLSX.utils.encode_cell({r:R,c:5})]=numC(hr.dep_vis||0,bg,'B8860B');
-        ws[XLSX.utils.encode_cell({r:R,c:6})]=numC(hr.dep_tot||0,bg,depCol,true);
-        ws[XLSX.utils.encode_cell({r:R,c:7})]=numC(hr.ad_tot||0,bg,'333333',true);
-        ws[XLSX.utils.encode_cell({r:R,c:8})]=numC(proj,bg,'B8860B',true);
-        ws[XLSX.utils.encode_cell({r:R,c:9})]=dataC('',bg,'999999');
+        const histTot=hr.ad_tot||0;
+        const histArrFrac=(hr.arr_tot||0)/(histTot||1);
+        const projTot=Math.round(histTot*f.factor);
+        const projArr=Math.round(projTot*histArrFrac);
+        const projDep=projTot-projArr;
+
+        // Prev year actual for this time slot
+        const p25=_prevMap[hr.time]||{};
+        const p25ArrR=p25.arr_res||0, p25ArrV=p25.arr_vis||0, p25ArrT=p25.arr_tot||0;
+        const p25DepR=p25.dep_res||0, p25DepV=p25.dep_vis||0, p25DepT=p25.dep_tot||0;
+        const p25Tot=(p25ArrT||0)+(p25DepT||0);
+
+        // Accumulate
+        _s25ArrR+=p25ArrR; _s25ArrV+=p25ArrV; _s25ArrT+=p25ArrT;
+        _s25DepR+=p25DepR; _s25DepV+=p25DepV; _s25DepT+=p25DepT; _s25Tot+=p25Tot;
+        _sHistT+=histTot; _sProjArr+=projArr; _sProjDep+=projDep; _sProjTot+=projTot;
+
+        const bg=isPk?'FFF8DC':(i%2===0?'FFFFFF':'F5FAFE');
+        const _bg25=isPk?'FFF8DC':(i%2===0?_c2025L:'E0F2F8');
+        const _bgH =isPk?'FFF8DC':_cHistL;
+        const _bgP =isPk?'FFF8DC':(i%2===0?_cProjL:'E0EAFF');
+        const hasP25=p25ArrT>0||p25DepT>0;
+
+        ws[XLSX.utils.encode_cell({r:R,c:0})] = hTxt(hr.time+(isPk?' ★':''),bg,isPk?'7A4F00':'333333',isPk,10);
+        // 2025 actual cols (teal bg)
+        ws[XLSX.utils.encode_cell({r:R,c:1})] = hNum(hasP25?p25ArrR:null,_bg25,_c2025);
+        ws[XLSX.utils.encode_cell({r:R,c:2})] = hNum(hasP25?p25ArrV:null,_bg25,'B8860B');
+        ws[XLSX.utils.encode_cell({r:R,c:3})] = hNum(hasP25?p25ArrT:null,_bg25,_c2025,true);
+        ws[XLSX.utils.encode_cell({r:R,c:4})] = hNum(hasP25?p25DepR:null,_bg25,depCol);
+        ws[XLSX.utils.encode_cell({r:R,c:5})] = hNum(hasP25?p25DepV:null,_bg25,'B8860B');
+        ws[XLSX.utils.encode_cell({r:R,c:6})] = hNum(hasP25?p25DepT:null,_bg25,depCol,true);
+        ws[XLSX.utils.encode_cell({r:R,c:7})] = hNum(hasP25?p25Tot:null,_bg25,'333333',true);
+        // Hist avg (amber bg)
+        ws[XLSX.utils.encode_cell({r:R,c:8})] = hNum(histTot,_bgH,_cHist,isPk);
+        // Projection (navy bg)
+        ws[XLSX.utils.encode_cell({r:R,c:9})] = hNum(projArr,_bgP,arrCol,true);
+        ws[XLSX.utils.encode_cell({r:R,c:10})]= hNum(projDep,_bgP,depCol,true);
+        ws[XLSX.utils.encode_cell({r:R,c:11})]= hNum(projTot,_bgP,_cProj==='1A3A7A'?'1A3A7A':'1B4A2A',true);
+        ws[XLSX.utils.encode_cell({r:R,c:12})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_bgP}},border:{}}};
         ws['!rows'][R]={hpt:12}; R++;
       });
-      // ── Day Total row ─────────────────────────────────────────────────────────
-      const _totBg = isPostCovid?'1A3A7A':'1B4A2A';
-      const _totSty = (v,fmt) => ({v,t:'n',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_totBg}},alignment:{horizontal:'center',vertical:'center'},numFmt:fmt||'#,##0',border:{}}});
-      const _lblSty = {v:'DAY TOTAL',t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_totBg}},alignment:{horizontal:'left',vertical:'center',indent:1},border:{}}};
-      ws[XLSX.utils.encode_cell({r:R,c:0})]=_lblSty;
-      ws[XLSX.utils.encode_cell({r:R,c:1})]=_totSty(_sumArrR);
-      ws[XLSX.utils.encode_cell({r:R,c:2})]=_totSty(_sumArrV);
-      ws[XLSX.utils.encode_cell({r:R,c:3})]=_totSty(_sumArrT);
-      ws[XLSX.utils.encode_cell({r:R,c:4})]=_totSty(_sumDepR);
-      ws[XLSX.utils.encode_cell({r:R,c:5})]=_totSty(_sumDepV);
-      ws[XLSX.utils.encode_cell({r:R,c:6})]=_totSty(_sumDepT);
-      ws[XLSX.utils.encode_cell({r:R,c:7})]=_totSty(_sumHist);
-      ws[XLSX.utils.encode_cell({r:R,c:8})]=_totSty(_sumProj);
-      ws[XLSX.utils.encode_cell({r:R,c:9})]=({v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_totBg}},border:{}}});
-      ws['!rows'][R]={hpt:14}; R++;
 
-      // ── Historical Peak Hour row ─────────────────────────────────────────────
-      if(peakH&&peakH.time){
-        const _pkBg='FFF8DC';
-        const _pkLabel='★ PEAK HOUR: '+peakH.time;
-        const _pkSty=(v)=>({v,t:'n',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'7A4F00'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_pkBg}},alignment:{horizontal:'center',vertical:'center'},numFmt:'#,##0',border:{}}});
-        const _pkLbl={v:_pkLabel,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'7A4F00'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_pkBg}},alignment:{horizontal:'left',vertical:'center',indent:1},border:{}}};
-        const _pkProj=Math.round((peakH.ad_tot||0)*f.factor);
-        ws[XLSX.utils.encode_cell({r:R,c:0})]=_pkLbl;
-        ws[XLSX.utils.encode_cell({r:R,c:1})]=_pkSty(peakH.arr_res||0);
-        ws[XLSX.utils.encode_cell({r:R,c:2})]=_pkSty(peakH.arr_vis||0);
-        ws[XLSX.utils.encode_cell({r:R,c:3})]=_pkSty(peakH.arr_tot||0);
-        ws[XLSX.utils.encode_cell({r:R,c:4})]=_pkSty(peakH.dep_res||0);
-        ws[XLSX.utils.encode_cell({r:R,c:5})]=_pkSty(peakH.dep_vis||0);
-        ws[XLSX.utils.encode_cell({r:R,c:6})]=_pkSty(peakH.dep_tot||0);
-        ws[XLSX.utils.encode_cell({r:R,c:7})]=_pkSty(peakH.ad_tot||0);
-        ws[XLSX.utils.encode_cell({r:R,c:8})]=_pkSty(_pkProj);
-        ws[XLSX.utils.encode_cell({r:R,c:9})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_pkBg}},border:{}}};
-        ws['!rows'][R]={hpt:14}; R++;
-      }
+      // ── DAY TOTAL row ─────────────────────────────────────────────────────────
+      const _totBg = _cProj;
+      const _tSty=(v,bg)=>({v:v||0,t:'n',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},
+        fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||_totBg}},
+        alignment:{horizontal:'center',vertical:'center'},numFmt:'#,##0',border:{}}});
+      const _tLbl=(txt,bg)=>({v:txt,t:'s',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},
+        fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||_totBg}},
+        alignment:{horizontal:'left',vertical:'center',indent:1},border:{}}});
+
+      ws[XLSX.utils.encode_cell({r:R,c:0})] =_tLbl('DAY TOTAL','444444');
+      ws[XLSX.utils.encode_cell({r:R,c:1})] =_tSty(_s25ArrR,_c2025);
+      ws[XLSX.utils.encode_cell({r:R,c:2})] =_tSty(_s25ArrV,_c2025);
+      ws[XLSX.utils.encode_cell({r:R,c:3})] =_tSty(_s25ArrT,_c2025);
+      ws[XLSX.utils.encode_cell({r:R,c:4})] =_tSty(_s25DepR,_c2025);
+      ws[XLSX.utils.encode_cell({r:R,c:5})] =_tSty(_s25DepV,_c2025);
+      ws[XLSX.utils.encode_cell({r:R,c:6})] =_tSty(_s25DepT,_c2025);
+      ws[XLSX.utils.encode_cell({r:R,c:7})] =_tSty(_s25Tot,_c2025);
+      ws[XLSX.utils.encode_cell({r:R,c:8})] =_tSty(_sHistT,_cHist);
+      ws[XLSX.utils.encode_cell({r:R,c:9})] =_tSty(_sProjArr,_cProj);
+      ws[XLSX.utils.encode_cell({r:R,c:10})]=_tSty(_sProjDep,_cProj);
+      ws[XLSX.utils.encode_cell({r:R,c:11})]=_tSty(_sProjTot,_cProj);
+      ws[XLSX.utils.encode_cell({r:R,c:12})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:_cProj}},border:{}}};
+      ws['!rows'][R]={hpt:14}; R++;
       R++;
     });
 
@@ -1840,7 +1932,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
   ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R+2,c:NC-1}});
   ws['!merges']=mrg;
-  ws['!cols']=[{wch:32},{wch:12},{wch:9},{wch:8},{wch:13},{wch:13},{wch:13},{wch:13},{wch:13},{wch:13}];
+  ws['!cols']=[{wch:14},{wch:11},{wch:9},{wch:11},{wch:11},{wch:9},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:11},{wch:9}];
   XLSX.utils.book_append_sheet(wb,ws,'Analysis & Forecast');
 }
 
