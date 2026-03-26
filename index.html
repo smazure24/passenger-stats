@@ -1425,23 +1425,23 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   function padBlank(r){ for(let _c=10;_c<13;_c++) ws[XLSX.utils.encode_cell({r,c:_c})]={v:'',t:'s',s:{border:{}}}; }
 
   // Style factories
-  const navyBg  = isPostCovid?'1A3A7A':'1B4A2A';
-  const navy2   = isPostCovid?'0D2A5E':'0A2A14';
-  const navy3   = isPostCovid?'1E4D9A':'1E5C35';
-  const arrCol  = isPostCovid?'0277BD':'00796B';
-  const depCol  = isPostCovid?'512DA8':'3949AB';
-  const altBg   = isPostCovid?'F4F8FF':'F4FFF8';
+  const navyBg  = isPostCovid?'0F3460':'0D3520';
+  const navy2   = isPostCovid?'0B1E3D':'061A0C';
+  const navy3   = isPostCovid?'1B5090':'165C38';
+  const arrCol  = isPostCovid?'1565C0':'00695C';
+  const depCol  = isPostCovid?'5B35A8':'2E5FA3';
+  const altBg   = isPostCovid?'EEF4FB':'EBF5EF';
   const warnBg  = 'FFFBEA';
   const warnFg  = '7A5500';
 
   function hdrCell(v, bg, fg, sz, bold, halign, wrap, colIdx, totalCols){
-    const leftBorder  = (colIdx===0)          ? {style:'medium',color:{rgb:isPostCovid?'1A3570':'0F3018'}} : {style:'thin',color:{rgb:'FFFFFF'}};
-    const rightBorder = (colIdx===totalCols-1) ? {style:'medium',color:{rgb:isPostCovid?'1A3570':'0F3018'}} : {style:'thin',color:{rgb:'FFFFFF'}};
+    const leftBorder  = (colIdx===0)          ? {style:'medium',color:{rgb:isPostCovid?'0F3460':'0D3520'}} : {style:'thin',color:{rgb:'FFFFFF'}};
+    const rightBorder = (colIdx===totalCols-1) ? {style:'medium',color:{rgb:isPostCovid?'0F3460':'0D3520'}} : {style:'thin',color:{rgb:'FFFFFF'}};
     return {v, t:'s', s:{
       font:{name:'Calibri',sz:sz||9,bold:bold!==false,color:{rgb:fg||'FFFFFF'}},
       fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||navyBg}},
       alignment:{horizontal:halign||'center',vertical:'center',wrapText:wrap||false,indent:halign==='left'?1:0},
-      border:{bottom:{style:'medium',color:{rgb:isPostCovid?'1A3570':'0F3018'}}}
+      border:{bottom:{style:'medium',color:{rgb:isPostCovid?'0F3460':'0D3520'}}}
     }};
   }
   // ── Cell border sets ──────────────────────────────────────────────────────
@@ -1497,7 +1497,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
   // ── TITLE BANNER ─────────────────────────────────────────────────────────
   ws['!rows'][R]={hpt:6};
-  for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'43A047'}},border:{}}};
+  for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'1B5090':'165C38'}},border:{}}};
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:(isPostCovid?'POST-COVID':'SINCE COMMISSIONING')+'  ●',t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:isPostCovid?'0D2B6B':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'43A047'}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
   merge(R,0,R,9); R++;
 
@@ -2058,38 +2058,38 @@ function exportExcel(){
   // Since Comm. → Forest Green (classic, authoritative)
   const isPostCovid = currentEra === 'postcovid';
   const C = isPostCovid ? {
-    // ── CLEAN BLUE — dark headers, light data area ──
-    navyDark:  {rgb:'0D2A5E'}, // rich navy for title bar
-    navy:      {rgb:'1A3A7A'}, // section title bar — still bold
-    navyMid:   {rgb:'1E4D9A'}, // column headers — visible but not oppressive
-    accent:    {rgb:'1565C0'}, // accent blue
-    grpArr:    {rgb:'0277BD'}, // arrival — clear blue
-    grpDep:    {rgb:'512DA8'}, // departure — purple
-    gold:      {rgb:'B8860B'}, // warm gold for #1 rank text
-    goldBg:    {rgb:'FFFBEA'}, // pale champagne for #1 row — LIGHT
-    goldText:  {rgb:'B8860B'}, // gold text
-    altRow:    {rgb:'F4F8FF'}, // barely-there blue for alt rows
-    totalFg:   {rgb:'1565C0'}, // total text blue
-    totalBg:   {rgb:'EBF2FF'}, // total bg very pale
-    tagBg:     {rgb:'E3EEF9'}, // badge bg
-    tagFg:     {rgb:'0D2A5E'}, // badge text
+    // ── POST-COVID: DEEP OCEAN BLUE ──────────────────────────────────────────
+    navyDark:  {rgb:'0B1E3D'}, // deep navy — title/org bar
+    navy:      {rgb:'0F3460'}, // royal blue — section header banners
+    navyMid:   {rgb:'1B5090'}, // cobalt — column headers
+    accent:    {rgb:'1A6FAD'}, // sky blue — data accents
+    grpArr:    {rgb:'1565C0'}, // arrival group — strong blue
+    grpDep:    {rgb:'5B35A8'}, // departure group — blue-violet
+    gold:      {rgb:'B07D10'}, // amber for rank #1
+    goldBg:    {rgb:'FFFCF2'}, // pale amber tint — rank #1 row
+    goldText:  {rgb:'B07D10'},
+    altRow:    {rgb:'EEF4FB'}, // pale blue-grey alternating rows
+    totalFg:   {rgb:'0F3460'}, // total value — matches navy
+    totalBg:   {rgb:'DDE9F8'}, // total cell soft blue bg
+    tagBg:     {rgb:'D0E4F5'},
+    tagFg:     {rgb:'0B1E3D'},
     eraLabel:  'Post-COVID',
   } : {
-    // ── CLEAN GREEN — dark headers, light data area ──
-    navyDark:  {rgb:'0A2A14'}, // rich forest for title bar
-    navy:      {rgb:'1B4A2A'}, // section title bar
-    navyMid:   {rgb:'1E5C35'}, // column headers
-    accent:    {rgb:'2E7D52'}, // accent green
-    grpArr:    {rgb:'00796B'}, // arrival — teal-green
-    grpDep:    {rgb:'3949AB'}, // departure — indigo
-    gold:      {rgb:'8B6914'}, // warm gold for #1 rank text
-    goldBg:    {rgb:'FFFDF0'}, // barely-there gold tint for #1 row — LIGHT
-    goldText:  {rgb:'8B6914'}, // gold text
-    altRow:    {rgb:'F4FFF8'}, // barely-there green for alt rows
-    totalFg:   {rgb:'2E7D52'}, // total text green
-    totalBg:   {rgb:'EEFBF3'}, // total bg very pale
-    tagBg:     {rgb:'E0F2E9'}, // badge bg
-    tagFg:     {rgb:'0A2A14'}, // badge text
+    // ── SINCE COMMISSIONING: DEEP FOREST GREEN ───────────────────────────────
+    navyDark:  {rgb:'061A0C'}, // near-black green — title/org bar
+    navy:      {rgb:'0D3520'}, // deep forest — section header banners
+    navyMid:   {rgb:'165C38'}, // rich emerald — column headers
+    accent:    {rgb:'1A7A45'}, // vivid green — data accents
+    grpArr:    {rgb:'00695C'}, // arrival group — teal
+    grpDep:    {rgb:'2E5FA3'}, // departure group — blue (contrast)
+    gold:      {rgb:'9A7010'},
+    goldBg:    {rgb:'FFFCEF'},
+    goldText:  {rgb:'9A7010'},
+    altRow:    {rgb:'EBF5EF'}, // pale green alternating rows
+    totalFg:   {rgb:'0D3520'},
+    totalBg:   {rgb:'D5EDE0'},
+    tagBg:     {rgb:'C8E6D2'},
+    tagFg:     {rgb:'061A0C'},
     eraLabel:  'Since Commissioning',
   };
   // Shared colours
@@ -2099,7 +2099,7 @@ function exportExcel(){
 
   const border={
     thin:{style:'thin',color:{rgb:'D0D8E4'}},              // neutral light grey grid
-    med:{style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}}, // section dividers
+    med:{style:'medium',color:{rgb:isPostCovid?'1B5090':'165C38'}}, // section dividers
     none:{style:'thin',color:{rgb:'FFFFFF'}},
   };
   // Clean border philosophy: bottom lines only for data, no cage effect
@@ -2169,8 +2169,8 @@ function exportExcel(){
 
     // ── ROW 0: Era identification banner (mirrors Analysis sheet) ───────────────
     ws['!rows'][R]={hpt:7};
-    const eraBannerBg2 = isPostCovid ? '29B6F6' : '43A047';
-    const eraBannerFg2 = isPostCovid ? '0D2B6B' : '0A2218';
+    const eraBannerBg2 = isPostCovid ? '1565C0' : '155A34';
+    const eraBannerFg2 = isPostCovid ? 'DDEEFF' : 'CCEEDB';
     for(let col=0;col<maxCols;col++)
       ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',8,false,eraBannerFg2,eraBannerBg2,'center');
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
@@ -2182,7 +2182,7 @@ function exportExcel(){
 
     // ── ROW 1: Thin accent bar ───────────────────────────────────────────────────
     ws['!rows'][R]={hpt:5};
-    const accentBarCol = isPostCovid ? '1565C0' : '2E7D52';
+    const accentBarCol = isPostCovid ? '1B5090' : '165C38';
     for(let col=0;col<maxCols;col++)
       ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',6,false,accentBarCol,accentBarCol);
     merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
@@ -2261,16 +2261,16 @@ function exportExcel(){
 
       // Colour scheme per section type
       const secAccent = titleIsDeparture
-        ? (isPostCovid ? '6B4BCC' : '4B6A9E')    // deep violet / slate
+        ? (isPostCovid ? '5C35A8' : '2E5FA3')    // purple-blue / blue
         : titleIsArrival
-          ? (isPostCovid ? '0097C4' : '00A86B')   // electric teal / jade
-          : (isPostCovid ? '1A3570' : '0F3018');  // deep sapphire / dungeon
+          ? (isPostCovid ? '1565C0' : '00695C')   // cobalt blue / teal
+          : (isPostCovid ? '0D2B55' : '0C3320');  // deep navy / deep forest
 
       // Light tint for the main title row bg
       const secTintMap = {
-        '5B3D9E': 'F3F0FF', '3D4E9E': 'ECEEFF',
-        '0097A7': 'E6F7F9',
-        '1565C0': 'E8F0FE', '1E5C3A': 'E6F4EC',
+        '5C35A8': 'EDE8F8', '2E5FA3': 'E3EBF8',   // departure tints
+        '1565C0': 'E3EDF9', '00695C': 'E0F2EE',   // arrival tints
+        '0D2B55': 'E8F0FB', '0C3320': 'E3F2E9',   // total tints
       };
       const secTint = secTintMap[secAccent] || 'F5F5F5';
 
@@ -2283,10 +2283,10 @@ function exportExcel(){
                            sec.title.toLowerCase().includes('total visitor');
       const titleIsArrivalOnly = !titleIsTotal && (sec.title.toLowerCase().includes('arrival') ||
                                                     sec.title.toLowerCase().includes('inbound'));
-      const dirLabel = titleIsDeparture ? 'DEPARTURE'
-                     : titleIsArrivalOnly ? 'ARRIVAL'
-                     : titleIsTotal ? 'TOTAL'
-                     : 'ARRIVAL / TOTAL';
+      const dirLabel = titleIsDeparture ? 'DEPARTURE PASSENGERS'
+                     : titleIsArrivalOnly ? 'ARRIVAL PASSENGERS'
+                     : titleIsTotal ? 'TOTAL PASSENGERS'
+                     : 'TOTAL PASSENGERS';
 
       // ── SUB-ROW A: Thin top accent bar for this section ──────────────────
       ws['!rows'][R] = {hpt: 4};
@@ -2460,8 +2460,8 @@ function exportExcel(){
       hrTotal,getDetailedRemarks(x.day.date)];
   }
 
-  const grpArr9={label:'ARRIVAL (Inbound)',span:2,style:S.grpArr};
-  const grpDep9={label:'DEPARTURE (Outbound)',span:2,style:S.grpDep};
+  const grpArr9={label:'ARRIVAL',span:2,style:S.grpArr};
+  const grpDep9={label:'DEPARTURE',span:2,style:S.grpDep};
   const grpBlank1={label:'',span:1,style:S.colHdrL};
   const grpBlank2={label:'',span:2,style:S.colHdrL};
   const grpTotal={label:'',span:1,style:S.colHdr};
@@ -2478,11 +2478,11 @@ function exportExcel(){
          headers:['Rank','Date','Day','Arr HKR','Arr V','Dep HKR','Dep V','Total','Remarks'],
          sortCol:7, totalCols:[7],
          rows:topN(days,d=>d.dt.ad_tot).map(daily9col)},
-        {title:'Record High on Arrival (Inbound) Passengers',
+        {title:'Record High on Arrival Passengers',
          headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
          sortCol:5, totalCols:[5],
          rows:topN(days,d=>d.dt.arr_tot).map((x,i)=>daily7col(x,i,true))},
-        {title:'Record High on Departure (Outbound) Passengers',
+        {title:'Record High on Departure Passengers',
          headers:['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
          sortCol:5, totalCols:[5],
          rows:topN(days,d=>d.dt.dep_tot).map((x,i)=>daily7col(x,i,false))},
@@ -2496,8 +2496,8 @@ function exportExcel(){
     const _blkW={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{}}};
     const _blkA={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'F4F8FF':'F4FFF8'}},border:{}}};
     // Accent colours for sec2 (arrival) and sec3 (departure) — must match buildSheet logic
-    const _sec2Acc=isPostCovid?'0097C4':'00A86B';
-    const _sec3Acc=isPostCovid?'6B4BCC':'4B6A9E';
+    const _sec2Acc=isPostCovid?'1565C0':'00695C';
+    const _sec3Acc=isPostCovid?'5B35A8':'2E5FA3';
     function _accentCell(col){ return {v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:col}},border:{}}}; }
 
     // Header=7 rows (R0-R6). Sec1 has groups → 11 rows (R7-R17). Sec2 starts R18. Sec3 starts R28.
@@ -2542,11 +2542,11 @@ function exportExcel(){
          headers:['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
          sortCol:5, totalCols:[5],
          rows:topN(days,d=>(d.dt.arr_res||0)+(d.dt.dep_res||0)).map(hkr7col)},
-        {title:'Record High on Arrival (Inbound) HKR',
+        {title:'Record High on Arrival HKR',
          headers:['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
          sortCol:3, totalCols:[5],
          rows:topN(days,d=>d.dt.arr_res).map(hkr7col)},
-        {title:'Record High on Departure (Outbound) HKR',
+        {title:'Record High on Departure HKR',
          headers:['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
          sortCol:4, totalCols:[5],
          rows:topN(days,d=>d.dt.dep_res).map(hkr7col)},
@@ -2565,11 +2565,11 @@ function exportExcel(){
          headers:['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
          sortCol:5, totalCols:[5],
          rows:topN(days,d=>(d.dt.arr_vis||0)+(d.dt.dep_vis||0)).map(vis7col)},
-        {title:'Record High on Arrival (Inbound) Visitors',
+        {title:'Record High on Arrival Visitors',
          headers:['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
          sortCol:3, totalCols:[5],
          rows:topN(days,d=>d.dt.arr_vis).map(vis7col)},
-        {title:'Record High on Departure (Outbound) Visitors',
+        {title:'Record High on Departure Visitors',
          headers:['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
          sortCol:4, totalCols:[5],
          rows:topN(days,d=>d.dt.dep_vis).map(vis7col)},
@@ -2586,25 +2586,25 @@ function exportExcel(){
       `Record High — Hourly`,
       [
         {title:'Hourly Record High on Total Passenger',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL",span:3,style:S.grpArr},{label:"DEPARTURE",span:3,style:S.grpDep},grpTotal,grpRem],
          headers:hHdr,sortCol:10,totalCols:[10],rows:hRows(h=>(h.arr_tot||0)+(h.dep_tot||0))},
         {title:'Hourly Record High on Arrival Passenger',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL",span:3,style:S.grpArr},{label:"DEPARTURE",span:3,style:S.grpDep},grpTotal,grpRem],
          headers:hHdr,sortCol:6,totalCols:[10],rows:hRows(h=>h.arr_tot)},
         {title:'Hourly Record High on Departure Passenger',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL",span:3,style:S.grpArr},{label:"DEPARTURE",span:3,style:S.grpDep},grpTotal,grpRem],
          headers:hHdr,sortCol:9,totalCols:[10],rows:hRows(h=>h.dep_tot)},
         {title:'Hourly Record High on Arrival Residents',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL",span:3,style:S.grpArr},{label:"DEPARTURE",span:3,style:S.grpDep},grpTotal,grpRem],
          headers:hHdr,sortCol:4,totalCols:[10],rows:hRows(h=>h.arr_res)},
         {title:'Hourly Record High on Departure Residents',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL",span:3,style:S.grpArr},{label:"DEPARTURE",span:3,style:S.grpDep},grpTotal,grpRem],
          headers:hHdr,sortCol:7,totalCols:[10],rows:hRows(h=>h.dep_res)},
         {title:'Hourly Record High on Arrival Visitors',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL",span:3,style:S.grpArr},{label:"DEPARTURE",span:3,style:S.grpDep},grpTotal,grpRem],
          headers:hHdr,sortCol:5,totalCols:[10],rows:hRows(h=>h.arr_vis)},
         {title:'Hourly Record High on Departure Visitors',
-         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL (Inbound)",span:3,style:S.grpArr},{label:"DEPARTURE (Outbound)",span:3,style:S.grpDep},grpTotal,grpRem],
+         groups:[grpBlank1,grpBlank1,grpBlank1,grpBlank1,{label:"ARRIVAL",span:3,style:S.grpArr},{label:"DEPARTURE",span:3,style:S.grpDep},grpTotal,grpRem],
          headers:hHdr,sortCol:8,totalCols:[10],rows:hRows(h=>h.dep_vis)},
       ],
       [6,13,5,12,8,8,11,8,8,11,11,32]
@@ -3178,7 +3178,7 @@ function buildTotalTrafficTable(days){
 }
 function buildInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_tot);
-  return buildTable('Record High on Arrival (Inbound) Passengers',
+  return buildTable('Record High on Arrival Passengers',
     ['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.arr_vis),fN(x.day.dt.arr_tot),getRemarks(x.day.date)]),
@@ -3186,7 +3186,7 @@ function buildInboundTable(days){
 }
 function buildOutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_tot);
-  return buildTable('Record High on Departure (Outbound) Passengers',
+  return buildTable('Record High on Departure Passengers',
     ['Rank','Date','Day','HKR','Visitors','Total','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.dep_res),fN(x.day.dt.dep_vis),fN(x.day.dt.dep_tot),getRemarks(x.day.date)]),
@@ -3202,7 +3202,7 @@ function buildHKRTotalTable(days){
 }
 function buildHKRInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_res);
-  return buildTable('Record High on Arrival (Inbound) HKR',
+  return buildTable('Record High on Arrival HKR',
     ['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.dep_res),fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)),getRemarks(x.day.date)]),
@@ -3210,7 +3210,7 @@ function buildHKRInboundTable(days){
 }
 function buildHKROutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_res);
-  return buildTable('Record High on Departure (Outbound) HKR',
+  return buildTable('Record High on Departure HKR',
     ['Rank','Date','Day','Arrival HKR','Departure HKR','Total HKR','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_res),fN(x.day.dt.dep_res),fN((x.day.dt.arr_res||0)+(x.day.dt.dep_res||0)),getRemarks(x.day.date)]),
@@ -3226,7 +3226,7 @@ function buildVisTotalTable(days){
 }
 function buildVisInboundTable(days){
   const rows=topN(days,d=>d.dt.arr_vis);
-  return buildTable('Record High on Arrival (Inbound) Visitors',
+  return buildTable('Record High on Arrival Visitors',
     ['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_vis),fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)),getRemarks(x.day.date)]),
@@ -3234,7 +3234,7 @@ function buildVisInboundTable(days){
 }
 function buildVisOutboundTable(days){
   const rows=topN(days,d=>d.dt.dep_vis);
-  return buildTable('Record High on Departure (Outbound) Visitors',
+  return buildTable('Record High on Departure Visitors',
     ['Rank','Date','Day','Arrival Visitors','Departure Visitors','Total Visitors','Remarks'],
     [false,true,true,false,false,false,true],
     rows.map((x,i)=>[i+1,x.day.date,dayOfWeek(x.day.date),fN(x.day.dt.arr_vis),fN(x.day.dt.dep_vis),fN((x.day.dt.arr_vis||0)+(x.day.dt.dep_vis||0)),getRemarks(x.day.date)]),
