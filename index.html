@@ -2501,23 +2501,24 @@ function exportExcel(){
     function _accentCell(col){ return {v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:col}},border:{}}}; }
 
     // Header=7 rows (R0-R6). Sec1 has groups → 11 rows (R7-R17). Sec2 starts R18. Sec3 starts R28.
-    // Merge G:H (cols 6-7) for rows 18-35 (Excel rows 19-36) so Remarks spans two columns.
-    // Col 8 (I) stays plain white.
-    // Sec2: R18(accent) R19(title) R20(colHdr) R21-25(data) R26-27(gap)
-    for(let r=18;r<=27;r++){
+    // G:H merge for sec2 and sec3 — only for colHdr and data rows (NOT accent/title rows
+    // which are already fully merged by buildSheet, causing overlap if we add another).
+    // Sec2: R18=accent(already merged 0..6), R19=title(already merged), R20=colHdr, R21-25=data, R26-27=gap
+    for(let r=20;r<=27;r++){
       const isDataRow=(r>=21&&r<=25);
       const isAltData=isDataRow&&(r-21)%2===1;
-      // Col 7 (H) matches col 6 (G) style so the merge looks seamless
       const _g=ws[XLSX.utils.encode_cell({r,c:6})];
       ws[XLSX.utils.encode_cell({r,c:7})]=_g
         ? JSON.parse(JSON.stringify({..._g,v:''}))
         : (isAltData?_blkA:_blkW);
       ws[XLSX.utils.encode_cell({r,c:8})]=_blkW;
       if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6))
-        ws['!merges'].push({s:{r,c:6},e:{r,c:7}}); // G:H merged
+        ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
     }
-    // Sec3: R28(accent) R29(title) R30(colHdr) R31-35(data) R36-37(gap)
-    for(let r=28;r<=37;r++){
+    // Also white H and I for accent+title rows without adding merges
+    for(const r of [18,19]){ ws[XLSX.utils.encode_cell({r,c:7})]=_blkW; ws[XLSX.utils.encode_cell({r,c:8})]=_blkW; }
+    // Sec3: R28=accent, R29=title, R30=colHdr, R31-35=data, R36-37=gap
+    for(let r=30;r<=37;r++){
       const isDataRow=(r>=31&&r<=35);
       const isAltData=isDataRow&&(r-31)%2===1;
       const _g=ws[XLSX.utils.encode_cell({r,c:6})];
@@ -2526,8 +2527,9 @@ function exportExcel(){
         : (isAltData?_blkA:_blkW);
       ws[XLSX.utils.encode_cell({r,c:8})]=_blkW;
       if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6))
-        ws['!merges'].push({s:{r,c:6},e:{r,c:7}}); // G:H merged
+        ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
     }
+    for(const r of [28,29]){ ws[XLSX.utils.encode_cell({r,c:7})]=_blkW; ws[XLSX.utils.encode_cell({r,c:8})]=_blkW; }
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
 
