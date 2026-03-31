@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -24,16 +23,16 @@ html,body{background:var(--bg);color:var(--text);color-scheme:dark;font-family:'
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
 /* HEADER */
-header{background:var(–surface);border-bottom:1px solid var(–border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .brand{display:flex;align-items:center;gap:10px}
-.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(–accent),#7c6af7);display:flex;align-items:center;justify-content:center;font-size:13px}
+.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#7c6af7);display:flex;align-items:center;justify-content:center;font-size:13px}
 .brand-name{font-family:Space Mono,monospace;font-size:12px;font-weight:700;letter-spacing:.04em}
-.brand-sub{font-size:10px;color:var(–muted);margin-top:1px}
+.brand-sub{font-size:10px;color:var(--muted);margin-top:1px}
 .hdr-right{display:flex;align-items:center;gap:12px}
 .hdr-stat{text-align:right}
-.hdr-val{font-family:Space Mono,monospace;font-size:16px;font-weight:700;color:var(–accent);line-height:1}
-.hdr-label{font-size:9px;color:var(–muted)}
-.btn-sm{background:transparent;border:1px solid var(–border);color:var(–muted);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace}
+.hdr-val{font-family:Space Mono,monospace;font-size:16px;font-weight:700;color:var(--accent);line-height:1}
+.hdr-label{font-size:9px;color:var(--muted)}
+.btn-sm{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace}
 
 /* MAIN */
 main{max-width:1300px;margin:0 auto;padding:20px}
@@ -41,207 +40,207 @@ main{max-width:1300px;margin:0 auto;padding:20px}
 /* UPLOAD */
 .upload-wrap{max-width:520px;margin:60px auto;text-align:center}
 .upload-title{font-family:Space Mono,monospace;font-size:22px;font-weight:700;line-height:1.3;margin-bottom:8px}
-.upload-sub{color:var(–dim);font-size:13px;margin-bottom:36px;line-height:1.7}
-.drop-zone{border:2px dashed var(–border);border-radius:12px;padding:44px 28px;cursor:pointer;position:relative;transition:all .2s}
-.drop-zone:hover,.drop-zone.over{border-color:var(–accent);background:rgba(0,212,184,.04)}
+.upload-sub{color:var(--dim);font-size:13px;margin-bottom:36px;line-height:1.7}
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:44px 28px;cursor:pointer;position:relative;transition:all .2s}
+.drop-zone:hover,.drop-zone.over{border-color:var(--accent);background:rgba(0,212,184,.04)}
 .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .drop-icon{font-size:38px;margin-bottom:12px}
-.drop-t{font-family:Space Mono,monospace;font-size:12px;color:var(–dim);margin-bottom:5px}
-.drop-h{font-size:11px;color:var(–muted)}
-.loading-msg{color:var(–accent);font-size:12px;font-family:Space Mono,monospace;margin-top:16px}
+.drop-t{font-family:Space Mono,monospace;font-size:12px;color:var(--dim);margin-bottom:5px}
+.drop-h{font-size:11px;color:var(--muted)}
+.loading-msg{color:var(--accent);font-size:12px;font-family:Space Mono,monospace;margin-top:16px}
 .err-box{color:#ff4d6a;font-size:10px;padding:10px;background:rgba(255,77,106,.1);border-radius:6px;margin-top:14px;white-space:pre-wrap;font-family:Space Mono,monospace;max-height:240px;overflow-y:auto;text-align:left}
 
 /* DASHBOARD */
 .top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-.add-btn{display:flex;align-items:center;gap:6px;background:var(–surface);border:1px solid var(–border);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(–dim)}
-.add-btn:hover{border-color:var(–accent);color:var(–accent)}
-.files-label{font-size:11px;color:var(–muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.add-btn{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(--dim)}
+.add-btn:hover{border-color:var(--accent);color:var(--accent)}
+.files-label{font-size:11px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ERA TABS */
-.era-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(–border)}
-.era-tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;font-family:Space Mono,monospace;font-size:10px;letter-spacing:.08em;color:var(–muted);text-transform:uppercase;transition:all .15s;margin-bottom:-1px}
-.era-tab.active{border-bottom-color:var(–gold);color:var(–gold)}
+.era-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.era-tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;font-family:Space Mono,monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;transition:all .15s;margin-bottom:-1px}
+.era-tab.active{border-bottom-color:var(--gold);color:var(--gold)}
 
 /* ERA CONFIG */
-.era-config{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.era-config label{font-size:11px;color:var(–dim);font-family:Space Mono,monospace}
-.era-config input[type=date]{background:var(–surface3);border:1px solid var(–border);color:var(–text);padding:5px 10px;border-radius:5px;font-size:11px;font-family:Space Mono,monospace}
-.era-config input[type=date]:focus{outline:none;border-color:var(–accent)}
-.era-apply{background:var(–accent);color:#000;border:none;padding:5px 14px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700}
+.era-config{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.era-config label{font-size:11px;color:var(--dim);font-family:Space Mono,monospace}
+.era-config input[type=date]{background:var(--surface3);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:5px;font-size:11px;font-family:Space Mono,monospace}
+.era-config input[type=date]:focus{outline:none;border-color:var(--accent)}
+.era-apply{background:var(--accent);color:#000;border:none;padding:5px 14px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700}
 
 /* SECTION TABS */
 .sec-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
-.sec-tab{background:transparent;border:1px solid var(–border);border-radius:5px;padding:6px 14px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(–muted);transition:all .15s}
-.sec-tab.active{background:rgba(0,212,184,.1);border-color:var(–accent);color:var(–accent)}
+.sec-tab{background:transparent;border:1px solid var(--border);border-radius:5px;padding:6px 14px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(--muted);transition:all .15s}
+.sec-tab.active{background:rgba(0,212,184,.1);border-color:var(--accent);color:var(--accent)}
 
 /* AS-AT DATE */
-.as-at{font-family:Space Mono,monospace;font-size:11px;color:var(–dim);margin-bottom:16px}
+.as-at{font-family:Space Mono,monospace;font-size:11px;color:var(--dim);margin-bottom:16px}
 
 /* RECORD TABLE */
 .record-section{margin-bottom:28px}
-.rs-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;color:var(–dim);letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase;border-left:3px solid var(–accent);padding-left:10px}
-.record-table-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(–border)}
+.rs-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase;border-left:3px solid var(--accent);padding-left:10px}
+.record-table-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(--border)}
 .record-table{width:100%;border-collapse:collapse;font-size:11px}
-.record-table thead tr:first-child th{background:var(–surface2);padding:7px 10px;font-family:Space Mono,monospace;font-size:9px;letter-spacing:.07em;color:var(–muted);text-align:center;border-bottom:1px solid var(–border);white-space:nowrap}
-.record-table thead tr:last-child th{background:var(–surface);padding:6px 10px;font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(–muted);text-align:right;border-bottom:1px solid var(–border)}
+.record-table thead tr:first-child th{background:var(--surface2);padding:7px 10px;font-family:Space Mono,monospace;font-size:9px;letter-spacing:.07em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+.record-table thead tr:last-child th{background:var(--surface);padding:6px 10px;font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);text-align:right;border-bottom:1px solid var(--border)}
 .record-table thead tr:last-child th.l{text-align:left}
-.record-table thead th.group-hdr{border-left:1px solid var(–border)}
+.record-table thead th.group-hdr{border-left:1px solid var(--border)}
 .record-table tbody tr{transition:background .1s}
-.record-table tbody tr:nth-child(even){background:var(–surface2)}
-.record-table tbody tr:nth-child(odd){background:var(–surface)}
+.record-table tbody tr:nth-child(even){background:var(--surface2)}
+.record-table tbody tr:nth-child(odd){background:var(--surface)}
 .record-table tbody tr.rank1{background:rgba(245,200,66,.06)!important}
-.record-table tbody tr.highlight{color:var(–gold)}
-.record-table tbody td{padding:7px 10px;font-family:Space Mono,monospace;font-size:11px;text-align:right;color:var(–dim);white-space:nowrap}
+.record-table tbody tr.highlight{color:var(--gold)}
+.record-table tbody td{padding:7px 10px;font-family:Space Mono,monospace;font-size:11px;text-align:right;color:var(--dim);white-space:nowrap}
 .record-table tbody td.l{text-align:left}
-.record-table tbody td.rank-cell{font-size:10px;color:var(–muted);text-align:center}
-.record-table tbody td.rank1-cell{color:var(–gold);font-weight:700}
-.record-table tbody td.total-cell{color:var(–tot);font-weight:700}
-.record-table tbody td.remarks-cell{color:var(–dim);font-size:10px;text-align:left}
-.record-table tbody tr.rank1 td.total-cell{color:var(–gold)}
+.record-table tbody td.rank-cell{font-size:10px;color:var(--muted);text-align:center}
+.record-table tbody td.rank1-cell{color:var(--gold);font-weight:700}
+.record-table tbody td.total-cell{color:var(--tot);font-weight:700}
+.record-table tbody td.remarks-cell{color:var(--dim);font-size:10px;text-align:left}
+.record-table tbody tr.rank1 td.total-cell{color:var(--gold)}
 
 /* GRID for sections */
 .tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(560px,1fr));gap:20px}
 
 @media print{
-:root{–bg:#fff;–surface:#fff;–surface2:#f5f5f5;–surface3:#eee;–border:#ccc;–accent:#007a6a;–gold:#b8860b;–text:#111;–dim:#444;–muted:#777;–res:#1a7a3a;–vis:#8a6a00;–tot:#007a6a;}
-header,.top-bar,.era-tabs,.era-config,.sec-tabs,.add-btn,.hdr-right{display:none!important}
-body,html{background:#fff;color:#111;font-size:10px}
-main{padding:8px;max-width:100%}
-.tables-grid{grid-template-columns:1fr!important}
-.record-table-wrap{border:1px solid #ccc;page-break-inside:avoid}
-.record-table{font-size:9px}
-.record-section{margin-bottom:16px;page-break-inside:avoid}
-.rs-title{color:#111;border-left-color:#007a6a;font-size:9px}
-.as-at{color:#444;font-size:9px}
-.pdf-header{display:block!important}
+  :root{--bg:#fff;--surface:#fff;--surface2:#f5f5f5;--surface3:#eee;--border:#ccc;--accent:#007a6a;--gold:#b8860b;--text:#111;--dim:#444;--muted:#777;--res:#1a7a3a;--vis:#8a6a00;--tot:#007a6a;}
+  header,.top-bar,.era-tabs,.era-config,.sec-tabs,.add-btn,.hdr-right{display:none!important}
+  body,html{background:#fff;color:#111;font-size:10px}
+  main{padding:8px;max-width:100%}
+  .tables-grid{grid-template-columns:1fr!important}
+  .record-table-wrap{border:1px solid #ccc;page-break-inside:avoid}
+  .record-table{font-size:9px}
+  .record-section{margin-bottom:16px;page-break-inside:avoid}
+  .rs-title{color:#111;border-left-color:#007a6a;font-size:9px}
+  .as-at{color:#444;font-size:9px}
+  .pdf-header{display:block!important}
 }
 .pdf-header{display:none;text-align:center;margin-bottom:12px}
 .pdf-header h2{font-size:16px;font-weight:700;color:#111}
 .pdf-header p{font-size:10px;color:#444;margin-top:4px}
 
 /* ════════════════════════════════════════════════
-ANALYSIS & FORECAST
-════════════════════════════════════════════════ */
-.af-page-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(–muted);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-.af-page-title::after{content:’’;flex:1;height:1px;background:var(–border)}
+   ANALYSIS & FORECAST
+   ════════════════════════════════════════════════ */
+.af-page-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.af-page-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .kpi-ribbon{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
-.kpi-card{background:var(–surface);border:1px solid var(–border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
-.kpi-card:hover{border-color:var(–accent)}
-.kpi-card::before{content:’’;position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
-.kpi-card.kc-accent::before{background:var(–accent)}.kpi-card.kc-gold::before{background:var(–gold)}
-.kpi-card.kc-res::before{background:var(–res)}.kpi-card.kc-dep::before{background:var(–departure)}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.kpi-card:hover{border-color:var(--accent)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.kpi-card.kc-accent::before{background:var(--accent)}.kpi-card.kc-gold::before{background:var(--gold)}
+.kpi-card.kc-res::before{background:var(--res)}.kpi-card.kc-dep::before{background:var(--departure)}
 .kpi-card.kc-purple::before{background:#7c6af7}
-.kpi-lbl{font-size:9px;font-family:Space Mono,monospace;letter-spacing:.1em;color:var(–muted);text-transform:uppercase;margin-bottom:6px}
-.kpi-val{font-family:Space Mono,monospace;font-size:26px;font-weight:700;line-height:1;color:var(–text)}
-.kpi-sub{font-size:10px;color:var(–dim);margin-top:4px}
+.kpi-lbl{font-size:9px;font-family:Space Mono,monospace;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-family:Space Mono,monospace;font-size:26px;font-weight:700;line-height:1;color:var(--text)}
+.kpi-sub{font-size:10px;color:var(--dim);margin-top:4px}
 .kpi-trend{font-size:11px;font-weight:600;margin-top:4px}
-.kpi-trend.up{color:var(–res)}.kpi-trend.dn{color:#f87171}
+.kpi-trend.up{color:var(--res)}.kpi-trend.dn{color:#f87171}
 .af-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 @media(max-width:900px){.af-grid{grid-template-columns:1fr}}
-.af-card{background:var(–surface);border:1px solid var(–border);border-radius:10px;overflow:hidden}
-.af-card-hdr{padding:14px 18px 12px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.af-card-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(–dim);text-transform:uppercase}
+.af-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.af-card-hdr{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.af-card-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
 .af-card-body{padding:16px 18px}
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
 .bar-row:last-child{margin-bottom:0}
-.bar-label{font-size:11px;color:var(–dim);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar-track{flex:1;height:7px;background:var(–surface3);border-radius:4px;overflow:hidden}
+.bar-label{font-size:11px;color:var(--dim);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:7px;background:var(--surface3);border-radius:4px;overflow:hidden}
 .bar-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
-.bar-fill.bf-accent{background:linear-gradient(90deg,var(–accent),#00b8a0)}
-.bar-fill.bf-gold{background:linear-gradient(90deg,var(–gold),#e8a800)}
+.bar-fill.bf-accent{background:linear-gradient(90deg,var(--accent),#00b8a0)}
+.bar-fill.bf-gold{background:linear-gradient(90deg,var(--gold),#e8a800)}
 .bar-fill.bf-arr{background:linear-gradient(90deg,#0097A7,#00bcd4)}
 .bar-fill.bf-dep{background:linear-gradient(90deg,#5B3D9E,#7c6af7)}
-.bar-val{font-family:Space Mono,monospace;font-size:10px;color:var(–text);font-weight:600;width:64px;text-align:right;flex-shrink:0}
+.bar-val{font-family:Space Mono,monospace;font-size:10px;color:var(--text);font-weight:600;width:64px;text-align:right;flex-shrink:0}
 .af-table{width:100%;border-collapse:collapse;font-size:11px}
-.af-table thead th{padding:7px 10px;background:var(–surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.08em;color:var(–muted);text-align:center;border-bottom:1px solid var(–border);white-space:nowrap}
+.af-table thead th{padding:7px 10px;background:var(--surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.08em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
 .af-table thead th:first-child{text-align:left}
-.af-table tbody tr{border-bottom:1px solid var(–border);transition:background .1s}
-.af-table tbody tr:hover{background:var(–surface2)}
+.af-table tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+.af-table tbody tr:hover{background:var(--surface2)}
 .af-table tbody tr:last-child{border-bottom:none}
-.af-table tbody td{padding:8px 10px;text-align:center;color:var(–dim);font-family:Space Mono,monospace;font-size:10px}
-.af-table tbody td:first-child{text-align:left;font-family:‘DM Sans’,sans-serif;font-size:11px;font-weight:500;color:var(–text)}
-.af-table .pos{color:var(–res);font-weight:700}.af-table .neg{color:#f87171;font-weight:700}
-.af-table .arr-c{color:var(–arrival)}.af-table .dep-c{color:var(–departure)}
-.af-table .hi{color:var(–gold);font-weight:700}
+.af-table tbody td{padding:8px 10px;text-align:center;color:var(--dim);font-family:Space Mono,monospace;font-size:10px}
+.af-table tbody td:first-child{text-align:left;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text)}
+.af-table .pos{color:var(--res);font-weight:700}.af-table .neg{color:#f87171;font-weight:700}
+.af-table .arr-c{color:var(--arrival)}.af-table .dep-c{color:var(--departure)}
+.af-table .hi{color:var(--gold);font-weight:700}
 .day-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
 @media(max-width:700px){.day-cards{grid-template-columns:1fr 1fr}}
-.day-card{background:var(–surface2);border:1px solid var(–border);border-radius:9px;padding:16px 14px;text-align:center;transition:all .2s;cursor:default;position:relative;overflow:hidden}
-.day-card:hover{border-color:var(–gold);background:var(–surface3)}
+.day-card{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 14px;text-align:center;transition:all .2s;cursor:default;position:relative;overflow:hidden}
+.day-card:hover{border-color:var(--gold);background:var(--surface3)}
 .day-card-tag{position:absolute;top:0;left:0;right:0;height:3px}
-.day-card-date{font-family:Space Mono,monospace;font-size:9px;color:var(–muted);margin-bottom:4px}
-.day-card-occasion{font-size:12px;font-weight:600;color:var(–text);margin-bottom:12px;line-height:1.3}
-.day-card-total{font-family:Space Mono,monospace;font-size:24px;font-weight:700;color:var(–gold);line-height:1;margin-bottom:8px}
-.day-card-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-top:1px solid var(–border)}
+.day-card-date{font-family:Space Mono,monospace;font-size:9px;color:var(--muted);margin-bottom:4px}
+.day-card-occasion{font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.3}
+.day-card-total{font-family:Space Mono,monospace;font-size:24px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:8px}
+.day-card-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-top:1px solid var(--border)}
 .day-card-row:first-of-type{margin-top:8px}
-.day-card-row .dcr-lbl{color:var(–muted)}
+.day-card-row .dcr-lbl{color:var(--muted)}
 .hourly-wrap{overflow-x:auto}
 .hourly-chart{display:flex;align-items:flex-end;gap:2px;height:72px;min-width:480px}
 .hb-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
 .hb-wrap:hover .hb-tip{display:flex}
 .hb-fill{width:100%;border-radius:2px 2px 0 0;min-height:2px;transition:height .5s}
-.hb-lbl{font-size:6px;color:var(–muted);font-family:Space Mono,monospace;transform:rotate(-40deg);white-space:nowrap;line-height:1;margin-top:1px}
-.hb-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(–surface3);border:1px solid var(–border);border-radius:6px;padding:7px 9px;font-size:9px;white-space:nowrap;z-index:20;font-family:Space Mono,monospace;flex-direction:column;gap:2px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
-.hb-tip b{color:var(–gold)}
+.hb-lbl{font-size:6px;color:var(--muted);font-family:Space Mono,monospace;transform:rotate(-40deg);white-space:nowrap;line-height:1;margin-top:1px}
+.hb-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:9px;white-space:nowrap;z-index:20;font-family:Space Mono,monospace;flex-direction:column;gap:2px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.hb-tip b{color:var(--gold)}
 .peak-star{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:8px;line-height:1}
 .ctr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:700px){.ctr-grid{grid-template-columns:1fr 1fr}}
-.ctr-card{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:16px 12px;text-align:center;transition:border-color .2s}
-.ctr-card:hover{border-color:var(–accent)}
+.ctr-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 12px;text-align:center;transition:border-color .2s}
+.ctr-card:hover{border-color:var(--accent)}
 .ctr-val{font-family:Space Mono,monospace;font-size:34px;font-weight:700;line-height:1;margin-bottom:5px}
-.ctr-lbl{font-size:11px;font-weight:600;color:var(–dim);margin-bottom:2px}
-.ctr-sub{font-size:9px;color:var(–muted)}
-.ctr-sub2{font-size:9px;color:var(–muted);margin-top:6px;padding-top:6px;border-top:1px solid var(–border)}
-.param-bar{display:flex;gap:12px;align-items:center;background:var(–surface2);border-radius:6px;padding:10px 14px;margin-bottom:16px;flex-wrap:wrap}
-.param-item{font-size:10px;color:var(–dim)}.param-item b{color:var(–text);font-family:Space Mono,monospace}
+.ctr-lbl{font-size:11px;font-weight:600;color:var(--dim);margin-bottom:2px}
+.ctr-sub{font-size:9px;color:var(--muted)}
+.ctr-sub2{font-size:9px;color:var(--muted);margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.param-bar{display:flex;gap:12px;align-items:center;background:var(--surface2);border-radius:6px;padding:10px 14px;margin-bottom:16px;flex-wrap:wrap}
+.param-item{font-size:10px;color:var(--dim)}.param-item b{color:var(--text);font-family:Space Mono,monospace}
 /* ════════════════════════════════════════════════
-THROUGHPUT ESTIMATOR
-════════════════════════════════════════════════ */
+   THROUGHPUT ESTIMATOR
+   ════════════════════════════════════════════════ */
 .tp-layout{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 @media(max-width:860px){.tp-layout{grid-template-columns:1fr}}
-.tp-ctrl{background:var(–surface);border:1px solid var(–border);border-radius:10px;overflow:hidden}
-.tp-ctrl-hdr{padding:12px 16px;background:var(–surface2);border-bottom:1px solid var(–border)}
-.tp-ctrl-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(–dim);text-transform:uppercase}
+.tp-ctrl{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tp-ctrl-hdr{padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.tp-ctrl-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
 .tp-ctrl-body{padding:14px 16px}
-.dir-tog{display:flex;background:var(–surface3);border-radius:8px;padding:3px;gap:3px;margin-bottom:16px}
-.dir-tog-btn{flex:1;padding:8px;border:none;border-radius:6px;background:transparent;color:var(–muted);cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700;transition:all .2s;text-align:center}
+.dir-tog{display:flex;background:var(--surface3);border-radius:8px;padding:3px;gap:3px;margin-bottom:16px}
+.dir-tog-btn{flex:1;padding:8px;border:none;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700;transition:all .2s;text-align:center}
 .dir-tog-btn.act-arr{background:linear-gradient(135deg,#0097A7,#00bcd4);color:#000}
 .dir-tog-btn.act-dep{background:linear-gradient(135deg,#5B3D9E,#7c6af7);color:#fff}
 .scen-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
-.scen-pill{padding:4px 10px;border-radius:20px;border:1px solid var(–border);background:transparent;color:var(–muted);cursor:pointer;font-size:9px;font-family:Space Mono,monospace;transition:all .15s}
-.scen-pill:hover{border-color:var(–accent);color:var(–accent)}
-.tp-sec-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.12em;color:var(–muted);text-transform:uppercase;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
-.tp-sec-lbl::after{content:’’;flex:1;height:1px;background:var(–border)}
+.scen-pill{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:9px;font-family:Space Mono,monospace;transition:all .15s}
+.scen-pill:hover{border-color:var(--accent);color:var(--accent)}
+.tp-sec-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.tp-sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
 .sl-row{display:flex;align-items:center;gap:7px;margin-bottom:9px}
 .sl-badge{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;letter-spacing:.02em}
 .sl-badge.r{background:rgba(0,151,167,.2);color:#0097A7}
 .sl-badge.v{background:rgba(245,200,66,.2);color:#f5c842}
-.sl-lbl{font-size:10px;color:var(–dim);width:44px;flex-shrink:0}
-input[type=range].tpsl{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:2px;background:var(–border);cursor:pointer;outline:none}
+.sl-lbl{font-size:10px;color:var(--dim);width:44px;flex-shrink:0}
+input[type=range].tpsl{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:2px;background:var(--border);cursor:pointer;outline:none}
 input[type=range].tpsl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;cursor:pointer;transition:transform .15s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
 .sl-val{font-family:Space Mono,monospace;font-size:12px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
-.sl-hint{font-size:8px;color:var(–muted);margin-left:29px;margin-top:-6px;margin-bottom:4px}
+.sl-hint{font-size:8px;color:var(--muted);margin-left:29px;margin-top:-6px;margin-bottom:4px}
 .tp-kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.tp-kc{background:var(–surface);border:1px solid var(–border);border-radius:8px;padding:13px 14px;position:relative;overflow:hidden;transition:border-color .2s}
-.tp-kc:hover{border-color:var(–accent)}
-.tp-kc::before{content:’’;position:absolute;top:0;left:0;right:0;height:2px}
-.tp-kc.tc-a::before{background:var(–accent)}.tp-kc.tc-g::before{background:var(–gold)}
-.tp-kc.tc-p::before{background:#7c6af7}.tp-kc.tc-r::before{background:var(–res)}
-.tp-kc-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.08em;color:var(–muted);margin-bottom:4px;text-transform:uppercase}
+.tp-kc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 14px;position:relative;overflow:hidden;transition:border-color .2s}
+.tp-kc:hover{border-color:var(--accent)}
+.tp-kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.tp-kc.tc-a::before{background:var(--accent)}.tp-kc.tc-g::before{background:var(--gold)}
+.tp-kc.tc-p::before{background:#7c6af7}.tp-kc.tc-r::before{background:var(--res)}
+.tp-kc-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.08em;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
 .tp-kc-val{font-family:Space Mono,monospace;font-size:22px;font-weight:700;line-height:1}
-.tp-kc-sub{font-size:9px;color:var(–muted);margin-top:3px}
+.tp-kc-sub{font-size:9px;color:var(--muted);margin-top:3px}
 .stt{width:100%;border-collapse:collapse;font-size:11px}
-.stt thead th{padding:8px 10px;background:var(–surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(–muted);text-align:center;border-bottom:1px solid var(–border);white-space:nowrap}
+.stt thead th{padding:8px 10px;background:var(--surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
 .stt thead th:first-child{text-align:left}
-.stt tbody tr{border-bottom:1px solid var(–border);transition:background .1s}
-.stt tbody tr:hover{background:var(–surface2)}
+.stt tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+.stt tbody tr:hover{background:var(--surface2)}
 .stt tbody tr:last-child{border-bottom:none}
-.stt tbody tr.stt-total{background:var(–surface2);border-top:1px solid var(–border)}
-.stt tbody td{padding:10px 10px;text-align:center;font-family:Space Mono,monospace;font-size:11px;color:var(–dim)}
-.stt tbody td:first-child{text-align:left;color:var(–text);font-weight:700}
+.stt tbody tr.stt-total{background:var(--surface2);border-top:1px solid var(--border)}
+.stt tbody td{padding:10px 10px;text-align:center;font-family:Space Mono,monospace;font-size:11px;color:var(--dim)}
+.stt tbody td:first-child{text-align:left;color:var(--text);font-weight:700}
 .util-cell{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
 .util-pct{font-size:11px;font-weight:700}
-.util-bar{width:52px;height:5px;background:var(–surface3);border-radius:3px;overflow:hidden}
+.util-bar{width:52px;height:5px;background:var(--surface3);border-radius:3px;overflow:hidden}
 .util-fill{height:100%;border-radius:3px;transition:width .5s}
 .spill{display:inline-block;padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:Space Mono,monospace;letter-spacing:.02em}
 .spill-met{background:rgba(74,222,128,.15);color:#4ade80}
@@ -250,11 +249,11 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
 .wt-ok{color:#4ade80;font-weight:700}.wt-warn{color:#f5c842;font-weight:700}.wt-fail{color:#f87171;font-weight:700}
 .ico-grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:700px){.ico-grid2{grid-template-columns:1fr 1fr}}
-.ico-c{background:var(–surface);border:1px solid var(–border);border-radius:8px;padding:13px;text-align:center;transition:border-color .2s}
-.ico-c:hover{border-color:var(–border)}
+.ico-c{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center;transition:border-color .2s}
+.ico-c:hover{border-color:var(--border)}
 .ico-c-num{font-family:Space Mono,monospace;font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
-.ico-c-lbl{font-size:10px;font-weight:600;color:var(–dim);margin-bottom:2px}
-.ico-c-sub{font-size:9px;color:var(–muted)}
+.ico-c-lbl{font-size:10px;font-weight:600;color:var(--dim);margin-bottom:2px}
+.ico-c-sub{font-size:9px;color:var(--muted)}
 
 </style>
 </head>
@@ -305,7 +304,6 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
   </div>
 
   <!-- DASHBOARD -->
-
   <div id="dashboard" style="display:none">
     <div class="top-bar">
       <label class="add-btn">
@@ -316,47 +314,44 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
       <div class="loading-msg" id="dashLoading" style="display:none">Parsing…</div>
     </div>
 
-```
-<!-- ERA TABS -->
-<div class="era-tabs">
-  <button class="era-tab active" onclick="switchEra('postcovid',this)">Post-COVID</button>
-  <button class="era-tab" onclick="switchEra('commissioning',this)">Since Commissioning</button>
-</div>
+    <!-- ERA TABS -->
+    <div class="era-tabs">
+      <button class="era-tab active" onclick="switchEra('postcovid',this)">Post-COVID</button>
+      <button class="era-tab" onclick="switchEra('commissioning',this)">Since Commissioning</button>
+    </div>
 
-<!-- ERA DATE CONFIG -->
-<div class="era-config" id="eraConfig">
-  <div>
-    <label>Post-COVID start date:</label><br/>
-    <input type="date" id="postCovidDate" value="2023-01-08"/>
-  </div>
-  <div>
-    <label>Since Commissioning start date:</label><br/>
-    <input type="date" id="commDate" value="2003-09-07"/>
-  </div>
-  <button class="era-apply" onclick="applyConfig()">APPLY &amp; REFRESH</button>
-  <span style="font-size:10px;color:var(--muted)">Post-COVID default: 08 Jan 2023 (HK border reopening)</span>
-</div>
+    <!-- ERA DATE CONFIG -->
+    <div class="era-config" id="eraConfig">
+      <div>
+        <label>Post-COVID start date:</label><br/>
+        <input type="date" id="postCovidDate" value="2023-01-08"/>
+      </div>
+      <div>
+        <label>Since Commissioning start date:</label><br/>
+        <input type="date" id="commDate" value="2003-09-07"/>
+      </div>
+      <button class="era-apply" onclick="applyConfig()">APPLY &amp; REFRESH</button>
+      <span style="font-size:10px;color:var(--muted)">Post-COVID default: 08 Jan 2023 (HK border reopening)</span>
+    </div>
 
-<!-- SECTION TABS -->
-<div class="sec-tabs">
-  <button class="sec-tab active" onclick="switchSection('total',this)">Total Traffic</button>
-  <button class="sec-tab" onclick="switchSection('hkr',this)">HKR</button>
-  <button class="sec-tab" onclick="switchSection('visitor',this)">Visitor</button>
-  <button class="sec-tab" onclick="switchSection('hourly',this)">Hourly</button>
-  <button class="sec-tab" onclick="switchSection('analysis',this)">📈 Analysis &amp; Forecast</button>
-  <button class="sec-tab" onclick="switchSection('estimator',this)">⚙️ Throughput Estimator</button>
-</div>
+    <!-- SECTION TABS -->
+    <div class="sec-tabs">
+      <button class="sec-tab active" onclick="switchSection('total',this)">Total Traffic</button>
+      <button class="sec-tab" onclick="switchSection('hkr',this)">HKR</button>
+      <button class="sec-tab" onclick="switchSection('visitor',this)">Visitor</button>
+      <button class="sec-tab" onclick="switchSection('hourly',this)">Hourly</button>
+      <button class="sec-tab" onclick="switchSection('analysis',this)">📈 Analysis &amp; Forecast</button>
+      <button class="sec-tab" onclick="switchSection('estimator',this)">⚙️ Throughput Estimator</button>
+    </div>
 
-<div class="as-at" id="asAt"></div>
-<div class="pdf-header" id="pdfHeader">
-  <h2>Record High — Passenger Statistics</h2>
-  <p id="pdfSubtitle"></p>
-</div>
+    <div class="as-at" id="asAt"></div>
+    <div class="pdf-header" id="pdfHeader">
+      <h2>Record High — Passenger Statistics</h2>
+      <p id="pdfSubtitle"></p>
+    </div>
 
-<!-- CONTENT -->
-<div id="content"></div>
-```
-
+    <!-- CONTENT -->
+    <div id="content"></div>
   </div>
 </main>
 
@@ -1425,23 +1420,23 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   function padBlank(r){ for(let _c=10;_c<13;_c++) ws[XLSX.utils.encode_cell({r,c:_c})]={v:'',t:'s',s:{border:{}}}; }
 
   // Style factories
-  const navyBg  = isPostCovid?'0F3460':'0D3520';
-  const navy2   = isPostCovid?'0B1E3D':'061A0C';
-  const navy3   = isPostCovid?'1B5090':'165C38';
-  const arrCol  = isPostCovid?'1565C0':'00695C';
-  const depCol  = isPostCovid?'5B35A8':'2E5FA3';
-  const altBg   = isPostCovid?'EEF4FB':'EBF5EF';
+  const navyBg  = isPostCovid?'2E86C1':'28A263';
+  const navy2   = isPostCovid?'1A5276':'1D6A40';
+  const navy3   = isPostCovid?'5DADE2':'52C28A';
+  const arrCol  = isPostCovid?'2980B9':'17A589';
+  const depCol  = isPostCovid?'7D3C98':'2E86C1';
+  const altBg   = isPostCovid?'EBF5FB':'E9F7EF';
   const warnBg  = 'FFFBEA';
   const warnFg  = '7A5500';
 
   function hdrCell(v, bg, fg, sz, bold, halign, wrap, colIdx, totalCols){
-    const leftBorder  = (colIdx===0)          ? {style:'medium',color:{rgb:isPostCovid?'0F3460':'0D3520'}} : {style:'thin',color:{rgb:'FFFFFF'}};
-    const rightBorder = (colIdx===totalCols-1) ? {style:'medium',color:{rgb:isPostCovid?'0F3460':'0D3520'}} : {style:'thin',color:{rgb:'FFFFFF'}};
+    const leftBorder  = (colIdx===0)          ? {style:'medium',color:{rgb:isPostCovid?'2E86C1':'28A263'}} : {style:'thin',color:{rgb:'FFFFFF'}};
+    const rightBorder = (colIdx===totalCols-1) ? {style:'medium',color:{rgb:isPostCovid?'2E86C1':'28A263'}} : {style:'thin',color:{rgb:'FFFFFF'}};
     return {v, t:'s', s:{
       font:{name:'Calibri',sz:sz||9,bold:bold!==false,color:{rgb:fg||'FFFFFF'}},
       fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||navyBg}},
       alignment:{horizontal:halign||'center',vertical:'center',wrapText:wrap||false,indent:halign==='left'?1:0},
-      border:{bottom:{style:'medium',color:{rgb:isPostCovid?'0F3460':'0D3520'}}}
+      border:{bottom:{style:'medium',color:{rgb:isPostCovid?'2E86C1':'28A263'}}}
     }};
   }
   // ── Cell border sets ──────────────────────────────────────────────────────
@@ -1497,7 +1492,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 
   // ── TITLE BANNER ─────────────────────────────────────────────────────────
   ws['!rows'][R]={hpt:6};
-  for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'1B5090':'165C38'}},border:{}}};
+  for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'5DADE2':'52C28A'}},border:{}}};
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:(isPostCovid?'POST-COVID':'SINCE COMMISSIONING')+'  ●',t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:isPostCovid?'0D2B6B':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'43A047'}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
   merge(R,0,R,9); R++;
 
@@ -2058,38 +2053,38 @@ function exportExcel(){
   // Since Comm. → Forest Green (classic, authoritative)
   const isPostCovid = currentEra === 'postcovid';
   const C = isPostCovid ? {
-    // ── POST-COVID: DEEP OCEAN BLUE ──────────────────────────────────────────
-    navyDark:  {rgb:'0B1E3D'}, // deep navy — title/org bar
-    navy:      {rgb:'0F3460'}, // royal blue — section header banners
-    navyMid:   {rgb:'1B5090'}, // cobalt — column headers
-    accent:    {rgb:'1A6FAD'}, // sky blue — data accents
-    grpArr:    {rgb:'1565C0'}, // arrival group — strong blue
-    grpDep:    {rgb:'5B35A8'}, // departure group — blue-violet
-    gold:      {rgb:'B07D10'}, // amber for rank #1
-    goldBg:    {rgb:'FFFCF2'}, // pale amber tint — rank #1 row
+    // ── POST-COVID: LIGHT BLUE — airy, professional ───────────────────────────
+    navyDark:  {rgb:'1A5276'}, // medium teal-blue — title bar
+    navy:      {rgb:'2E86C1'}, // medium blue — section headers
+    navyMid:   {rgb:'5DADE2'}, // sky blue — column headers
+    accent:    {rgb:'2E86C1'},
+    grpArr:    {rgb:'2980B9'}, // arrival — clear blue
+    grpDep:    {rgb:'7D3C98'}, // departure — medium violet
+    gold:      {rgb:'B07D10'},
+    goldBg:    {rgb:'FEFCF0'},
     goldText:  {rgb:'B07D10'},
-    altRow:    {rgb:'EEF4FB'}, // pale blue-grey alternating rows
-    totalFg:   {rgb:'0F3460'}, // total value — matches navy
-    totalBg:   {rgb:'DDE9F8'}, // total cell soft blue bg
-    tagBg:     {rgb:'D0E4F5'},
-    tagFg:     {rgb:'0B1E3D'},
+    altRow:    {rgb:'EBF5FB'}, // very pale blue alt rows
+    totalFg:   {rgb:'1A5276'},
+    totalBg:   {rgb:'D6EAF8'},
+    tagBg:     {rgb:'C8E3F5'},
+    tagFg:     {rgb:'1A5276'},
     eraLabel:  'Post-COVID',
   } : {
-    // ── SINCE COMMISSIONING: DEEP FOREST GREEN ───────────────────────────────
-    navyDark:  {rgb:'061A0C'}, // near-black green — title/org bar
-    navy:      {rgb:'0D3520'}, // deep forest — section header banners
-    navyMid:   {rgb:'165C38'}, // rich emerald — column headers
-    accent:    {rgb:'1A7A45'}, // vivid green — data accents
-    grpArr:    {rgb:'00695C'}, // arrival group — teal
-    grpDep:    {rgb:'2E5FA3'}, // departure group — blue (contrast)
+    // ── SINCE COMMISSIONING: LIGHT GREEN — fresh, professional ───────────────
+    navyDark:  {rgb:'1D6A40'}, // medium forest green — title bar
+    navy:      {rgb:'28A263'}, // medium green — section headers
+    navyMid:   {rgb:'52C28A'}, // light emerald — column headers
+    accent:    {rgb:'28A263'},
+    grpArr:    {rgb:'17A589'}, // arrival — teal-green
+    grpDep:    {rgb:'2E86C1'}, // departure — blue contrast
     gold:      {rgb:'9A7010'},
-    goldBg:    {rgb:'FFFCEF'},
+    goldBg:    {rgb:'FEFCEF'},
     goldText:  {rgb:'9A7010'},
-    altRow:    {rgb:'EBF5EF'}, // pale green alternating rows
-    totalFg:   {rgb:'0D3520'},
-    totalBg:   {rgb:'D5EDE0'},
-    tagBg:     {rgb:'C8E6D2'},
-    tagFg:     {rgb:'061A0C'},
+    altRow:    {rgb:'E9F7EF'}, // very pale green alt rows
+    totalFg:   {rgb:'1D6A40'},
+    totalBg:   {rgb:'D5F5E3'},
+    tagBg:     {rgb:'C0EDD4'},
+    tagFg:     {rgb:'1D6A40'},
     eraLabel:  'Since Commissioning',
   };
   // Shared colours
@@ -2099,7 +2094,7 @@ function exportExcel(){
 
   const border={
     thin:{style:'thin',color:{rgb:'D0D8E4'}},              // neutral light grey grid
-    med:{style:'medium',color:{rgb:isPostCovid?'1B5090':'165C38'}}, // section dividers
+    med:{style:'medium',color:{rgb:isPostCovid?'5DADE2':'52C28A'}}, // section dividers
     none:{style:'thin',color:{rgb:'FFFFFF'}},
   };
   // Clean border philosophy: bottom lines only for data, no cage effect
@@ -2167,86 +2162,62 @@ function exportExcel(){
     }
     function blank(bgRgb){return hCell('',9,false,'FFFFFF',bgRgb);}
 
-    // ── ROW 0: Era identification banner (mirrors Analysis sheet) ───────────────
-    ws['!rows'][R]={hpt:7};
-    const eraBannerBg2 = isPostCovid ? '1565C0' : '155A34';
-    const eraBannerFg2 = isPostCovid ? 'DDEEFF' : 'CCEEDB';
-    for(let col=0;col<maxCols;col++)
-      ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',8,false,eraBannerFg2,eraBannerBg2,'center');
+    // ── 5-ROW HEADER — matches PDF report layout ────────────────────────────────
+    // R0: Era strip    6pt  era colour + "POST-COVID ●"
+    // R1: Org bar     30pt  medium-dark + "LSC" left + "PASSENGER STATISTICS" right
+    // R2: Sheet name  20pt  era colour  + sheet title left + "as at date" right
+    // R3: Info strip  12pt  very light  + date range + op days
+    // R4: Thin rule    3pt  accent line
+    const accentBarCol = isPostCovid ? '2E86C1' : '28A263';
+    const hdrDark = isPostCovid ? '1A5276' : '1D6A40';  // medium-dark for org bar
+    const metaBg  = isPostCovid ? 'EBF5FB' : 'E9F7EF';
+
+    // R0: Era strip
+    ws['!rows'][R]={hpt:8};
+    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',7,false,'FFFFFF',accentBarCol);
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
       (isPostCovid?'POST-COVID':'SINCE COMMISSIONING')+'  ●',
-      8,true,eraBannerFg2,eraBannerBg2,'left'
+      7,true,isPostCovid?'DDEEFF':'CCFFDD',accentBarCol,'left'
     );
-    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
-    R++;
+    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}}); R++;
 
-    // ── ROW 1: Thin accent bar ───────────────────────────────────────────────────
-    ws['!rows'][R]={hpt:5};
-    const accentBarCol = isPostCovid ? '1B5090' : '165C38';
-    for(let col=0;col<maxCols;col++)
-      ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',6,false,accentBarCol,accentBarCol);
-    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
-    R++;
+    // R1: Org bar — "LSC" bold left, "PASSENGER STATISTICS" right
+    ws['!rows'][R]={hpt:30};
+    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',11,false,'FFFFFF',hdrDark);
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell('LSC',18,true,'FFFFFF',hdrDark,'left');
+    const _orgSplit=Math.floor(maxCols*0.5);
+    merges.push({s:{r:R,c:0},e:{r:R,c:_orgSplit-1}});
+    ws[XLSX.utils.encode_cell({r:R,c:_orgSplit})]=hCell('PASSENGER STATISTICS',9,false,isPostCovid?'AED6F1':'A9DFBF',hdrDark,'right');
+    merges.push({s:{r:R,c:_orgSplit},e:{r:R,c:maxCols-1}}); R++;
 
-    // ── ROW 1: Organisation header — near-black + bold white ───────────────────
-    ws['!rows'][R]={hpt:34};
-    const hdrBg = isPostCovid ? '080E1E' : '060E08';
-    for(let col=0;col<maxCols;col++) ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',11,false,'FFFFFF',hdrBg);
-    // org name left
+    // R2: Sheet name bar — era colour, sheet title left, date right
+    ws['!rows'][R]={hpt:20};
+    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',10,false,'FFFFFF',accentBarCol);
+    ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(sheetTitle,11,true,'FFFFFF',accentBarCol,'left');
+    const _sheetSplit=Math.floor(maxCols*0.65);
+    merges.push({s:{r:R,c:0},e:{r:R,c:_sheetSplit-1}});
+    ws[XLSX.utils.encode_cell({r:R,c:_sheetSplit})]=hCell('as at  '+fDate(latestDate),9,false,isPostCovid?'D6EEFF':'CCF0DE',accentBarCol,'right');
+    merges.push({s:{r:R,c:_sheetSplit},e:{r:R,c:maxCols-1}}); R++;
+
+    // R3: Info strip — very light
+    ws['!rows'][R]={hpt:12};
+    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',8,false,'FFFFFF',metaBg);
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
-      'LSC',
-      16,true,isPostCovid?'B8D4FF':'A8E6C0',hdrBg,'left'
+      '⬡  '+eraFrom+' – '+fDate(latestDate),
+      8,false,isPostCovid?'1A5276':'1D6A40',metaBg,'left'
     );
-    const orgCols = Math.floor(maxCols*0.6);
-    merges.push({s:{r:R,c:0},e:{r:R,c:orgCols-1}});
-    // report type right
-    ws[XLSX.utils.encode_cell({r:R,c:orgCols})]=hCell(
-      'PASSENGER STATISTICS  ·  RECORD HIGH REPORT',
-      9,false,isPostCovid?'3E9BFF':'2ECC71',hdrBg,'right'
+    const _infoSplit=Math.floor(maxCols*0.6);
+    merges.push({s:{r:R,c:0},e:{r:R,c:_infoSplit-1}});
+    ws[XLSX.utils.encode_cell({r:R,c:_infoSplit})]=hCell(
+      days.filter(d=>!isBorderClosed(d.date)).length.toLocaleString()+' operational days',
+      8,false,isPostCovid?'1A5276':'1D6A40',metaBg,'right'
     );
-    merges.push({s:{r:R,c:orgCols},e:{r:R,c:maxCols-1}});
-    R++;
+    merges.push({s:{r:R,c:_infoSplit},e:{r:R,c:maxCols-1}}); R++;
 
-    // ── ROW 2: Sheet title bar — deep jewel tone ────────────────────────────────
-    ws['!rows'][R]={hpt:22};
-    const catBg    = isPostCovid ? '0F1F4A' : '0A1F0E';
-    const catCols  = Math.floor(maxCols*0.72);
-    for(let col=0;col<maxCols;col++) ws[XLSX.utils.encode_cell({r:R,c:col})]=hCell('',11,false,'FFFFFF',catBg);
-    ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
-      sheetTitle, 12, true, 'FFFFFF', catBg, 'left'
-    );
-    merges.push({s:{r:R,c:0},e:{r:R,c:catCols-1}});
-    ws[XLSX.utils.encode_cell({r:R,c:catCols})]=hCell(
-      'as at '+fDate(latestDate), 9, false, isPostCovid?'3E9BFF':'2ECC71', catBg, 'right'
-    );
-    merges.push({s:{r:R,c:catCols},e:{r:R,c:maxCols-1}});
-    R++;
-
-    // ── ROW 3: Meta info bar — dark tone with accent text ────────────────────────
-    const metaBg = isPostCovid ? 'EBF2FF' : 'EBF7EE';
-    const seg = Math.floor(maxCols/3);
-    const seg2 = seg;
-    const seg3 = maxCols - seg - seg2;
-    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',9,false,'FFFFFF',metaBg);
-    ws[XLSX.utils.encode_cell({r:R,c:0})]       =hCell('⬡  '+eraFrom+' – '+fDate(latestDate), 8,false,isPostCovid?'0D2A5E':'0A2A14',metaBg,'left');
-    ws[XLSX.utils.encode_cell({r:R,c:seg})]     =hCell(C.eraLabel.toUpperCase(),        8,false,isPostCovid?'7FB8FF':'7EDDA0',metaBg,'center');
-    ws[XLSX.utils.encode_cell({r:R,c:seg+seg2})]=hCell(days.length+' DAYS',                     8,false,isPostCovid?'0D2A5E':'0A2A14',metaBg,'right');
-    merges.push({s:{r:R,c:0},e:{r:R,c:seg-1}});
-    merges.push({s:{r:R,c:seg},e:{r:R,c:seg+seg2-1}});
-    merges.push({s:{r:R,c:seg+seg2},e:{r:R,c:maxCols-1}});
-    ws['!rows'][R]={hpt:14};
-    R++;
-
-    // ── ROW 4: Accent rule ──────────────────────────────────────────────────────
-    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',4,false,accentBarCol,accentBarCol);
-    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}});
-    ws['!rows'][R]={hpt:4};
-    R++;
-
-    // ── ROW 5: Spacer ────────────────────────────────────────
-    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',9,false,'FFFFFF','FFFFFF');
-    ws['!rows'][R]={hpt:8};
-    R++;
+    // R4: Thin rule
+    ws['!rows'][R]={hpt:3};
+    for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',3,false,accentBarCol,accentBarCol);
+    merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}}); R++;
 
     const _BK={style:'medium',color:{rgb:'000000'}};
     const _BT={style:'thin',color:{rgb:'D0D8E4'}};
@@ -2263,14 +2234,14 @@ function exportExcel(){
       const secAccent = titleIsDeparture
         ? (isPostCovid ? '5C35A8' : '2E5FA3')    // purple-blue / blue
         : titleIsArrival
-          ? (isPostCovid ? '1565C0' : '00695C')   // cobalt blue / teal
+          ? (isPostCovid ? '2980B9' : '17A589')   // blue / teal
           : (isPostCovid ? '0D2B55' : '0C3320');  // deep navy / deep forest
 
       // Light tint for the main title row bg
       const secTintMap = {
-        '5C35A8': 'EDE8F8', '2E5FA3': 'E3EBF8',   // departure tints
-        '1565C0': 'E3EDF9', '00695C': 'E0F2EE',   // arrival tints
-        '0D2B55': 'E8F0FB', '0C3320': 'E3F2E9',   // total tints
+        '7D3C98': 'F5EEF8', '2E86C1': 'EBF5FB',   // departure tints
+        '2980B9': 'EBF5FB', '17A589': 'E0F5EF',   // arrival tints
+        '1A5276': 'E8F4FB', '1D6A40': 'E2F5EC',   // total tints
       };
       const secTint = secTintMap[secAccent] || 'F5F5F5';
 
@@ -2496,17 +2467,15 @@ function exportExcel(){
     const _blkW={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{}}};
     const _blkA={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'F4F8FF':'F4FFF8'}},border:{}}};
     // Accent colours for sec2 (arrival) and sec3 (departure) — must match buildSheet logic
-    const _sec2Acc=isPostCovid?'1565C0':'00695C';
-    const _sec3Acc=isPostCovid?'5B35A8':'2E5FA3';
+    const _sec2Acc=isPostCovid?'2980B9':'17A589';
+    const _sec3Acc=isPostCovid?'7D3C98':'2E86C1';
     function _accentCell(col){ return {v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:col}},border:{}}}; }
 
-    // Header=7 rows (R0-R6). Sec1 has groups → 11 rows (R7-R17). Sec2 starts R18. Sec3 starts R28.
-    // G:H merge for sec2 and sec3 — only for colHdr and data rows (NOT accent/title rows
-    // which are already fully merged by buildSheet, causing overlap if we add another).
-    // Sec2: R18=accent(already merged 0..6), R19=title(already merged), R20=colHdr, R21-25=data, R26-27=gap
-    for(let r=20;r<=27;r++){
-      const isDataRow=(r>=21&&r<=25);
-      const isAltData=isDataRow&&(r-21)%2===1;
+    // Header=5 rows (R0-R4). Sec1 groups+colHdr+5data+2gap=11 rows (R5-R15). Sec2 starts R16. Sec3 starts R27.
+    // Sec2: R16=accent, R17=title, R18=colHdr, R19-23=data, R24-25=gap
+    for(let r=18;r<=25;r++){
+      const isDataRow=(r>=19&&r<=23);
+      const isAltData=isDataRow&&(r-19)%2===1;
       const _g=ws[XLSX.utils.encode_cell({r,c:6})];
       ws[XLSX.utils.encode_cell({r,c:7})]=_g
         ? JSON.parse(JSON.stringify({..._g,v:''}))
@@ -2515,12 +2484,11 @@ function exportExcel(){
       if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6))
         ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
     }
-    // Also white H and I for accent+title rows without adding merges
-    for(const r of [18,19]){ ws[XLSX.utils.encode_cell({r,c:7})]=_blkW; ws[XLSX.utils.encode_cell({r,c:8})]=_blkW; }
-    // Sec3: R28=accent, R29=title, R30=colHdr, R31-35=data, R36-37=gap
-    for(let r=30;r<=37;r++){
-      const isDataRow=(r>=31&&r<=35);
-      const isAltData=isDataRow&&(r-31)%2===1;
+    for(const r of [16,17]){ ws[XLSX.utils.encode_cell({r,c:7})]=_blkW; ws[XLSX.utils.encode_cell({r,c:8})]=_blkW; }
+    // Sec3: R27=accent, R28=title, R29=colHdr, R30-34=data, R35-36=gap
+    for(let r=29;r<=36;r++){
+      const isDataRow=(r>=30&&r<=34);
+      const isAltData=isDataRow&&(r-30)%2===1;
       const _g=ws[XLSX.utils.encode_cell({r,c:6})];
       ws[XLSX.utils.encode_cell({r,c:7})]=_g
         ? JSON.parse(JSON.stringify({..._g,v:''}))
@@ -2529,6 +2497,7 @@ function exportExcel(){
       if(!ws['!merges'].find(m=>m.s.r===r&&m.s.c===6))
         ws['!merges'].push({s:{r,c:6},e:{r,c:7}});
     }
+    for(const r of [27,28]){ ws[XLSX.utils.encode_cell({r,c:7})]=_blkW; ws[XLSX.utils.encode_cell({r,c:8})]=_blkW; }
     for(const r of [28,29]){ ws[XLSX.utils.encode_cell({r,c:7})]=_blkW; ws[XLSX.utils.encode_cell({r,c:8})]=_blkW; }
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
@@ -4624,6 +4593,5 @@ function exportPPTX(){
 
 // estimator render triggered from switchSection directly
 </script>
-
 </body>
 </html>
