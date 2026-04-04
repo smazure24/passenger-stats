@@ -889,7 +889,7 @@ function buildAnalysisHTML(days){
   const holidays = holidayAnalysis(days);
   const wdwph    = weekdayWeekendAnalysis(days);
   const _upcomingHol = detectUpcomingHoliday(days);
-  const easter   = forecastEaster2026(days);
+  const easter   = forecastNextHoliday(days);
   const easterDays = getEasterDays(days);
 
   const o = [];
@@ -1145,10 +1145,11 @@ function buildAnalysisHTML(days){
 
   // ══ SECTION 3: Easter 2026 Forecast ══════════════════════════════════════════
   const _fcastTitle = easter ? (easter.targetEasterLabel||'Easter')+' Forecast' : 'Upcoming Holiday Forecast';
-  push('<div class="af-page-title">🐣 '+_fcastTitle+'</div>');
+  const _fcastIcon = easter ? (easter.holidayIcon||'📅') : '📅';
+  push('<div class="af-page-title">'+_fcastIcon+' '+_fcastTitle+'</div>');
 
   if(!easter||easterDays.length===0){
-    push('<div class="af-card"><div class="af-card-body" style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No Easter days found in loaded data.<br>Load data that includes past Easter holidays to generate the forecast.</div></div>');
+    push('<div class="af-card"><div class="af-card-body" style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No historical data found for '+_fcastTitle+'.<br>Load data covering previous years of this holiday to generate a forecast.</div></div>');
   } else {
     const f=easter;
     // Use Easter Sunday (offset 0) profile as the primary reference
@@ -1212,7 +1213,7 @@ function buildAnalysisHTML(days){
       if(!eByYear[y]) eByYear[y]=[];
       eByYear[y].push(d);
     }
-    push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Historical Easter — Actual Figures</div>');
+    push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Historical '+f.targetEasterLabel.split(' ')[0]+' — Actual Figures</div>');
     push('<div style="overflow-x:auto">');
     push('<table class="af-table"><thead><tr>');
     push('<th>Year</th><th>Day</th><th>Date</th><th>Occasion</th><th>Arr HKR</th><th>Arr Vis</th><th>▲ Arrival</th><th>Dep HKR</th><th>Dep Vis</th><th>▼ Departure</th><th>Total</th></tr></thead><tbody>');
@@ -1347,6 +1348,27 @@ function buildAnalysisHTML(days){
       }
       push('</div></div>');
     })();
+
+    // ── AI Context Analysis ──────────────────────────────────────────────────
+    // Uses Claude + web search to pull in real HK news, weather, events for Easter
+    const _easterYear = f.targetEasterLabel ? f.targetEasterLabel.replace('Easter ','') : '2026';
+    const _gfDate = f.dayProfiles['-2'] ? f.dayProfiles['-2'].date : '';
+    const _emDate = f.dayProfiles['1']  ? f.dayProfiles['1'].date  : '';
+    const _aiCardId = 'ai-context-card-'+Date.now();
+    push('<div class="af-card" style="margin-top:20px;border:1px solid rgba(245,200,66,.3);background:rgba(245,200,66,.04)" id="'+_aiCardId+'">');
+    push('<div class="af-card-hdr" style="background:rgba(245,200,66,.08);border-bottom:1px solid rgba(245,200,66,.2);display:flex;align-items:center;justify-content:space-between">');
+    push('<div><h3 style="color:var(--gold);margin:0">🤖 AI Context Analysis — Real-World Factors</h3>');
+    push('<div class="kpi-sub" style="margin-top:2px">Claude analyses HK &amp; Mainland factors impacting traffic for <b style="color:var(--gold)">'+f.targetEasterLabel+'</b></div></div>');
+    push('<button id="ai-ctx-btn-'+_aiCardId+'" onclick="runAIContextAnalysis(\''+_aiCardId+'\',\''+_easterYear+'\',\''+_gfDate+'\',\''+_emDate+'\')" style="padding:7px 16px;border-radius:6px;border:1px solid var(--gold);background:rgba(245,200,66,.12);color:var(--gold);cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700;white-space:nowrap">▶ Run Analysis</button>');
+    push('</div>');
+    push('<div id="ai-ctx-body-'+_aiCardId+'" class="af-card-body">');
+    push('<div style="color:var(--muted);font-size:11px;padding:20px 0;text-align:center">');
+    push('Click <b style="color:var(--gold)">▶ Run Analysis</b> to let Claude search for:<br>');
+    push('<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px">');
+    ['🌤 HK Easter weather forecast','📰 HK cross-border travel news','🚧 Border/MTR disruptions','📅 Competing events & holidays','✈️ Inbound tourism sentiment'].forEach(t=>{
+      push('<span style="background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:10px;font-family:Space Mono,monospace">'+t+'</span>');
+    });
+    push('</div></div></div></div>');
 
     // ── Day selector buttons ──────────────────────────────────────────────────
     push('<div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0">');
@@ -1604,6 +1626,97 @@ function buildAnalysisHTML(days){
     });
     push('</tbody></table></div></div></div>');
   }
+
+
+  // ══ HK ANNUAL EVENTS CALENDAR ════════════════════════════════════════════════
+  // Known recurring exhibitions and fairs that drive cross-border traffic peaks
+  push('<div class="af-page-title">🏟 HK Annual Events & Exhibitions</div>');
+  push('<div class="af-card">');
+  push('<div class="af-card-hdr"><h3>Major Recurring Events — Traffic Impact Reference</h3>');
+  push('<span class="kpi-sub">Historical peak weeks during these events · compare vs avg weekday/weekend benchmark · dates are approximate</span></div>');
+  push('<div class="af-card-body" style="padding:0">');
+
+  // Define known annual events
+  const _annualEvents = [
+    // Summer events
+    {name:'📚 Book Fair (香港書展)',       month:7, weekNo:3, duration:7, type:'summer',
+     note:'HKCEC, 3rd week of July · ~100万人次 · visitor-heavy (Mainland tourists)',
+     color:'#f59e0b'},
+    {name:'🎮 Ani-Com & Games (動漫電玩節)', month:7, weekNo:4, duration:5, type:'summer',
+     note:'HKCEC, late July · attracts HK youth + Mainland fans · high Sat/Sun peaks',
+     color:'#7c6af7'},
+    {name:'👶 Baby Products Expo (嬰兒博覽)', month:8, weekNo:2, duration:4, type:'summer',
+     note:'HKCEC, mid-August · family cross-border travel · strong Mainland visitor component',
+     color:'#34d399'},
+    {name:'🎨 Art Basel HK / Art Central',   month:3, weekNo:2, duration:5, type:'spring',
+     note:'Convention area, mid-March · high-end visitor traffic · significant Mainland collector travel',
+     color:'#f87171'},
+    {name:'🏡 HOFEX (Food & Hotel Asia)',     month:5, weekNo:1, duration:4, type:'trade',
+     note:'HKCEC, early May (odd years) · trade show · modest public day impact',
+     color:'#38bdf8'},
+    {name:'⌚ HK Watch & Clock Fair',         month:9, weekNo:2, duration:5, type:'trade',
+     note:'HKCEC, mid-September · trade + public · Mainland buyers significant',
+     color:'#fb923c'},
+    {name:'🎮 Games & Comics Fest (秋季)',    month:11,weekNo:3, duration:4, type:'autumn',
+     note:'HKCEC, late November · increasingly popular with cross-border attendance',
+     color:'#a78bfa'},
+    {name:'🎉 New Year Countdown',            month:12,weekNo:5, duration:2, type:'christmas',
+     note:'Victoria Harbour · Dec 31 + Jan 1 · massive outbound departure surge Dec 31',
+     color:'#f59e0b'},
+  ];
+
+  // For each event, check if we have historical data in that week and compute avg
+  const _evWdBase = wdwph.weekday.avgTotal||1;
+  const _evPhBase = wdwph.phwk.avgTotal||1;
+
+  push('<div style="overflow-x:auto"><table class="af-table" style="min-width:600px">');
+  push('<thead><tr>');
+  push('<th style="text-align:left;padding:6px 10px">Event</th>');
+  push('<th>Typical Period</th>');
+  push('<th>Duration</th>');
+  push('<th>Hist. Avg Pax/Day</th>');
+  push('<th>vs Weekday</th>');
+  push('<th>vs Wknd/PH</th>');
+  push('<th style="text-align:left">Notes</th>');
+  push('</tr></thead><tbody>');
+
+  const _moNames2=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  _annualEvents.forEach((ev,i)=>{
+    // Find days in loaded data that fall in this event's typical week
+    const _evDays = days.filter(d=>{
+      const dm=parseInt(d.date.substring(5,7));
+      const dd=parseInt(d.date.substring(8));
+      if(dm!==ev.month) return false;
+      // Approx: week 1 = day 1-7, week 2 = 8-14, week 3 = 15-21, week 4 = 22-28, week 5 = 28-31
+      const startDay = (ev.weekNo-1)*7+1;
+      const endDay = Math.min(startDay+ev.duration+6,31);
+      return dd>=startDay && dd<=endDay;
+    });
+    const _evAvg = _evDays.length>=3
+      ? Math.round(_evDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/_evDays.length) : null;
+    const _vsWD = _evAvg ? ((_evAvg-_evWdBase)/_evWdBase*100) : null;
+    const _vsWE = _evAvg ? ((_evAvg-_evPhBase)/_evPhBase*100) : null;
+
+    const weekLabel = ev.weekNo===5?'End of month':
+      ['','1st','2nd','3rd','4th','Late'][Math.min(ev.weekNo,5)]+' wk of '+_moNames2[ev.month];
+
+    push('<tr style="'+(i%2===0?'':'background:var(--surface2)')+'">');
+    push('<td style="font-weight:600;color:'+ev.color+';padding:6px 10px;white-space:nowrap;max-width:200px">'+ev.name+'</td>');
+    push('<td style="text-align:center;font-size:10px;color:var(--muted);white-space:nowrap">'+weekLabel+'</td>');
+    push('<td style="text-align:center">'+ev.duration+'d</td>');
+    push('<td class="hi" style="text-align:center">'+(_evAvg?nt(_evAvg):'<span style="color:var(--muted);font-size:9px">no data</span>')+'</td>');
+    push('<td class="'+(_vsWD===null?'':_vsWD>=0?'pos':'neg')+'">'+(_vsWD===null?'—':(_vsWD>=0?'+':'')+_vsWD.toFixed(1)+'%')+'</td>');
+    push('<td class="'+(_vsWE===null?'':_vsWE>=0?'pos':'neg')+'">'+(_vsWE===null?'—':(_vsWE>=0?'+':'')+_vsWE.toFixed(1)+'%')+'</td>');
+    push('<td style="font-size:9px;color:var(--muted);text-align:left;max-width:200px">'+ev.note+'</td>');
+    push('</tr>');
+  });
+
+  push('</tbody></table></div>');
+  push('<div style="padding:8px 12px;font-size:9px;color:var(--muted);border-top:1px solid var(--border)">');
+  push('Hist. avg shows average daily pax during that calendar week across all loaded years. ');
+  push('Load multiple years of data for more reliable estimates. Exact event dates vary year-to-year — confirm with HKTDC / HKCEC.</div>');
+  push('</div></div>');
 
   push('</div>'); // af-wrap
   return o.join('');
@@ -3144,6 +3257,11 @@ function detectUpcomingHoliday(days){
     const d=yr+'-10-01';
     if(d>latest) candidates.push({type:'national',year:yr,date:d,label:'National Day Golden Week '+yr,icon:'🇨🇳'});
   }
+  // Summer Peak Season Jul 15
+  for(let yr=y; yr<=y+1; yr++){
+    const d=yr+'-07-15';
+    if(d>latest) candidates.push({type:'summer',year:yr,date:d,label:'Summer Season '+yr,icon:'☀️'});
+  }
   // Christmas Dec 25
   for(let yr=y; yr<=y+1; yr++){
     const d=yr+'-12-25';
@@ -3153,6 +3271,272 @@ function detectUpcomingHoliday(days){
   return candidates[0]||null;
 }
 
+
+
+// ─── UNIVERSAL HOLIDAY FORECAST ENGINE ────────────────────────────────────────
+// Detects the NEXT upcoming major holiday from the loaded data and forecasts it.
+// Supports: Easter, Labour Golden Week (5/1-5), National Day GW (10/1-7),
+//           Lunar New Year, Christmas, Ching Ming
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Define all holiday "windows" — how many days before/after the anchor date to include
+const HOLIDAY_DEFS = [
+  {
+    type:'easter', icon:'🐣', label:y=>'Easter '+y,
+    // Days are -2..+2 relative to Easter Sunday; anchor = Good Friday (offset -2)
+    getAnchor: y => { const e=getEaster(y); return isoAddDays(isoDate(e),-2); },
+    getDates: y => {
+      const e=getEaster(y);
+      const sun=isoDate(e);
+      return [
+        {date:isoAddDays(sun,-2), label:'Good Friday — PH',         color:'#f59e0b'},
+        {date:isoAddDays(sun,-1), label:'Easter Saturday — PH',      color:'#a78bfa'},
+        {date:sun,                label:'Easter Sunday — PH',        color:'var(--accent)'},
+        {date:isoAddDays(sun, 1), label:'Easter Monday — PH',        color:'var(--res)'},
+        {date:isoAddDays(sun, 2), label:'Day After Easter — Non-PH', color:'var(--vis)'},
+      ];
+    },
+    matchDate: (date, y) => {
+      const e=getEaster(y); const sun=isoDate(e);
+      const offsets=[-2,-1,0,1,2];
+      return offsets.some(o=>isoAddDays(sun,o)===date);
+    },
+  },
+  {
+    type:'labour', icon:'⚒️', label:y=>'Labour Day Golden Week '+y,
+    getAnchor: y => y+'-05-01',
+    getDates: y => {
+      const labels=['Labour Day (May 1) — PH','May 2 — PH','May 3 — PH',
+                    'May 4 — PH','May 5 — PH'];
+      const cols=['#f59e0b','#a78bfa','var(--accent)','var(--res)','var(--vis)'];
+      return Array.from({length:5},(_,i)=>({
+        date: y+'-05-0'+(i+1),
+        label: labels[i], color: cols[i]
+      }));
+    },
+    matchDate: (date, y) => {
+      const m=date.substring(5,7),d=parseInt(date.substring(8));
+      return date.substring(0,4)===String(y) && m==='05' && d>=1 && d<=5;
+    },
+  },
+  {
+    type:'national', icon:'🇨🇳', label:y=>'National Day Golden Week '+y,
+    getAnchor: y => y+'-10-01',
+    getDates: y => {
+      const labels=['National Day (Oct 1) — PH','Oct 2 — PH','Oct 3 — PH',
+                    'Oct 4 — PH','Oct 5 — PH','Oct 6 — PH','Oct 7 — PH'];
+      const cols=['#f59e0b','#a78bfa','var(--accent)','var(--res)','var(--vis)','#34d399','#f87171'];
+      return Array.from({length:7},(_,i)=>({
+        date: y+'-10-0'+(i+1),
+        label: labels[i], color: cols[i]
+      }));
+    },
+    matchDate: (date, y) => {
+      const m=date.substring(5,7),d=parseInt(date.substring(8));
+      return date.substring(0,4)===String(y) && m==='10' && d>=1 && d<=7;
+    },
+  },
+  {
+    type:'summer', icon:'☀️', label:y=>'Summer Season '+y,
+    getAnchor: y => y+'-07-15',
+    getDates: y => {
+      // Build one entry per week (Mon of each week) Jul 15 – Aug 31
+      const dates=[]; let cur=y+'-07-15';
+      const end=y+'-08-31';
+      const weekLabels=['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6','Week 7'];
+      const weekCols=['#f59e0b','#a78bfa','var(--accent)','var(--res)','var(--vis)','#34d399','#f87171'];
+      // Get Saturdays and Sundays + weekdays separately
+      const sats=[], suns=[], wkds=[];
+      let d=cur;
+      while(d<=end){
+        const dow=new Date(Date.UTC(+d.slice(0,4),+d.slice(5,7)-1,+d.slice(8))).getUTCDay();
+        if(dow===6) sats.push(d);
+        else if(dow===0) suns.push(d);
+        else wkds.push(d);
+        d=isoAddDays(d,1);
+      }
+      // Return up to 7 Saturdays (the peak days of summer)
+      return sats.slice(0,7).map((s,i)=>({
+        date:s,
+        label:'Summer Saturday '+(i+1)+' ('+s+')',
+        color:weekCols[i]||'var(--accent)'
+      }));
+    },
+    matchDate: (date, y) => {
+      const ys=String(y);
+      if(date.substring(0,4)!==ys) return false;
+      const md=date.substring(5);
+      return (md>='07-15'&&md<='07-31')||(md>='08-01'&&md<='08-31');
+    },
+  },
+  {
+    type:'christmas', icon:'🎄', label:y=>'Christmas '+y,
+    getAnchor: y => y+'-12-25',
+    getDates: y => [
+      {date:y+'-12-24', label:'Christmas Eve — Non-PH',       color:'#f59e0b'},
+      {date:y+'-12-25', label:'Christmas Day — PH',            color:'#a78bfa'},
+      {date:y+'-12-26', label:'Boxing Day — PH',               color:'var(--accent)'},
+      {date:y+'-12-27', label:'Post-Christmas Day — PH',       color:'var(--res)'},
+    ],
+    matchDate: (date, y) => {
+      const m=date.substring(5,7),d=parseInt(date.substring(8));
+      return date.substring(0,4)===String(y) && m==='12' && d>=24 && d<=27;
+    },
+  },
+];
+
+// Get all historical days matching a holiday definition
+function getHolidayDays(allDays, holDef){
+  const years=[...new Set(allDays.map(d=>+d.date.substring(0,4)))];
+  const result=[];
+  for(const y of years){
+    for(const d of allDays){
+      if(holDef.matchDate(d.date, y)) result.push(d);
+    }
+  }
+  return result;
+}
+
+// Find the next upcoming holiday from latest loaded date
+function detectNextForecastHoliday(days){
+  if(!days||!days.length) return null;
+  const latest=days[days.length-1].date;
+  const latestY=parseInt(latest.substring(0,4));
+  let best=null;
+  for(const def of HOLIDAY_DEFS){
+    for(let yr=latestY; yr<=latestY+2; yr++){
+      const anchor=def.getAnchor(yr);
+      if(anchor>latest){
+        if(!best||anchor<best.anchor){
+          best={def, year:yr, anchor, label:def.label(yr), icon:def.icon, type:def.type};
+        }
+        break;
+      }
+    }
+  }
+  return best;
+}
+
+// Universal holiday forecast — same methodology as Easter, but for any holiday
+function forecastNextHoliday(days){
+  const POST_COVID_REOPEN='2023-01-08';
+  if(!days||!days.length) return null;
+
+  // 1. Detect next holiday
+  const nextHol = detectNextForecastHoliday(days);
+  if(!nextHol) return null;
+
+  const {def, year:targetYear} = nextHol;
+  const targetDates = def.getDates(targetYear);
+
+  // 2. Collect all historical days for this holiday (post-COVID only for projection)
+  const allHolDays = getHolidayDays(days, def);
+  const postCovidHolDays = allHolDays.filter(d=>d.date>=POST_COVID_REOPEN);
+  const projBase = postCovidHolDays.length>0 ? postCovidHolDays : allHolDays;
+
+  // 3. Growth rate — same OLS method
+  const yoy=yoyAnalysis(days);
+  let growthRate=0.05, growthMethod='default 5%', dynamicCap=0.20;
+  const postCovidYears=yoy.filter(y=>y.year>='2023'&&y.count>=30&&y.avgDaily>0);
+  const opYears=postCovidYears.length>0?postCovidYears:yoy.filter(y=>y.count>=30&&y.avgDaily>0&&!isBorderClosed(y.year+'-06-01'));
+
+  // Dynamic cap from holiday-to-holiday YoY
+  const holByYear={};
+  for(const d of postCovidHolDays){const y=d.date.substring(0,4);if(!holByYear[y])holByYear[y]=[];holByYear[y].push(d);}
+  const holYrs=Object.keys(holByYear).filter(y=>holByYear[y].length>=2).sort();
+  if(holYrs.length>=2){
+    const y1=holYrs[holYrs.length-2],y2=holYrs[holYrs.length-1];
+    const t1=holByYear[y1].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
+    const t2=holByYear[y2].reduce((s,d)=>s+(d.dt.ad_tot||0),0);
+    if(t1>0) dynamicCap=Math.max(0.05,(t2-t1)/t1);
+  }
+
+  // Same-period YoY for hourly factor
+  let hourlyFactor=1.05;
+  const _spYrs=opYears.length>=2?opYears:yoy.filter(y=>y.year>='2023'&&y.count>=30&&y.avgDaily>0);
+  if(_spYrs.length>=2){
+    const _p=_spYrs[_spYrs.length-2],_l=_spYrs[_spYrs.length-1];
+    hourlyFactor=_l.avgDaily/_p.avgDaily;
+  }
+
+  let growthCalcSteps=[];
+  if(opYears.length>=3){
+    const n=opYears.length;
+    const xs=opYears.map((_,i)=>i),ys=opYears.map(y=>y.avgDaily);
+    const xMean=xs.reduce((a,b)=>a+b,0)/n,yMean=ys.reduce((a,b)=>a+b,0)/n;
+    const ssxy=xs.reduce((s,x,i)=>s+(x-xMean)*(ys[i]-yMean),0);
+    const ssxx=xs.reduce((s,x)=>s+(x-xMean)**2,0);
+    const slope=ssxx>0?ssxy/ssxx:0;
+    growthRate=yMean>0?slope/yMean:0.05;
+    growthMethod='OLS regression ('+n+' years)';
+    growthCalcSteps=[
+      'Method: OLS on avg daily across '+n+' post-COVID years',
+      'Years: '+opYears.map(y=>y.year+' ('+Number(y.avgDaily).toLocaleString()+')').join(', '),
+      'Growth rate: '+(growthRate*100).toFixed(1)+'% → capped at '+(Math.max(-0.10,Math.min(dynamicCap,growthRate))*100).toFixed(1)+'%',
+      'Hourly factor: same-period YoY ×'+hourlyFactor.toFixed(3),
+      'Historical '+def.label(targetYear-1)+' data: '+postCovidHolDays.filter(d=>d.date.startsWith(String(targetYear-1))).length+' days',
+    ];
+  } else if(opYears.length===2){
+    const r=(opYears[1].avgDaily/opYears[0].avgDaily)-1;
+    growthRate=r; growthMethod='CAGR (2 years)';
+    growthCalcSteps=['CAGR = '+(r*100).toFixed(1)+'%','Hourly: ×'+hourlyFactor.toFixed(3)];
+  }
+  growthRate=Math.max(-0.10,Math.min(dynamicCap,growthRate));
+  const factor=1+growthRate;
+
+  // 4. Build dayProfiles for each target date
+  const mostRecentYear=projBase.length?projBase.reduce((a,b)=>a.date>b.date?a:b).date.substring(0,4):null;
+  const dayProfiles={};
+
+  for(const td of targetDates){
+    // Find historical matches for same "relative day" in prior years
+    // For date-fixed holidays: same month/day-offset
+    // For Easter: matched by offset already
+    const relOffset = targetDates.indexOf(td); // 0-based day index
+    const histMatches = postCovidHolDays.filter(d=>{
+      const matchDates=def.getDates(parseInt(d.date.substring(0,4)));
+      return matchDates[relOffset] && matchDates[relOffset].date===d.date;
+    });
+    const recentMatch = mostRecentYear ? histMatches.find(d=>d.date.startsWith(mostRecentYear)) : null;
+    const profileDays = histMatches.length>0 ? histMatches : projBase;
+    const profile = avgHourlyProfile(profileDays);
+    const baselineTotal = recentMatch
+      ? (recentMatch.dt.ad_tot||0)
+      : (histMatches.length>0
+        ? Math.round(histMatches.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/histMatches.length)
+        : Math.round(projBase.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/projBase.length));
+    const avgTotal = histMatches.length>0
+      ? Math.round(histMatches.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/histMatches.length)
+      : Math.round(projBase.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/projBase.length);
+
+    dayProfiles[String(relOffset)]={
+      ...td,
+      profile, avgTotal,
+      projTotal: Math.round(baselineTotal*factor),
+      baselineTotal, baselineYear: recentMatch?mostRecentYear:'avg',
+      histCount: histMatches.length, isEstimated: histMatches.length===0,
+      fullYearFactor: hourlyFactor,
+    };
+  }
+
+  const avgHolTotal = projBase.length
+    ? Math.round(projBase.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/projBase.length) : 0;
+
+  return {
+    dayProfiles,
+    avgEasterTotal: avgHolTotal, // keep field name for compatibility
+    growthRate, growthMethod, growthCalcSteps,
+    factor, fullYearFactor: hourlyFactor,
+    easterDays: allHolDays,      // all historical days for this holiday type
+    byOffset: {},
+    targetEasterLabel: nextHol.label,
+    holidayType: nextHol.type,
+    holidayIcon: nextHol.icon,
+    projectedTotal: Math.round(avgHolTotal*factor),
+    baselineNote: '(post-COVID '+postCovidHolDays.length+' days)',
+    postCovidEasterCount: postCovidHolDays.length,
+  };
+}
 
 function forecastEaster2026(days){
   const POST_COVID_REOPEN='2023-01-08'; // traffic regime changed after reopening
@@ -3540,95 +3924,295 @@ function renderContent(){
 // HKR:     5.0 pax/min = 300 pax/hr per counter  |  600 pax/hr per e-channel
 // Visitor: 3.0 pax/min = 180 pax/hr per counter  |  360 pax/hr per e-channel
 // Hall capacity baseline: ~2,500 pax (arrival hall capacity for load reference)
+// ── AI Context Analysis ──────────────────────────────────────────────────────
+async function runAIContextAnalysis(cardId, easterYear, gfDate, emDate){
+  const btn  = document.getElementById('ai-ctx-btn-'+cardId);
+  const body = document.getElementById('ai-ctx-body-'+cardId);
+  if(!btn||!body) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Analysing…';
+
+  // Animate loading dots
+  let dot=0;
+  const loadTimer = setInterval(()=>{
+    body.innerHTML = `<div style="padding:24px;text-align:center;font-family:'Space Mono',monospace">
+      <div style="font-size:28px;margin-bottom:12px">${['🔍','📰','🌤','📊','🚆'][dot%5]}</div>
+      <div style="font-size:11px;color:var(--muted)">${['Reviewing HK cross-border travel context…','Checking Mainland holiday & tourism factors…','Assessing weather & seasonal patterns…','Evaluating economic & policy environment…','Synthesising traffic impact assessment…'][dot%5]}</div>
+    </div>`;
+    dot++;
+  }, 900);
+
+  // Build rich context from loaded data
+  const days = typeof eraFilter==='function' ? eraFilter(allDays) : allDays;
+  const latestDate = allDays.length ? allDays[allDays.length-1].date : 'unknown';
+  const easter = typeof forecastEaster2026==='function' ? forecastEaster2026(days) : null;
+  const projSummary = easter ? Object.entries(easter.dayProfiles||{}).sort((a,b)=>+a[0]-+b[0])
+    .map(([off,dp])=>`  ${dp.label}: projected ${dp.projTotal.toLocaleString()} pax`).join('\n') : 'N/A';
+
+  const prompt = `You are an expert analyst for LSC (羅湖 Lo Wu Boundary Control Point), the busiest HK-Mainland land border crossing.
+
+Today's date: ${new Date().toLocaleDateString('en-HK',{year:'numeric',month:'long',day:'numeric'})}.
+Data loaded through: ${latestDate}.
+Target Easter: ${easterYear} (Good Friday ${gfDate} → Day after Easter Monday ${emDate}).
+
+Current base projections:
+${projSummary}
+
+Your task: Provide a comprehensive real-world factors assessment for Easter ${easterYear} cross-border traffic at Lo Wu. Cover BOTH Hong Kong AND Mainland China factors.
+
+Structure your response with these sections:
+
+## 🇭🇰 Hong Kong Factors
+
+**Weather & Seasonal**
+Typical April weather in HK (temperature, humidity, rain probability, typhoon season onset). How does weather affect cross-border travel decisions?
+
+**Public Holidays & Events**
+Easter is a statutory HK PH. Any major HK events, festivals, concerts, or exhibitions that could compete for resident leisure time or attract Mainland visitors?
+
+**Transport & Infrastructure**
+MTR East Rail / Lo Wu service capacity. Any known engineering works, service enhancements, or disruptions typical in Easter period?
+
+**Economic & Consumer Sentiment**
+HK retail, tourism, F&B sectors — are residents more likely to travel outbound or stay in HK? Typical HK Easter travel patterns (short getaway vs day trips).
+
+## 🇨🇳 Mainland China Factors
+
+**Holiday Alignment**
+Is Easter a public holiday in Mainland? How does the timing align with Qingming Festival (清明節, usually early April)? If Qingming falls near Easter, combined holiday effects?
+
+**Mainland Tourism Appetite**
+Mainland visitor trends to HK. Any travel campaigns, visa policies, or cross-border incentive schemes? Typical Mainland visitor behaviour during Easter (shopping, leisure, transit)?
+
+**Mainland Events & Competition**
+Are there major events in Guangdong / GBA region that might attract HK residents to cross over, or keep Mainlanders in GBA instead of coming to HK?
+
+**Economic Factors**
+Consumer confidence in GBA. Exchange rate HKD/RMB implications for Mainland visitor spending motivation. Any cross-border e-commerce or duty-free incentives?
+
+**Border Policy & Capacity**
+ImmD / Mainland immigration capacity arrangements for peak Easter period. Any mutual recognition schemes, faster clearance tech deployments expected?
+
+## 📊 Overall Impact Assessment
+
+Provide:
+- **HK Factors Impact**: Positive / Neutral / Negative on total pax (brief reason)  
+- **Mainland Factors Impact**: Positive / Neutral / Negative on total pax (brief reason)
+- **Overall Sentiment Score**: A single integer from -3 (very negative) to +3 (very positive) on ONE line, formatted exactly as: "Overall Sentiment Score: +1" or "Overall Sentiment Score: -2" etc.
+- **Suggested Projection Adjustment**: e.g. "Base projections appear reasonable. Consider +3-5% uplift if Qingming falls immediately before Easter, boosting the pre-Easter departure surge."
+- **Key Watch Points** (3-5 bullet points of what to monitor in the 2 weeks before Easter)
+
+Be specific and practical. Note where you are reasoning from general knowledge vs what would need live verification. Keep total response under 600 words.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1200,
+        system: 'You are a concise, practical expert analyst. Provide structured, actionable analysis. Use markdown headers and bullet points. Be specific about HK and Mainland China factors separately.',
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+
+    clearInterval(loadTimer);
+
+    if(!res.ok){
+      const err = await res.json().catch(()=>({error:{message:'HTTP '+res.status}}));
+      throw new Error(err.error?.message || 'HTTP '+res.status);
+    }
+
+    const data = await res.json();
+    const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
+    if(!text) throw new Error('Empty response from API');
+
+    // Markdown → HTML
+    function md(t){
+      return t
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+        .replace(/\*(.+?)\*/g,'<i>$1</i>')
+        .replace(/^## (.+)$/gm,'<h4 style="color:var(--gold);font-size:11px;margin:14px 0 5px;padding-bottom:3px;border-bottom:1px solid rgba(245,200,66,.2);letter-spacing:.05em">$1</h4>')
+        .replace(/^\*\*(.+?)\*\*$/gm,'<div style="font-size:10px;font-weight:700;color:var(--text);margin:7px 0 2px">$1</div>')
+        .replace(/^[-•] (.+)$/gm,'<li style="margin:2px 0;font-size:10.5px;color:var(--dim);line-height:1.5">$1</li>')
+        .replace(/(<li[^>]*>.*<\/li>\n?)+/gs,'<ul style="margin:4px 0 8px 14px;padding:0">$&</ul>')
+        .replace(/\n\n+/g,'<br>')
+        .replace(/\n/g,' ');
+    }
+
+    // Extract sentiment score
+    const scoreMatch = text.match(/Overall Sentiment Score:\s*([+-]?\d)/i);
+    const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+    const scoreCol = score>=2?'#22c55e':score<=-2?'#f87171':'#f59e0b';
+    const scoreLabel = score>=2?'Positive 📈':score<=-2?'Negative 📉':'Neutral ➡';
+    const scoreBar = score>=0
+      ? '<div style="display:flex;align-items:center;gap:4px">'+'<div style="width:12px;height:12px;border-radius:2px;background:#444"></div>'.repeat(3)+'<div style="width:12px;height:12px;border-radius:2px;background:'+scoreCol+'"></div>'.repeat(Math.min(score,3))+'</div>'
+      : '<div style="display:flex;align-items:center;gap:4px">'+'<div style="width:12px;height:12px;border-radius:2px;background:'+scoreCol+'"></div>'.repeat(Math.min(-score,3))+'<div style="width:12px;height:12px;border-radius:2px;background:#444"></div>'.repeat(3)+'</div>';
+
+    body.innerHTML = `
+      <div style="padding:12px 16px">
+        <div style="display:flex;align-items:center;gap:14px;padding:10px 14px;
+             background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.2);
+             border-radius:6px;margin-bottom:14px">
+          <div style="text-align:center;min-width:56px">
+            <div style="font-size:26px;font-weight:700;color:${scoreCol};line-height:1">${score>=0?'+':''}${score}</div>
+            <div style="font-size:8px;color:${scoreCol};font-family:'Space Mono',monospace;margin-top:2px">${scoreLabel}</div>
+          </div>
+          <div style="flex:1">
+            ${scoreBar}
+            <div style="font-size:9px;color:var(--muted);margin-top:4px">
+              Impact score: −3 (very negative) → +3 (very positive) vs base forecast<br>
+              <span style="opacity:.7">Knowledge-based analysis · verify live data before operational decisions · ${new Date().toLocaleString('en-HK')}</span>
+            </div>
+          </div>
+          <button onclick="runAIContextAnalysis('${cardId}','${easterYear}','${gfDate}','${emDate}')"
+            style="padding:5px 10px;border-radius:5px;border:1px solid var(--border);
+            background:transparent;color:var(--muted);cursor:pointer;font-size:9px;
+            font-family:'Space Mono',monospace;white-space:nowrap">↻ Refresh</button>
+        </div>
+        <div style="font-size:10.5px;line-height:1.6;color:var(--dim)">${md(text)}</div>
+        <div style="margin-top:12px;padding-top:8px;border-top:1px solid var(--border);
+             font-size:8.5px;color:var(--muted);font-family:'Space Mono',monospace">
+          ⚠ Knowledge-based analysis. Weather forecasts, live news &amp; policy changes require independent verification before operational use.
+        </div>
+      </div>`;
+
+  } catch(err){
+    clearInterval(loadTimer);
+    body.innerHTML = `<div style="padding:16px">
+      <div style="color:#f87171;font-size:11px;font-family:'Space Mono',monospace;margin-bottom:8px">⚠ ${err.message}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:12px">Make sure you are using the app on claude.ai</div>
+      <button onclick="runAIContextAnalysis('${cardId}','${easterYear}','${gfDate}','${emDate}')"
+        style="padding:6px 14px;border-radius:5px;border:1px solid var(--border);
+        background:transparent;color:var(--muted);cursor:pointer;font-size:10px;
+        font-family:'Space Mono',monospace">↻ Retry</button>
+    </div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '↻ Re-run';
+}
+
 function exportAnalysisPDF(){
-  const el=document.getElementById('content');
-  if(!el){alert('No analysis content to export');return;}
+  const isPC = currentEra==='postcovid';
+  const hdrCol = isPC ? '#1A5276' : '#1D6A40';
+  const latestD = allDays.length ? allDays[allDays.length-1].date : '';
+  const eraLabel = isPC ? 'Post-COVID' : 'Since Commissioning';
 
-  // Grab the current era/date context for the header
-  const days=eraFilter(allDays);
-  const eraLabel=currentEra==='postcovid'?'Post-COVID':'Since Commissioning';
-  const latestD=allDays.length?allDays[allDays.length-1].date:'';
-  const isPC=currentEra==='postcovid';
-  const hdrCol=isPC?'#1A5276':'#1D6A40';
+  // Inject a print-only <style> that overrides the dark theme and hides UI chrome.
+  // window.print() reads this directly — no pop-ups, no blobs, no CSP issues.
+  const styleId = '__lsc_print_css__';
+  document.getElementById(styleId)?.remove();
+  const s = document.createElement('style');
+  s.id = styleId;
+  s.media = 'print';
+  s.textContent = `
+    @page { margin: 12mm; size: A4 landscape; }
 
-  // Collect only the content we want: strip buttons, dark bg colours, CSS vars
-  let body=el.innerHTML;
-  body=body.replace(/<button[^>]*>[\s\S]*?<\/button>/gi,'');  // remove buttons
-  body=body.replace(/<canvas[^>]*>[\s\S]*?<\/canvas>/gi,'');  // remove canvas
-  // Replace dark-mode CSS variable references with light equivalents
-  const varMap={'var(--text)':'#111','var(--dim)':'#333','var(--muted)':'#666',
-    'var(--border)':'#e5e7eb','var(--surface)':'#f9fafb','var(--surface2)':'#f3f4f6',
-    'var(--surface3)':'#eff0f1','var(--bg)':'#fff',
-    'var(--accent)':'#1A5276','var(--res)':'#16a34a','var(--vis)':'#B07D10',
-    'var(--gold)':'#B07D10','var(--arrival)':'#1565C0','var(--departure)':'#7D3C98'};
-  Object.entries(varMap).forEach(([v,r])=>{ body=body.split(v).join(r); });
+    /* hide everything except the analysis content area */
+    body > *:not(#__lsc_print_wrap__) { display: none !important; }
 
-  const css=`
-    *{box-sizing:border-box}
-    body{font-family:Calibri,Arial,sans-serif;color:#111;background:#fff;margin:0;padding:16px;font-size:10.5px}
-    .pdf-header{background:${hdrCol};color:#fff;padding:14px 20px;margin-bottom:18px;border-radius:4px;display:flex;justify-content:space-between;align-items:center}
-    .pdf-header h1{margin:0;font-size:18px;font-weight:700}
-    .pdf-header span{font-size:10px;opacity:.8}
-    table{border-collapse:collapse;width:100%;margin-bottom:10px;font-size:9.5px}
-    th{background:${hdrCol};color:#fff;padding:4px 7px;text-align:center;white-space:nowrap}
-    td{padding:3px 7px;border-bottom:1px solid #e5e7eb}
-    tr:nth-child(even) td{background:#f8fafc}
-    h3{color:${hdrCol};font-size:12px;font-weight:700;margin:14px 0 4px}
-    .af-page-title{font-weight:700;font-size:13px;color:${hdrCol};margin:16px 0 6px;
-      border-bottom:2px solid ${hdrCol};padding-bottom:3px;page-break-before:auto}
-    .af-card{border:1px solid #e5e7eb;border-radius:4px;margin-bottom:12px;overflow:hidden}
-    .af-card-hdr{background:#f0f4f8;padding:8px 12px;border-bottom:1px solid #e5e7eb}
-    .af-card-hdr h3{margin:0;font-size:11px}
-    .af-card-body{padding:8px 12px}
-    .kpi-ribbon{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-    .kpi-card{border:1px solid #e5e7eb;border-radius:4px;padding:8px 12px;min-width:120px}
-    .kpi-lbl{font-size:8px;color:#666;text-transform:uppercase;letter-spacing:.04em}
-    .kpi-val{font-size:16px;font-weight:700;margin:2px 0}
-    .kpi-sub{font-size:8px;color:#888}
-    .pos{color:#16a34a;font-weight:700}.neg{color:#dc2626;font-weight:700}
-    .hi{font-weight:700}.arr-c{color:#1565C0}.dep-c{color:#7D3C98}
-    .bar-track{background:#e5e7eb;border-radius:3px;height:8px;overflow:hidden;margin:2px 0}
-    .bar-fill{height:100%;border-radius:3px}
-    .bf-accent{background:#1A5276}.bf-gold{background:#B07D10}
-    .day-cards{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-    .day-card{border:1px solid #e5e7eb;border-radius:4px;padding:8px 10px;min-width:140px;font-size:9.5px}
-    .eday-panel{display:block!important}
-    @media print{
-      @page{margin:10mm;size:A4 landscape}
-      body{padding:0}
-      .af-page-title{page-break-before:auto}
-      .af-card{page-break-inside:avoid}
-    }`;
+    #__lsc_print_wrap__ {
+      display: block !important;
+      position: static !important;
+      width: 100% !important;
+      background: #fff !important;
+      color: #111 !important;
+      font-family: Calibri, Arial, sans-serif !important;
+      font-size: 10px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
 
-  const fullHtml=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-    <title>LSC Analysis Report — ${latestD}</title>
-    <style>${css}</style></head><body>
-    <div class="pdf-header">
-      <h1>LSC — Analysis &amp; Forecast Report</h1>
-      <span>${eraLabel} &nbsp;·&nbsp; As at: ${latestD} &nbsp;·&nbsp; Generated: ${new Date().toLocaleString('en-HK')}</span>
-    </div>
-    ${body}
-    </body></html>`;
+    /* CSS variable overrides for print */
+    * {
+      --bg: #fff !important; --surface: #f9fafb !important; --surface2: #f3f4f6 !important;
+      --surface3: #eff0f1 !important; --border: #e0e4ea !important;
+      --text: #111 !important; --dim: #333 !important; --muted: #666 !important;
+      --accent: ${hdrCol} !important; --res: #16a34a !important; --vis: #B07D10 !important;
+      --gold: #B07D10 !important; --arrival: #1565C0 !important; --departure: #7D3C98 !important;
+      color-scheme: light !important;
+    }
 
-  // Use Blob URL — works without pop-up permission
-  const blob=new Blob([fullHtml],{type:'text/html'});
-  const url=URL.createObjectURL(blob);
-  // Open in new tab; user presses Cmd/Ctrl+P to save as PDF
-  const a=document.createElement('a');
-  a.href=url;
-  a.target='_blank';
-  a.rel='noopener';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  // Small notice
-  setTimeout(()=>URL.revokeObjectURL(url), 30000);
-  // Show print tip
-  const tip=document.createElement('div');
-  tip.style.cssText='position:fixed;bottom:24px;right:24px;background:#1A5276;color:#fff;padding:12px 18px;border-radius:8px;font-family:Space Mono,monospace;font-size:11px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4)';
-  tip.innerHTML='📄 PDF opened in new tab<br><span style="opacity:.7;font-size:9px">Press Cmd+P (Mac) or Ctrl+P (Win) to save as PDF</span>';
-  document.body.appendChild(tip);
-  setTimeout(()=>tip.remove(), 5000);
+    /* layout */
+    .af-wrap { background: #fff !important; padding: 0 !important; }
+    .af-card  { border: 1px solid #dde3ec !important; border-radius: 4px !important;
+                margin-bottom: 8px !important; page-break-inside: avoid !important;
+                background: #fff !important; }
+    .af-card-hdr { background: #eef2f7 !important; padding: 6px 10px !important;
+                   border-bottom: 1px solid #dde3ec !important; }
+    .af-card-hdr h3 { color: ${hdrCol} !important; font-size: 10px !important; margin: 0 !important; }
+    .af-card-body { padding: 6px 10px !important; background: #fff !important; }
+    .af-page-title { color: ${hdrCol} !important; font-size: 12px !important; font-weight: 700 !important;
+                     border-bottom: 2px solid ${hdrCol} !important; padding-bottom: 3px !important;
+                     margin: 12px 0 6px !important; page-break-before: auto !important; }
+    .kpi-ribbon { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; }
+    .kpi-card   { border: 1px solid #dde3ec !important; border-radius: 4px !important;
+                  padding: 6px 10px !important; background: #fff !important; min-width: 100px !important; }
+    .kpi-val  { font-size: 14px !important; font-weight: 700 !important; color: ${hdrCol} !important; }
+    .kpi-lbl  { font-size: 7.5px !important; color: #666 !important; text-transform: uppercase !important; }
+    .kpi-sub  { font-size: 7.5px !important; color: #888 !important; }
+    table { border-collapse: collapse !important; width: 100% !important;
+            font-size: 8.5px !important; margin-bottom: 6px !important; }
+    th { background: ${hdrCol} !important; color: #fff !important;
+         padding: 3px 6px !important; text-align: center !important; font-size: 8px !important; }
+    td { padding: 2px 6px !important; border-bottom: 1px solid #eee !important;
+         background: #fff !important; color: #111 !important; }
+    tr:nth-child(even) td { background: #f7f9fc !important; }
+    .pos { color: #16a34a !important; font-weight: 700 !important; }
+    .neg { color: #dc2626 !important; font-weight: 700 !important; }
+    .hi  { font-weight: 700 !important; }
+    .arr-c { color: #1565C0 !important; }
+    .dep-c { color: #7D3C98 !important; }
+    .bar-track { background: #e5e7eb !important; border-radius: 2px !important;
+                 height: 6px !important; overflow: hidden !important; }
+    .bar-fill { height: 100% !important; }
+    .bf-accent { background: ${hdrCol} !important; }
+    .bf-gold   { background: #B07D10 !important; }
+    .day-cards { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; }
+    .day-card  { border: 1px solid #dde3ec !important; border-radius: 3px !important;
+                 padding: 6px 8px !important; min-width: 120px !important;
+                 font-size: 8.5px !important; background: #fff !important; }
+    .eday-panel { display: block !important; }
+    /* hide interactive / decorative elements */
+    button, .hb-tip, .peak-star, input, select { display: none !important; }
+    .hourly-chart { display: none !important; }   /* bar charts don't print well */
+  `;
+  document.head.appendChild(s);
+
+  // Create a wrapper div that we can target cleanly
+  const wrap = document.createElement('div');
+  wrap.id = '__lsc_print_wrap__';
+
+  // Print header
+  const hdr = document.createElement('div');
+  hdr.style.cssText = `background:${hdrCol};color:#fff;padding:10px 16px;margin-bottom:12px;
+    display:flex;justify-content:space-between;align-items:center;border-radius:3px`;
+  hdr.innerHTML = `<div style="font-size:16px;font-weight:700">LSC — Analysis &amp; Forecast Report</div>
+    <div style="font-size:9px;opacity:.85">${eraLabel} &nbsp;·&nbsp; As at: ${latestD} &nbsp;·&nbsp; ${new Date().toLocaleString('en-HK')}</div>`;
+  wrap.appendChild(hdr);
+
+  // Clone the analysis content
+  const contentEl = document.getElementById('content');
+  if(contentEl){
+    const clone = contentEl.cloneNode(true);
+    // Make all eday-panels visible in clone
+    clone.querySelectorAll('.eday-panel').forEach(p => p.style.display = 'block');
+    // Remove buttons from clone
+    clone.querySelectorAll('button').forEach(b => b.remove());
+    wrap.appendChild(clone);
+  }
+
+  document.body.appendChild(wrap);
+  window.print();
+
+  // Cleanup after print dialog closes
+  setTimeout(()=>{
+    wrap.remove();
+    s.remove();
+  }, 1500);
 }
 
 function exportPPTX(){
