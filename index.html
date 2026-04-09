@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -23,16 +24,16 @@ html,body{background:var(--bg);color:var(--text);color-scheme:dark;font-family:'
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
 /* HEADER */
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+header{background:var(–surface);border-bottom:1px solid var(–border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .brand{display:flex;align-items:center;gap:10px}
-.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#7c6af7);display:flex;align-items:center;justify-content:center;font-size:13px}
+.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(–accent),#7c6af7);display:flex;align-items:center;justify-content:center;font-size:13px}
 .brand-name{font-family:Space Mono,monospace;font-size:12px;font-weight:700;letter-spacing:.04em}
-.brand-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.brand-sub{font-size:10px;color:var(–muted);margin-top:1px}
 .hdr-right{display:flex;align-items:center;gap:12px}
 .hdr-stat{text-align:right}
-.hdr-val{font-family:Space Mono,monospace;font-size:16px;font-weight:700;color:var(--accent);line-height:1}
-.hdr-label{font-size:9px;color:var(--muted)}
-.btn-sm{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace}
+.hdr-val{font-family:Space Mono,monospace;font-size:16px;font-weight:700;color:var(–accent);line-height:1}
+.hdr-label{font-size:9px;color:var(–muted)}
+.btn-sm{background:transparent;border:1px solid var(–border);color:var(–muted);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace}
 
 /* MAIN */
 main{max-width:1300px;margin:0 auto;padding:20px}
@@ -40,207 +41,207 @@ main{max-width:1300px;margin:0 auto;padding:20px}
 /* UPLOAD */
 .upload-wrap{max-width:520px;margin:60px auto;text-align:center}
 .upload-title{font-family:Space Mono,monospace;font-size:22px;font-weight:700;line-height:1.3;margin-bottom:8px}
-.upload-sub{color:var(--dim);font-size:13px;margin-bottom:36px;line-height:1.7}
-.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:44px 28px;cursor:pointer;position:relative;transition:all .2s}
-.drop-zone:hover,.drop-zone.over{border-color:var(--accent);background:rgba(0,212,184,.04)}
+.upload-sub{color:var(–dim);font-size:13px;margin-bottom:36px;line-height:1.7}
+.drop-zone{border:2px dashed var(–border);border-radius:12px;padding:44px 28px;cursor:pointer;position:relative;transition:all .2s}
+.drop-zone:hover,.drop-zone.over{border-color:var(–accent);background:rgba(0,212,184,.04)}
 .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .drop-icon{font-size:38px;margin-bottom:12px}
-.drop-t{font-family:Space Mono,monospace;font-size:12px;color:var(--dim);margin-bottom:5px}
-.drop-h{font-size:11px;color:var(--muted)}
-.loading-msg{color:var(--accent);font-size:12px;font-family:Space Mono,monospace;margin-top:16px}
+.drop-t{font-family:Space Mono,monospace;font-size:12px;color:var(–dim);margin-bottom:5px}
+.drop-h{font-size:11px;color:var(–muted)}
+.loading-msg{color:var(–accent);font-size:12px;font-family:Space Mono,monospace;margin-top:16px}
 .err-box{color:#ff4d6a;font-size:10px;padding:10px;background:rgba(255,77,106,.1);border-radius:6px;margin-top:14px;white-space:pre-wrap;font-family:Space Mono,monospace;max-height:240px;overflow-y:auto;text-align:left}
 
 /* DASHBOARD */
 .top-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-.add-btn{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(--dim)}
-.add-btn:hover{border-color:var(--accent);color:var(--accent)}
-.files-label{font-size:11px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.add-btn{display:flex;align-items:center;gap:6px;background:var(–surface);border:1px solid var(–border);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(–dim)}
+.add-btn:hover{border-color:var(–accent);color:var(–accent)}
+.files-label{font-size:11px;color:var(–muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ERA TABS */
-.era-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)}
-.era-tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;font-family:Space Mono,monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;transition:all .15s;margin-bottom:-1px}
-.era-tab.active{border-bottom-color:var(--gold);color:var(--gold)}
+.era-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(–border)}
+.era-tab{background:transparent;border:none;border-bottom:2px solid transparent;padding:10px 20px;cursor:pointer;font-family:Space Mono,monospace;font-size:10px;letter-spacing:.08em;color:var(–muted);text-transform:uppercase;transition:all .15s;margin-bottom:-1px}
+.era-tab.active{border-bottom-color:var(–gold);color:var(–gold)}
 
 /* ERA CONFIG */
-.era-config{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.era-config label{font-size:11px;color:var(--dim);font-family:Space Mono,monospace}
-.era-config input[type=date]{background:var(--surface3);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:5px;font-size:11px;font-family:Space Mono,monospace}
-.era-config input[type=date]:focus{outline:none;border-color:var(--accent)}
-.era-apply{background:var(--accent);color:#000;border:none;padding:5px 14px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700}
+.era-config{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.era-config label{font-size:11px;color:var(–dim);font-family:Space Mono,monospace}
+.era-config input[type=date]{background:var(–surface3);border:1px solid var(–border);color:var(–text);padding:5px 10px;border-radius:5px;font-size:11px;font-family:Space Mono,monospace}
+.era-config input[type=date]:focus{outline:none;border-color:var(–accent)}
+.era-apply{background:var(–accent);color:#000;border:none;padding:5px 14px;border-radius:5px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700}
 
 /* SECTION TABS */
 .sec-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
-.sec-tab{background:transparent;border:1px solid var(--border);border-radius:5px;padding:6px 14px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(--muted);transition:all .15s}
-.sec-tab.active{background:rgba(0,212,184,.1);border-color:var(--accent);color:var(--accent)}
+.sec-tab{background:transparent;border:1px solid var(–border);border-radius:5px;padding:6px 14px;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;color:var(–muted);transition:all .15s}
+.sec-tab.active{background:rgba(0,212,184,.1);border-color:var(–accent);color:var(–accent)}
 
 /* AS-AT DATE */
-.as-at{font-family:Space Mono,monospace;font-size:11px;color:var(--dim);margin-bottom:16px}
+.as-at{font-family:Space Mono,monospace;font-size:11px;color:var(–dim);margin-bottom:16px}
 
 /* RECORD TABLE */
 .record-section{margin-bottom:28px}
-.rs-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase;border-left:3px solid var(--accent);padding-left:10px}
-.record-table-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(--border)}
+.rs-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;color:var(–dim);letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase;border-left:3px solid var(–accent);padding-left:10px}
+.record-table-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(–border)}
 .record-table{width:100%;border-collapse:collapse;font-size:11px}
-.record-table thead tr:first-child th{background:var(--surface2);padding:7px 10px;font-family:Space Mono,monospace;font-size:9px;letter-spacing:.07em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
-.record-table thead tr:last-child th{background:var(--surface);padding:6px 10px;font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);text-align:right;border-bottom:1px solid var(--border)}
+.record-table thead tr:first-child th{background:var(–surface2);padding:7px 10px;font-family:Space Mono,monospace;font-size:9px;letter-spacing:.07em;color:var(–muted);text-align:center;border-bottom:1px solid var(–border);white-space:nowrap}
+.record-table thead tr:last-child th{background:var(–surface);padding:6px 10px;font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(–muted);text-align:right;border-bottom:1px solid var(–border)}
 .record-table thead tr:last-child th.l{text-align:left}
-.record-table thead th.group-hdr{border-left:1px solid var(--border)}
+.record-table thead th.group-hdr{border-left:1px solid var(–border)}
 .record-table tbody tr{transition:background .1s}
-.record-table tbody tr:nth-child(even){background:var(--surface2)}
-.record-table tbody tr:nth-child(odd){background:var(--surface)}
+.record-table tbody tr:nth-child(even){background:var(–surface2)}
+.record-table tbody tr:nth-child(odd){background:var(–surface)}
 .record-table tbody tr.rank1{background:rgba(245,200,66,.06)!important}
-.record-table tbody tr.highlight{color:var(--gold)}
-.record-table tbody td{padding:7px 10px;font-family:Space Mono,monospace;font-size:11px;text-align:right;color:var(--dim);white-space:nowrap}
+.record-table tbody tr.highlight{color:var(–gold)}
+.record-table tbody td{padding:7px 10px;font-family:Space Mono,monospace;font-size:11px;text-align:right;color:var(–dim);white-space:nowrap}
 .record-table tbody td.l{text-align:left}
-.record-table tbody td.rank-cell{font-size:10px;color:var(--muted);text-align:center}
-.record-table tbody td.rank1-cell{color:var(--gold);font-weight:700}
-.record-table tbody td.total-cell{color:var(--tot);font-weight:700}
-.record-table tbody td.remarks-cell{color:var(--dim);font-size:10px;text-align:left}
-.record-table tbody tr.rank1 td.total-cell{color:var(--gold)}
+.record-table tbody td.rank-cell{font-size:10px;color:var(–muted);text-align:center}
+.record-table tbody td.rank1-cell{color:var(–gold);font-weight:700}
+.record-table tbody td.total-cell{color:var(–tot);font-weight:700}
+.record-table tbody td.remarks-cell{color:var(–dim);font-size:10px;text-align:left}
+.record-table tbody tr.rank1 td.total-cell{color:var(–gold)}
 
 /* GRID for sections */
 .tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(560px,1fr));gap:20px}
 
 @media print{
-  :root{--bg:#fff;--surface:#fff;--surface2:#f5f5f5;--surface3:#eee;--border:#ccc;--accent:#007a6a;--gold:#b8860b;--text:#111;--dim:#444;--muted:#777;--res:#1a7a3a;--vis:#8a6a00;--tot:#007a6a;}
-  header,.top-bar,.era-tabs,.era-config,.sec-tabs,.add-btn,.hdr-right{display:none!important}
-  body,html{background:#fff;color:#111;font-size:10px}
-  main{padding:8px;max-width:100%}
-  .tables-grid{grid-template-columns:1fr!important}
-  .record-table-wrap{border:1px solid #ccc;page-break-inside:avoid}
-  .record-table{font-size:9px}
-  .record-section{margin-bottom:16px;page-break-inside:avoid}
-  .rs-title{color:#111;border-left-color:#007a6a;font-size:9px}
-  .as-at{color:#444;font-size:9px}
-  .pdf-header{display:block!important}
+:root{–bg:#fff;–surface:#fff;–surface2:#f5f5f5;–surface3:#eee;–border:#ccc;–accent:#007a6a;–gold:#b8860b;–text:#111;–dim:#444;–muted:#777;–res:#1a7a3a;–vis:#8a6a00;–tot:#007a6a;}
+header,.top-bar,.era-tabs,.era-config,.sec-tabs,.add-btn,.hdr-right{display:none!important}
+body,html{background:#fff;color:#111;font-size:10px}
+main{padding:8px;max-width:100%}
+.tables-grid{grid-template-columns:1fr!important}
+.record-table-wrap{border:1px solid #ccc;page-break-inside:avoid}
+.record-table{font-size:9px}
+.record-section{margin-bottom:16px;page-break-inside:avoid}
+.rs-title{color:#111;border-left-color:#007a6a;font-size:9px}
+.as-at{color:#444;font-size:9px}
+.pdf-header{display:block!important}
 }
 .pdf-header{display:none;text-align:center;margin-bottom:12px}
 .pdf-header h2{font-size:16px;font-weight:700;color:#111}
 .pdf-header p{font-size:10px;color:#444;margin-top:4px}
 
 /* ════════════════════════════════════════════════
-   ANALYSIS & FORECAST
-   ════════════════════════════════════════════════ */
-.af-page-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-.af-page-title::after{content:'';flex:1;height:1px;background:var(--border)}
+ANALYSIS & FORECAST
+════════════════════════════════════════════════ */
+.af-page-title{font-family:Space Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(–muted);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.af-page-title::after{content:’’;flex:1;height:1px;background:var(–border)}
 .kpi-ribbon{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
-.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
-.kpi-card:hover{border-color:var(--accent)}
-.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
-.kpi-card.kc-accent::before{background:var(--accent)}.kpi-card.kc-gold::before{background:var(--gold)}
-.kpi-card.kc-res::before{background:var(--res)}.kpi-card.kc-dep::before{background:var(--departure)}
+.kpi-card{background:var(–surface);border:1px solid var(–border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.kpi-card:hover{border-color:var(–accent)}
+.kpi-card::before{content:’’;position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.kpi-card.kc-accent::before{background:var(–accent)}.kpi-card.kc-gold::before{background:var(–gold)}
+.kpi-card.kc-res::before{background:var(–res)}.kpi-card.kc-dep::before{background:var(–departure)}
 .kpi-card.kc-purple::before{background:#7c6af7}
-.kpi-lbl{font-size:9px;font-family:Space Mono,monospace;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
-.kpi-val{font-family:Space Mono,monospace;font-size:26px;font-weight:700;line-height:1;color:var(--text)}
-.kpi-sub{font-size:10px;color:var(--dim);margin-top:4px}
+.kpi-lbl{font-size:9px;font-family:Space Mono,monospace;letter-spacing:.1em;color:var(–muted);text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-family:Space Mono,monospace;font-size:26px;font-weight:700;line-height:1;color:var(–text)}
+.kpi-sub{font-size:10px;color:var(–dim);margin-top:4px}
 .kpi-trend{font-size:11px;font-weight:600;margin-top:4px}
-.kpi-trend.up{color:var(--res)}.kpi-trend.dn{color:#f87171}
+.kpi-trend.up{color:var(–res)}.kpi-trend.dn{color:#f87171}
 .af-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 @media(max-width:900px){.af-grid{grid-template-columns:1fr}}
-.af-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.af-card-hdr{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.af-card-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.af-card{background:var(–surface);border:1px solid var(–border);border-radius:10px;overflow:hidden}
+.af-card-hdr{padding:14px 18px 12px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.af-card-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(–dim);text-transform:uppercase}
 .af-card-body{padding:16px 18px}
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
 .bar-row:last-child{margin-bottom:0}
-.bar-label{font-size:11px;color:var(--dim);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar-track{flex:1;height:7px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.bar-label{font-size:11px;color:var(–dim);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:7px;background:var(–surface3);border-radius:4px;overflow:hidden}
 .bar-fill{height:100%;border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
-.bar-fill.bf-accent{background:linear-gradient(90deg,var(--accent),#00b8a0)}
-.bar-fill.bf-gold{background:linear-gradient(90deg,var(--gold),#e8a800)}
+.bar-fill.bf-accent{background:linear-gradient(90deg,var(–accent),#00b8a0)}
+.bar-fill.bf-gold{background:linear-gradient(90deg,var(–gold),#e8a800)}
 .bar-fill.bf-arr{background:linear-gradient(90deg,#0097A7,#00bcd4)}
 .bar-fill.bf-dep{background:linear-gradient(90deg,#5B3D9E,#7c6af7)}
-.bar-val{font-family:Space Mono,monospace;font-size:10px;color:var(--text);font-weight:600;width:64px;text-align:right;flex-shrink:0}
+.bar-val{font-family:Space Mono,monospace;font-size:10px;color:var(–text);font-weight:600;width:64px;text-align:right;flex-shrink:0}
 .af-table{width:100%;border-collapse:collapse;font-size:11px}
-.af-table thead th{padding:7px 10px;background:var(--surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.08em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+.af-table thead th{padding:7px 10px;background:var(–surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.08em;color:var(–muted);text-align:center;border-bottom:1px solid var(–border);white-space:nowrap}
 .af-table thead th:first-child{text-align:left}
-.af-table tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
-.af-table tbody tr:hover{background:var(--surface2)}
+.af-table tbody tr{border-bottom:1px solid var(–border);transition:background .1s}
+.af-table tbody tr:hover{background:var(–surface2)}
 .af-table tbody tr:last-child{border-bottom:none}
-.af-table tbody td{padding:8px 10px;text-align:center;color:var(--dim);font-family:Space Mono,monospace;font-size:10px}
-.af-table tbody td:first-child{text-align:left;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text)}
-.af-table .pos{color:var(--res);font-weight:700}.af-table .neg{color:#f87171;font-weight:700}
-.af-table .arr-c{color:var(--arrival)}.af-table .dep-c{color:var(--departure)}
-.af-table .hi{color:var(--gold);font-weight:700}
+.af-table tbody td{padding:8px 10px;text-align:center;color:var(–dim);font-family:Space Mono,monospace;font-size:10px}
+.af-table tbody td:first-child{text-align:left;font-family:‘DM Sans’,sans-serif;font-size:11px;font-weight:500;color:var(–text)}
+.af-table .pos{color:var(–res);font-weight:700}.af-table .neg{color:#f87171;font-weight:700}
+.af-table .arr-c{color:var(–arrival)}.af-table .dep-c{color:var(–departure)}
+.af-table .hi{color:var(–gold);font-weight:700}
 .day-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
 @media(max-width:700px){.day-cards{grid-template-columns:1fr 1fr}}
-.day-card{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 14px;text-align:center;transition:all .2s;cursor:default;position:relative;overflow:hidden}
-.day-card:hover{border-color:var(--gold);background:var(--surface3)}
+.day-card{background:var(–surface2);border:1px solid var(–border);border-radius:9px;padding:16px 14px;text-align:center;transition:all .2s;cursor:default;position:relative;overflow:hidden}
+.day-card:hover{border-color:var(–gold);background:var(–surface3)}
 .day-card-tag{position:absolute;top:0;left:0;right:0;height:3px}
-.day-card-date{font-family:Space Mono,monospace;font-size:9px;color:var(--muted);margin-bottom:4px}
-.day-card-occasion{font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.3}
-.day-card-total{font-family:Space Mono,monospace;font-size:24px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:8px}
-.day-card-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-top:1px solid var(--border)}
+.day-card-date{font-family:Space Mono,monospace;font-size:9px;color:var(–muted);margin-bottom:4px}
+.day-card-occasion{font-size:12px;font-weight:600;color:var(–text);margin-bottom:12px;line-height:1.3}
+.day-card-total{font-family:Space Mono,monospace;font-size:24px;font-weight:700;color:var(–gold);line-height:1;margin-bottom:8px}
+.day-card-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-top:1px solid var(–border)}
 .day-card-row:first-of-type{margin-top:8px}
-.day-card-row .dcr-lbl{color:var(--muted)}
+.day-card-row .dcr-lbl{color:var(–muted)}
 .hourly-wrap{overflow-x:auto}
 .hourly-chart{display:flex;align-items:flex-end;gap:2px;height:72px;min-width:480px}
 .hb-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
 .hb-wrap:hover .hb-tip{display:flex}
 .hb-fill{width:100%;border-radius:2px 2px 0 0;min-height:2px;transition:height .5s}
-.hb-lbl{font-size:6px;color:var(--muted);font-family:Space Mono,monospace;transform:rotate(-40deg);white-space:nowrap;line-height:1;margin-top:1px}
-.hb-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:9px;white-space:nowrap;z-index:20;font-family:Space Mono,monospace;flex-direction:column;gap:2px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
-.hb-tip b{color:var(--gold)}
+.hb-lbl{font-size:6px;color:var(–muted);font-family:Space Mono,monospace;transform:rotate(-40deg);white-space:nowrap;line-height:1;margin-top:1px}
+.hb-tip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(–surface3);border:1px solid var(–border);border-radius:6px;padding:7px 9px;font-size:9px;white-space:nowrap;z-index:20;font-family:Space Mono,monospace;flex-direction:column;gap:2px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.hb-tip b{color:var(–gold)}
 .peak-star{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:8px;line-height:1}
 .ctr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:700px){.ctr-grid{grid-template-columns:1fr 1fr}}
-.ctr-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 12px;text-align:center;transition:border-color .2s}
-.ctr-card:hover{border-color:var(--accent)}
+.ctr-card{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:16px 12px;text-align:center;transition:border-color .2s}
+.ctr-card:hover{border-color:var(–accent)}
 .ctr-val{font-family:Space Mono,monospace;font-size:34px;font-weight:700;line-height:1;margin-bottom:5px}
-.ctr-lbl{font-size:11px;font-weight:600;color:var(--dim);margin-bottom:2px}
-.ctr-sub{font-size:9px;color:var(--muted)}
-.ctr-sub2{font-size:9px;color:var(--muted);margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
-.param-bar{display:flex;gap:12px;align-items:center;background:var(--surface2);border-radius:6px;padding:10px 14px;margin-bottom:16px;flex-wrap:wrap}
-.param-item{font-size:10px;color:var(--dim)}.param-item b{color:var(--text);font-family:Space Mono,monospace}
+.ctr-lbl{font-size:11px;font-weight:600;color:var(–dim);margin-bottom:2px}
+.ctr-sub{font-size:9px;color:var(–muted)}
+.ctr-sub2{font-size:9px;color:var(–muted);margin-top:6px;padding-top:6px;border-top:1px solid var(–border)}
+.param-bar{display:flex;gap:12px;align-items:center;background:var(–surface2);border-radius:6px;padding:10px 14px;margin-bottom:16px;flex-wrap:wrap}
+.param-item{font-size:10px;color:var(–dim)}.param-item b{color:var(–text);font-family:Space Mono,monospace}
 /* ════════════════════════════════════════════════
-   THROUGHPUT ESTIMATOR
-   ════════════════════════════════════════════════ */
+THROUGHPUT ESTIMATOR
+════════════════════════════════════════════════ */
 .tp-layout{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 @media(max-width:860px){.tp-layout{grid-template-columns:1fr}}
-.tp-ctrl{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.tp-ctrl-hdr{padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
-.tp-ctrl-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.tp-ctrl{background:var(–surface);border:1px solid var(–border);border-radius:10px;overflow:hidden}
+.tp-ctrl-hdr{padding:12px 16px;background:var(–surface2);border-bottom:1px solid var(–border)}
+.tp-ctrl-hdr h3{font-family:Space Mono,monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(–dim);text-transform:uppercase}
 .tp-ctrl-body{padding:14px 16px}
-.dir-tog{display:flex;background:var(--surface3);border-radius:8px;padding:3px;gap:3px;margin-bottom:16px}
-.dir-tog-btn{flex:1;padding:8px;border:none;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700;transition:all .2s;text-align:center}
+.dir-tog{display:flex;background:var(–surface3);border-radius:8px;padding:3px;gap:3px;margin-bottom:16px}
+.dir-tog-btn{flex:1;padding:8px;border:none;border-radius:6px;background:transparent;color:var(–muted);cursor:pointer;font-family:Space Mono,monospace;font-size:10px;font-weight:700;transition:all .2s;text-align:center}
 .dir-tog-btn.act-arr{background:linear-gradient(135deg,#0097A7,#00bcd4);color:#000}
 .dir-tog-btn.act-dep{background:linear-gradient(135deg,#5B3D9E,#7c6af7);color:#fff}
 .scen-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
-.scen-pill{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:9px;font-family:Space Mono,monospace;transition:all .15s}
-.scen-pill:hover{border-color:var(--accent);color:var(--accent)}
-.tp-sec-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
-.tp-sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.scen-pill{padding:4px 10px;border-radius:20px;border:1px solid var(–border);background:transparent;color:var(–muted);cursor:pointer;font-size:9px;font-family:Space Mono,monospace;transition:all .15s}
+.scen-pill:hover{border-color:var(–accent);color:var(–accent)}
+.tp-sec-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.12em;color:var(–muted);text-transform:uppercase;margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.tp-sec-lbl::after{content:’’;flex:1;height:1px;background:var(–border)}
 .sl-row{display:flex;align-items:center;gap:7px;margin-bottom:9px}
 .sl-badge{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;letter-spacing:.02em}
 .sl-badge.r{background:rgba(0,151,167,.2);color:#0097A7}
 .sl-badge.v{background:rgba(245,200,66,.2);color:#f5c842}
-.sl-lbl{font-size:10px;color:var(--dim);width:44px;flex-shrink:0}
-input[type=range].tpsl{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:2px;background:var(--border);cursor:pointer;outline:none}
+.sl-lbl{font-size:10px;color:var(–dim);width:44px;flex-shrink:0}
+input[type=range].tpsl{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:2px;background:var(–border);cursor:pointer;outline:none}
 input[type=range].tpsl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;cursor:pointer;transition:transform .15s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
 input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
 .sl-val{font-family:Space Mono,monospace;font-size:12px;font-weight:700;width:38px;text-align:right;flex-shrink:0}
-.sl-hint{font-size:8px;color:var(--muted);margin-left:29px;margin-top:-6px;margin-bottom:4px}
+.sl-hint{font-size:8px;color:var(–muted);margin-left:29px;margin-top:-6px;margin-bottom:4px}
 .tp-kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.tp-kc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 14px;position:relative;overflow:hidden;transition:border-color .2s}
-.tp-kc:hover{border-color:var(--accent)}
-.tp-kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.tp-kc.tc-a::before{background:var(--accent)}.tp-kc.tc-g::before{background:var(--gold)}
-.tp-kc.tc-p::before{background:#7c6af7}.tp-kc.tc-r::before{background:var(--res)}
-.tp-kc-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.08em;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
+.tp-kc{background:var(–surface);border:1px solid var(–border);border-radius:8px;padding:13px 14px;position:relative;overflow:hidden;transition:border-color .2s}
+.tp-kc:hover{border-color:var(–accent)}
+.tp-kc::before{content:’’;position:absolute;top:0;left:0;right:0;height:2px}
+.tp-kc.tc-a::before{background:var(–accent)}.tp-kc.tc-g::before{background:var(–gold)}
+.tp-kc.tc-p::before{background:#7c6af7}.tp-kc.tc-r::before{background:var(–res)}
+.tp-kc-lbl{font-size:8px;font-family:Space Mono,monospace;letter-spacing:.08em;color:var(–muted);margin-bottom:4px;text-transform:uppercase}
 .tp-kc-val{font-family:Space Mono,monospace;font-size:22px;font-weight:700;line-height:1}
-.tp-kc-sub{font-size:9px;color:var(--muted);margin-top:3px}
+.tp-kc-sub{font-size:9px;color:var(–muted);margin-top:3px}
 .stt{width:100%;border-collapse:collapse;font-size:11px}
-.stt thead th{padding:8px 10px;background:var(--surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+.stt thead th{padding:8px 10px;background:var(–surface2);font-family:Space Mono,monospace;font-size:8px;letter-spacing:.06em;color:var(–muted);text-align:center;border-bottom:1px solid var(–border);white-space:nowrap}
 .stt thead th:first-child{text-align:left}
-.stt tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
-.stt tbody tr:hover{background:var(--surface2)}
+.stt tbody tr{border-bottom:1px solid var(–border);transition:background .1s}
+.stt tbody tr:hover{background:var(–surface2)}
 .stt tbody tr:last-child{border-bottom:none}
-.stt tbody tr.stt-total{background:var(--surface2);border-top:1px solid var(--border)}
-.stt tbody td{padding:10px 10px;text-align:center;font-family:Space Mono,monospace;font-size:11px;color:var(--dim)}
-.stt tbody td:first-child{text-align:left;color:var(--text);font-weight:700}
+.stt tbody tr.stt-total{background:var(–surface2);border-top:1px solid var(–border)}
+.stt tbody td{padding:10px 10px;text-align:center;font-family:Space Mono,monospace;font-size:11px;color:var(–dim)}
+.stt tbody td:first-child{text-align:left;color:var(–text);font-weight:700}
 .util-cell{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
 .util-pct{font-size:11px;font-weight:700}
-.util-bar{width:52px;height:5px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.util-bar{width:52px;height:5px;background:var(–surface3);border-radius:3px;overflow:hidden}
 .util-fill{height:100%;border-radius:3px;transition:width .5s}
 .spill{display:inline-block;padding:3px 8px;border-radius:10px;font-size:9px;font-weight:700;font-family:Space Mono,monospace;letter-spacing:.02em}
 .spill-met{background:rgba(74,222,128,.15);color:#4ade80}
@@ -249,11 +250,11 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
 .wt-ok{color:#4ade80;font-weight:700}.wt-warn{color:#f5c842;font-weight:700}.wt-fail{color:#f87171;font-weight:700}
 .ico-grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:700px){.ico-grid2{grid-template-columns:1fr 1fr}}
-.ico-c{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center;transition:border-color .2s}
-.ico-c:hover{border-color:var(--border)}
+.ico-c{background:var(–surface);border:1px solid var(–border);border-radius:8px;padding:13px;text-align:center;transition:border-color .2s}
+.ico-c:hover{border-color:var(–border)}
 .ico-c-num{font-family:Space Mono,monospace;font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
-.ico-c-lbl{font-size:10px;font-weight:600;color:var(--dim);margin-bottom:2px}
-.ico-c-sub{font-size:9px;color:var(--muted)}
+.ico-c-lbl{font-size:10px;font-weight:600;color:var(–dim);margin-bottom:2px}
+.ico-c-sub{font-size:9px;color:var(–muted)}
 
 </style>
 </head>
@@ -304,6 +305,7 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
   </div>
 
   <!-- DASHBOARD -->
+
   <div id="dashboard" style="display:none">
     <div class="top-bar">
       <label class="add-btn">
@@ -314,47 +316,52 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
       <div class="loading-msg" id="dashLoading" style="display:none">Parsing…</div>
     </div>
 
-    <!-- ERA TABS -->
-    <div class="era-tabs">
-      <button class="era-tab active" onclick="switchEra('postcovid',this)">Post-COVID</button>
-      <button class="era-tab" onclick="switchEra('commissioning',this)">Since Commissioning</button>
-    </div>
+```
+<!-- ERA TABS -->
+<div class="era-tabs">
+  <button class="era-tab active" onclick="switchEra('postcovid',this)">Post-COVID</button>
+  <button class="era-tab" onclick="switchEra('commissioning',this)">Since Commissioning</button>
+</div>
 
-    <!-- ERA DATE CONFIG -->
-    <div class="era-config" id="eraConfig">
-      <div>
-        <label>Post-COVID start date:</label><br/>
-        <input type="date" id="postCovidDate" value="2023-01-08"/>
-      </div>
-      <div>
-        <label>Since Commissioning start date:</label><br/>
-        <input type="date" id="commDate" value="2003-09-07"/>
-      </div>
-      <button class="era-apply" onclick="applyConfig()">APPLY &amp; REFRESH</button>
-      <span style="font-size:10px;color:var(--muted)">Post-COVID default: 08 Jan 2023 (HK border reopening)</span>
-    </div>
+<!-- ERA DATE CONFIG -->
+<div class="era-config" id="eraConfig">
+  <div>
+    <label>Post-COVID start date:</label><br/>
+    <input type="date" id="postCovidDate" value="2023-01-08"/>
+  </div>
+  <div>
+    <label>Since Commissioning start date:</label><br/>
+    <input type="date" id="commDate" value="2003-09-07"/>
+  </div>
+  <button class="era-apply" onclick="applyConfig()">APPLY &amp; REFRESH</button>
+  <span style="font-size:10px;color:var(--muted)">Post-COVID default: 08 Jan 2023 (HK border reopening)</span>
+</div>
 
-    <!-- SECTION TABS -->
-    <div class="sec-tabs">
-      <button class="sec-tab active" onclick="switchSection('total',this)">Total Traffic</button>
-      <button class="sec-tab" onclick="switchSection('hkr',this)">HKR</button>
-      <button class="sec-tab" onclick="switchSection('visitor',this)">Visitor</button>
-      <button class="sec-tab" onclick="switchSection('hourly',this)">Hourly</button>
-      <button class="sec-tab" onclick="switchSection('analysis',this)">📈 Analysis &amp; Forecast</button>
-    </div>
+<!-- SECTION TABS -->
+<div class="sec-tabs">
+  <button class="sec-tab active" onclick="switchSection('total',this)">Total Traffic</button>
+  <button class="sec-tab" onclick="switchSection('hkr',this)">HKR</button>
+  <button class="sec-tab" onclick="switchSection('visitor',this)">Visitor</button>
+  <button class="sec-tab" onclick="switchSection('hourly',this)">Hourly</button>
+  <button class="sec-tab" onclick="switchSection('analysis',this)">📈 Analysis &amp; Forecast</button>
+</div>
 
-    <div class="as-at" id="asAt"></div>
-    <div class="pdf-header" id="pdfHeader">
-      <h2>Record High — Passenger Statistics</h2>
-      <p id="pdfSubtitle"></p>
-    </div>
+<div class="as-at" id="asAt"></div>
+<div class="pdf-header" id="pdfHeader">
+  <h2>Record High — Passenger Statistics</h2>
+  <p id="pdfSubtitle"></p>
+</div>
 
-    <!-- CONTENT -->
-    <div id="content"></div>
+<!-- CONTENT -->
+<div id="content"></div>
+```
+
   </div>
 </main>
 
 <script>
+const __CTX_DATA_B64__ = "eyJlYXN0ZXIiOiB7IndlYXRoZXIiOiAiQXByaWwgaXMgdHJhbnNpdGlvbiBzZWFzb24gaW4gSEsuIE1pbGQgMjAtMjZDLCBtb2RlcmF0ZSBodW1pZGl0eSwgb2NjYXNpb25hbCByYWluLiBMb3cgdHlwaG9vbiByaXNrLiBHb29kIGNvbmRpdGlvbnMgZm9yIGNyb3NzLWJvcmRlciB0cmF2ZWwuIiwgImhrIjogWyJFYXN0ZXIgaXMgYSA0LWRheSBzdGF0dXRvcnkgcHVibGljIGhvbGlkYXkgaW4gSEsgKEdvb2QgRnJpZGF5IHRvIEVhc3RlciBNb25kYXkpIiwgIlN0cm9uZyBvdXRib3VuZCBzdXJnZSBvbiBHb29kIEZyaWRheSBhcyBIS1IgaGVhZCB0byBNYWlubGFuZCBmb3IgdGhlIGxvbmcgd2Vla2VuZCIsICJSZXR1cm4gd2F2ZSBwZWFrcyBvbiBFYXN0ZXIgU3VuZGF5L01vbmRheSBldmVuaW5nLCBhcnJpdmFsLWhlYXZ5IiwgIkNoZWNrIE1UUiBFYXN0IFJhaWwgZW5naW5lZXJpbmcgd29ya3Mgc2NoZWR1bGUgZm9yIHRoZSBFYXN0ZXIgd2Vla2VuZCJdLCAibWFpbmxhbmQiOiBbIkVhc3RlciBpcyBOT1QgYSBNYWlubGFuZCBwdWJsaWMgaG9saWRheSwgbm9ybWFsIHdvcmtpbmcgd2VlayBmb3IgbW9zdCIsICJDaGluZyBNaW5nIEZlc3RpdmFsIChRaW5nbWluZykgb2Z0ZW4gZmFsbHMgbmVhciBFYXN0ZXIgaW4gZWFybHkgQXByaWwiLCAiSWYgUWluZ21pbmcgb3ZlcmxhcHMgRWFzdGVyLCBNYWlubGFuZCByZXNpZGVudHMgZ2V0IGV4dGVuZGVkIGJyZWFrIGFuZCBpbmNyZWFzZWQgaW5ib3VuZCB2aXNpdG9ycyIsICJHQkEgcmVzaWRlbnRzIHRlbmQgdG8gdmlzaXQgSEsgZm9yIEVhc3RlciBzaG9wcGluZyBhbmQgbGVpc3VyZSIsICJObyBtYWpvciBNYWlubGFuZCBHb2xkZW4gV2VlayBjb21wZXRpdGlvbiBcdTIwMTQgSEsgaXMgYW4gYXR0cmFjdGl2ZSBzaG9ydC1icmVhayBkZXN0aW5hdGlvbiJdLCAid2F0Y2giOiBbIkV4YWN0IFFpbmdtaW5nIGRhdGUgdnMgRWFzdGVyIG92ZXJsYXAiLCAiTVRSIHNlcnZpY2UgYW5ub3VuY2VtZW50cyIsICJXZWF0aGVyIGZvcmVjYXN0IiwgIkhvdGVsIG9jY3VwYW5jeSBkYXRhIiwgIk1haW5sYW5kIHRyYXZlbCBzZW50aW1lbnQiXX0sICJsYWJvdXIiOiB7IndlYXRoZXIiOiAiRWFybHkgTWF5IGluIEhLLiBXYXJtIDI1LTI5QywgaHVtaWRpdHkgcmlzaW5nLiBHZW5lcmFsbHkgcGxlYXNhbnQuIE9jY2FzaW9uYWwgdGh1bmRlcnN0b3JtcyBwb3NzaWJsZS4iLCAiaGsiOiBbIkxhYm91ciBEYXkgTWF5IDEgaXMgYSBISyBzdGF0dXRvcnkgUEggXHUyMDE0IDEtZGF5IGhvbGlkYXkgb25seSIsICJISyByZXNpZGVudHMgb2Z0ZW4gY29tYmluZSB3aXRoIGFubnVhbCBsZWF2ZSBmb3Igc2hvcnQgTWFpbmxhbmQgdHJpcHMiLCAiSEsgbWFsbHMgYW5kIHRvdXJpc20gc2l0ZXMgYnVzeSB3aXRoIGluYm91bmQgTWFpbmxhbmQgdmlzaXRvcnMiXSwgIm1haW5sYW5kIjogWyJMYWJvdXIgRGF5IEdvbGRlbiBXZWVrID0gTWF5IDEtNSwgZml2ZSBkYXlzIFx1MjAxNCBtYWpvciBNYWlubGFuZCBob2xpZGF5IiwgIk9uZSBvZiB0aGUgMyBiaWdnZXN0IHRyYXZlbCBwZWFrcyBpbiBDaGluYSwgY29tcGFyYWJsZSB0byBOYXRpb25hbCBEYXkiLCAiR0JBIHJlc2lkZW50cyBmbG9vZCBpbnRvIEhLIGZvciBzaG9wcGluZywgZGluaW5nLCBhbmQgZW50ZXJ0YWlubWVudCIsICJWaXNpdG9yIHNoYXJlIGF0IExvIFd1IHBlYWtzIHNpZ25pZmljYW50bHkgZHVyaW5nIHRoaXMgd2VlayIsICJISyBob3RlbCByYXRlcyBzdXJnZSBjb25maXJtaW5nIHN0cm9uZyBNYWlubGFuZCB2aXNpdG9yIGRlbWFuZCJdLCAid2F0Y2giOiBbIk1haW5sYW5kIHRvdXJpc20gYnVyZWF1IGFubm91bmNlbWVudHMiLCAiSG90ZWwgcmF0ZSB0cmVuZHMgaW4gSEsiLCAiTVRSIEd1YW5nemhvdSBzZXJ2aWNlIGNhcGFjaXR5IiwgIkV4Y2hhbmdlIHJhdGUgbW92ZW1lbnQiLCAiQ29hY2ggYW5kIG1pbmlidXMgYm9va2luZyBkYXRhIl19LCAic3VtbWVyIjogeyJ3ZWF0aGVyIjogIkp1bHktQXVndXN0IGlzIHBlYWsgdHlwaG9vbiBzZWFzb24uIEhvdCBhbmQgaHVtaWQgMzAtMzRDLiBBIE5vLjggc2lnbmFsIGltbWVkaWF0ZWx5IGhhbHRzIGFsbCBjcm9zcy1ib3JkZXIgdHJhZmZpYy4gQXVndXN0IGlzIHRoZSBtb3N0IGFjdGl2ZSB0eXBob29uIG1vbnRoLiIsICJoayI6IFsiQm9vayBGYWlyIChIb25nIEtvbmcgQm9vayBGYWlyKSBtaWQtSnVseSwgYXJvdW5kIDFNIGF0dGVuZGFuY2UsIHZpc2l0b3ItaGVhdnksIGJvb3N0cyBhcnJpdmFscyIsICJBbmktQ29tIGFuZCBHYW1lcyBsYXRlIEp1bHksIGF0dHJhY3RzIEhLIHlvdXRoIGFuZCBNYWlubGFuZCBmYW5zIiwgIkJhYnkgRXhwbyBBdWd1c3QsIGZhbWlseSB2aXNpdHMgd2l0aCBzdHJvbmcgTWFpbmxhbmQgdmlzaXRvciBjb21wb25lbnQiLCAiU2Nob29sIHN1bW1lciBicmVhaywgSEsgZmFtaWxpZXMgdHJhdmVsIG91dGJvdW5kIGVzcGVjaWFsbHkgbGF0ZSBKdWx5IHRvIEF1Z3VzdCJdLCAibWFpbmxhbmQiOiBbIk5vIE1haW5sYW5kIHN0YXR1dG9yeSBob2xpZGF5cyBpbiBKdWx5LUF1Z3VzdCBhcGFydCBmcm9tIHdlZWtlbmRzIiwgIk1haW5sYW5kIHNjaG9vbCBzdW1tZXIgYnJlYWsgbWlkLUp1bHkgdG8gQXVndXN0LCBmYW1pbGllcyB2aXNpdCBISyBmb3IgbGVpc3VyZSBhbmQgc2hvcHBpbmciLCAiRXh0cmVtZSBoZWF0IGluIGlubGFuZCBDaGluYSBtYWtlcyBjb2FzdGFsIEhLIG1vcmUgYXR0cmFjdGl2ZSB0byBNYWlubGFuZCB2aXNpdG9ycyIsICJHQkEgaGlnaC1zcGVlZCByYWlsIGRyYXdzIGRheS10cmlwcGVycyB0byBISyBmb3Igc2hvcHBpbmcgYW5kIGRpbmluZyJdLCAid2F0Y2giOiBbIlR5cGhvb24gZm9yZWNhc3RzIHZpYSBIS08gNS1kYXkgb3V0bG9vayIsICJIS0NFQyBldmVudCBjYWxlbmRhciIsICJIb3RlbCBhbmQgdHJhdmVsIHBhY2thZ2UgYm9va2luZ3MiLCAiQ29hY2ggY2FwYWNpdHkiLCAiTWFpbmxhbmQgc2Nob29sIGhvbGlkYXkgc2NoZWR1bGUiXX0sICJuYXRpb25hbCI6IHsid2VhdGhlciI6ICJFYXJseSBPY3RvYmVyOiBwbGVhc2FudCBhdXR1bW4gd2VhdGhlciAyNC0yOEMsIGxvdyBodW1pZGl0eSwgbWluaW1hbCB0eXBob29uIHJpc2suIElkZWFsIHRyYXZlbCBjb25kaXRpb25zLiIsICJoayI6IFsiTmF0aW9uYWwgRGF5IE9jdCAxIGlzIGEgSEsgc3RhdHV0b3J5IFBIIiwgIkZpcmV3b3JrcyBkaXNwbGF5IG92ZXIgVmljdG9yaWEgSGFyYm91ciBkcmF3cyBodWdlIGNyb3dkcyIsICJISyByZXRhaWwgYW5kIHRvdXJpc20gc2VjdG9yIGF0IGZ1bGwgY2FwYWNpdHkiXSwgIm1haW5sYW5kIjogWyJOYXRpb25hbCBEYXkgR29sZGVuIFdlZWsgPSBPY3QgMS03LCBzZXZlbiBkYXlzIFx1MjAxNCBvbmUgb2YgQ2hpbmEgYmlnZ2VzdCB0cmF2ZWwgcGVyaW9kcyIsICJIaWdoZXN0IE1haW5sYW5kIHZpc2l0b3Igdm9sdW1lIG9mIHRoZSB5ZWFyIGF0IExvIFd1IiwgIlZpc2l0b3Igc2hhcmUgY2FuIGV4Y2VlZCAzMCBwZXJjZW50IG9mIGRhaWx5IHRvdGFsIHZzIDIyIHBlcmNlbnQgb24gbm9ybWFsIGRheXMiLCAiU2hlbnpoZW4gYW5kIEdCQSByZXNpZGVudHMgZm9ybSB0aGUgY29yZSwgbWFueSBmb3IgZGF5IHNob3BwaW5nIHRyaXBzIiwgIk91dGJvdW5kIEhLUiBzdXJnZSBwcmUtaG9saWRheSwgZGVwYXJ0dXJlLWhlYXZ5IG9uIFNlcCAzMCJdLCAid2F0Y2giOiBbIk1haW5sYW5kIGFjY29tbW9kYXRpb24gYm9va2luZ3MgaW4gSEsiLCAiQ3Jvc3MtYm9yZGVyIGNvYWNoIGNhcGFjaXR5IiwgIk1UUiBHdWFuZ3pob3Ugc2VydmljZSBmcmVxdWVuY3kiLCAiSEsgVG91cmlzbSBCb2FyZCBwcm9qZWN0aW9ucyJdfSwgImNocmlzdG1hcyI6IHsid2VhdGhlciI6ICJMYXRlIERlY2VtYmVyOiBjb29sIGFuZCBkcnkgMTUtMjBDLCBsb3cgaHVtaWRpdHksIGNsZWFyIHNraWVzLiBCZXN0IHdlYXRoZXIgb2YgdGhlIHllYXIuIFZlcnkgZmF2b3VyYWJsZSBmb3IgdHJhdmVsLiIsICJoayI6IFsiQ2hyaXN0bWFzIERlYyAyNS0yNywgdGhyZWUgc3RhdHV0b3J5IFBIcyBcdTIwMTQgZXh0ZW5kZWQgaG9saWRheSBmb3IgSEtSIiwgIkRlYyAzMSBtYXNzaXZlIGRlcGFydHVyZSBzdXJnZSBhcyBIS1IgY3Jvc3MgdG8gTWFpbmxhbmQgZm9yIE5ZRSBjZWxlYnJhdGlvbnMiLCAiSmFuIDIgTWFpbmxhbmQgUHVibGljIEhvbGlkYXkgXHUyMDE0IHN0cm9uZyBpbmJvdW5kIE1haW5sYW5kIHZpc2l0b3JzIiwgIkhLIHJldGFpbCBnb2xkZW4gc2Vhc29uIHdpdGggbHV4dXJ5IHNob3BwaW5nIGFuZCBDaHJpc3RtYXMgbWFya2V0cyJdLCAibWFpbmxhbmQiOiBbIkNocmlzdG1hcyBpcyBOT1QgYSBNYWlubGFuZCBQSCwgbm9ybWFsIHdvcmtpbmcgZGF5cyBEZWMgMjUtMjYiLCAiSmFuIDEgSVMgYSAxLWRheSBNYWlubGFuZCBQSCBcdTIwMTQgaW5ib3VuZCBzdXJnZSBEZWMgMzEgYW5kIEphbiAxIiwgIkphbiAyIE1haW5sYW5kIGV4dHJhIGxlYXZlIGRheSBcdTIwMTQgc3Ryb25nIGluYm91bmQgdmlzaXRvciB0cmFmZmljIHRvIEhLIiwgIkdCQSBoaWdoLXNwZW5kaW5nIHZpc2l0b3JzIGRvbWluYXRlIENocmlzdG1hcyBwZXJpb2Qgc2hvcHBpbmciLCAiTmV3IFllYXIgRXZlIGhpc3RvcmljYWxseSBoYXMgdGhlIGhpZ2hlc3Qgc2luZ2xlLWhvdXIgZGVwYXJ0dXJlIGNvdW50IG9mIHRoZSB5ZWFyIl0sICJ3YXRjaCI6IFsiSmFuIDIgTWFpbmxhbmQgUEggY29uZmlybWF0aW9uIiwgIkhLIGhvdGVsIG9jY3VwYW5jeSBDaHJpc3RtYXMgd2VlayIsICJDTlkgZGF0ZSBpZiBpbiBKYW51YXJ5IiwgIk1UUiBhbmQgY29hY2ggY2FwYWNpdHkgRGVjIDMxIl19fQ==";
+
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 const TOP_N = 5;
 // Post-COVID default: HK fully reopened borders 2023-01-08
@@ -455,6 +462,109 @@ function parseSheet(ws,fileName,sheetName){
   }
   return days;
 }
+
+// ── New Records Alert ─────────────────────────────────────────────────────────
+// Called after loading new files. newDates = set of dates in newly loaded files.
+// Checks all major record categories and alerts if any new date is now #1.
+function checkNewRecords(prevDays, newDays){
+  if(!newDays.length) return;
+  const newDates = new Set(newDays.map(d=>d.date));
+  const all = allDays; // already merged
+
+  // Categories to check: [label, icon, getValue(day)]
+  const cats = [
+    {key:'ad_tot',    label:'Total Passengers',         icon:'🏆', fn:d=>d.dt.ad_tot||0},
+    {key:'arr_tot',   label:'Arrival Passengers',        icon:'🏆', fn:d=>d.dt.arr_tot||0},
+    {key:'dep_tot',   label:'Departure Passengers',      icon:'🏆', fn:d=>d.dt.dep_tot||0},
+    {key:'arr_res',   label:'Arrival HKR (Residents)',   icon:'🏆', fn:d=>d.dt.arr_res||0},
+    {key:'dep_res',   label:'Departure HKR (Residents)', icon:'🏆', fn:d=>d.dt.dep_res||0},
+    {key:'arr_vis',   label:'Arrival Visitors',          icon:'🏆', fn:d=>d.dt.arr_vis||0},
+    {key:'dep_vis',   label:'Departure Visitors',        icon:'🏆', fn:d=>d.dt.dep_vis||0},
+  ];
+
+  const alerts = [];
+  for(const cat of cats){
+    const sorted = [...all].sort((a,b)=>cat.fn(b)-cat.fn(a));
+    const top5 = sorted.slice(0,5);
+    // Check if any new date is in top 5
+    top5.forEach((day, rank) => {
+      if(newDates.has(day.date)){
+        // Find what the previous record was (from prevDays only)
+        const prevSorted = prevDays.length ? [...prevDays].sort((a,b)=>cat.fn(b)-cat.fn(a)) : [];
+        const prevRecord = prevSorted[0];
+        const isNewRecord = !prevRecord || cat.fn(day) > cat.fn(prevRecord);
+        alerts.push({
+          rank: rank+1,
+          date: day.date,
+          value: cat.fn(day),
+          label: cat.label,
+          icon: cat.icon,
+          isNewRecord,
+          prevDate: prevRecord ? prevRecord.date : null,
+          prevValue: prevRecord ? cat.fn(prevRecord) : 0,
+          remarks: getRemarks(day.date)||'',
+          dayOfWeek: dayOfWeek(day.date),
+        });
+      }
+    });
+  }
+
+  if(!alerts.length) return;
+
+  // Build banner HTML
+  const newRecords = alerts.filter(a=>a.isNewRecord && a.rank===1);
+  const topAppearances = alerts.filter(a=>a.rank<=5);
+
+  // Remove any existing alert banner
+  document.getElementById('__records_alert__')?.remove();
+
+  const banner = document.createElement('div');
+  banner.id = '__records_alert__';
+  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);border-bottom:3px solid #f59e0b;padding:14px 20px;box-shadow:0 4px 24px rgba(0,0,0,.6);font-family:Space Mono,monospace';
+
+  let html = '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">';
+  html += '<div style="flex:1">';
+
+  if(newRecords.length){
+    html += '<div style="font-size:12px;font-weight:700;color:#f59e0b;letter-spacing:.08em;margin-bottom:8px">🚨 NEW ALL-TIME RECORD'+(newRecords.length>1?'S':'')+' IN LOADED DATA</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">';
+    for(const r of newRecords){
+      html += `<div style="background:rgba(245,159,11,.15);border:1px solid #f59e0b;border-radius:6px;padding:8px 12px;min-width:200px">
+        <div style="font-size:10px;color:#f59e0b;font-weight:700;margin-bottom:2px">${r.icon} #1 ${r.label}</div>
+        <div style="font-size:16px;font-weight:700;color:#fff">${Number(r.value).toLocaleString()}</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:2px">${fDate(r.date)} (${r.dayOfWeek}) · ${r.remarks||'—'}</div>
+        ${r.prevValue ? `<div style="font-size:9px;color:#64748b;margin-top:2px">Previous record: ${Number(r.prevValue).toLocaleString()} on ${fDate(r.prevDate)}</div>` : ''}
+      </div>`;
+    }
+    html += '</div>';
+  }
+
+  // Top 5 appearances
+  const top5only = topAppearances.filter(a=>!(a.isNewRecord&&a.rank===1));
+  if(top5only.length){
+    html += `<div style="font-size:10px;color:#94a3b8;margin-top:4px">📊 Also in Top 5: `;
+    html += top5only.slice(0,6).map(r=>`<span style="color:#cbd5e1">#${r.rank} ${r.label} (${Number(r.value).toLocaleString()} · ${fDate(r.date)})</span>`).join(' &nbsp;·&nbsp; ');
+    html += '</div>';
+  }
+
+  html += '</div>';
+  html += '<button onclick="document.getElementById('__records_alert__').remove()" style="background:transparent;border:1px solid #475569;color:#94a3b8;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:Space Mono,monospace;font-size:10px;white-space:nowrap;flex-shrink:0">✕ Dismiss</button>';
+  html += '</div>';
+
+  banner.innerHTML = html;
+  document.body.appendChild(banner);
+
+  // Push content down so banner doesn't cover it
+  const dash = document.getElementById('dashboard');
+  if(dash){
+    const h = banner.offsetHeight + 8;
+    dash.style.marginTop = h + 'px';
+    banner.addEventListener('click', e=>{
+      if(e.target.tagName==='BUTTON') dash.style.marginTop = '';
+    });
+  }
+}
+
 async function parseFiles(files){
   const days=[];
   for(const file of files){
@@ -489,6 +599,7 @@ async function handleFiles(files){
     }
     // Merge + deduplicate by date — if same date appears in multiple files,
     // keep the one with the highest total pax (most complete data)
+    const prevDays = [...allDays]; // snapshot before merge for record comparison
     const mergedMap = {};
     for(const d of [...allDays, ...newDays]){
       const existing = mergedMap[d.date];
@@ -499,6 +610,8 @@ async function handleFiles(files){
     allDays = Object.values(mergedMap).sort((a,b)=>a.date.localeCompare(b.date));
     allFileNames=[...allFileNames,...Array.from(files).map(f=>f.name)];
     showDashboard();
+    // Check for new records in newly loaded data
+    setTimeout(()=>checkNewRecords(prevDays, newDays), 300);
   }catch(e){showErr('Error: '+e.message);}
   finally{showLoad(false);}
 }
@@ -921,7 +1034,7 @@ function buildAnalysisHTML(days){
     {lbl:'Days in Range', val:totalDays.toLocaleString(), sub:days[0].date+' – '+days[days.length-1].date, cls:'kc-accent', color:'var(--accent)'},
     {lbl:'Total Passengers', val:(grandTotal/1e6).toFixed(1)+'M', sub:'All-time in loaded data', cls:'kc-gold', color:'var(--gold)'},
     {lbl:'Avg Daily Traffic', val:lastYoy?nt(lastYoy.avgDaily):'—', sub:(lastYoy?lastYoy.year:'')+' average', cls:'kc-res', color:'var(--res)'},
-    {lbl:'YoY Growth (Same Period)', val:(yoyGrowth!==null?(yoyGrowth>=0?'+':'')+yoyGrowth.toFixed(1)+'%':'—'), sub:'Jan 1–'+latestMMDD+' this yr vs last yr · short-term comparison only', cls:'kc-dep', color:yoyGrowth>=0?'var(--res)':'#f87171', trend:yoyGrowth},
+    {lbl:'YoY Growth (Same Period)', val:(yoyGrowth!==null?(yoyGrowth>=0?'+':'')+yoyGrowth.toFixed(1)+'%':'—'), sub:'1 Jan – '+(function(s){const p=s.split('-');return parseInt(p[1])+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[0])-1];})(latestMMDD)+'  vs last yr (same period)', cls:'kc-dep', color:yoyGrowth>=0?'var(--res)':'#f87171', trend:yoyGrowth},
     {lbl:'Resident Ratio', val:resRatio+'%', sub:'of total traffic', cls:'kc-purple', color:'#7c6af7'},
     {lbl:'Peak Day Total', val:peakDay?nt(peakDay.dt.ad_tot):'—', sub:peakDay?fDate(peakDay.date)+' · '+getRemarks(peakDay.date):'', cls:'kc-gold', color:'var(--gold)'},
   ];
@@ -1010,7 +1123,7 @@ function buildAnalysisHTML(days){
     const rowStyle = is2023caveat ? 'background:rgba(251,191,36,.04)' : '';
     push('<tr style="'+rowStyle+'">');
     push('<td style="font-family:\'Space Mono\',monospace;font-weight:700;color:var(--accent)">'+y.year+(is2023caveat?' <span title="Early-reopening year — first months after COVID border closure. Public cautious; figures understate true demand trajectory." style="cursor:help;font-size:10px">⚠</span>':'')+'</td>');
-    if(showPeriod) push('<td style="font-size:9px;color:var(--muted);font-family:\'Space Mono\',monospace;white-space:nowrap">1 Jan – '+y.asAt+'</td>');
+    if(showPeriod){ const _ap=y.asAt.split('-');const _af=parseInt(_ap[1])+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(_ap[0])-1]; push('<td style="font-size:9px;color:var(--muted);font-family:\'Space Mono\',monospace;white-space:nowrap">1 Jan – '+_af+'</td>'); }
     else push('<td style="font-size:9px;color:var(--muted)">'+(y.isPartial?'Partial (in progress)':'Full year')+'</td>');
     push('<td>'+y.count+'</td>');
     push('<td style="font-size:9px;color:'+(y.closedDays>0?'#f87171':'var(--muted)')+'">'+(y.closedDays>0?y.closedDays+' excl.':'—')+'</td>');
@@ -1148,6 +1261,33 @@ function buildAnalysisHTML(days){
   const _fcastIcon = easter ? (easter.holidayIcon||'📅') : '📅';
   push('<div class="af-page-title">'+_fcastIcon+' '+_fcastTitle+'</div>');
 
+  // ── Auto-switch status banner ──────────────────────────────────────────────
+  {
+    const _latestLoaded = days.length ? days[days.length-1].date : '—';
+    const _allUpcoming = [];
+    const _ly = parseInt(_latestLoaded.substring(0,4));
+    if(typeof HOLIDAY_DEFS!=='undefined'){
+      HOLIDAY_DEFS.forEach(def=>{
+        for(let yr=_ly;yr<=_ly+1;yr++){
+          const a=def.getAnchor(yr);
+          if(a>_latestLoaded){ _allUpcoming.push({label:def.label(yr),anchor:a,icon:def.icon,isCurrent:easter&&easter.holidayType===def.type&&easter.targetEasterLabel===def.label(yr)}); break; }
+        }
+      });
+    }
+    _allUpcoming.sort((a,b)=>a.anchor.localeCompare(b.anchor));
+    push('<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">');
+    push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted)">DATA LOADED TO</div>');
+    push('<div style="font-size:13px;font-weight:700;color:var(--accent);font-family:Space Mono,monospace">'+_latestLoaded+'</div>');
+    push('<div style="width:1px;height:24px;background:var(--border)"></div>');
+    push('<div style="font-size:9px;font-family:Space Mono,monospace;color:var(--muted)">FORECASTING</div>');
+    push('<div style="font-size:13px;font-weight:700;color:var(--gold)">'+_fcastIcon+' '+_fcastTitle+'</div>');
+    if(_allUpcoming.length>1){
+      push('<div style="width:1px;height:24px;background:var(--border)"></div>');
+      push('<div style="font-size:9px;color:var(--muted)">Load data past <b style="color:var(--text)">'+_allUpcoming[1].anchor+'</b> to switch to '+_allUpcoming[1].icon+' '+_allUpcoming[1].label+'</div>');
+    }
+    push('</div>');
+  }
+
   if(!easter||easterDays.length===0){
     push('<div class="af-card"><div class="af-card-body" style="text-align:center;padding:32px;color:var(--muted);font-size:13px">No historical data found for '+_fcastTitle+'.<br>Load data covering previous years of this holiday to generate a forecast.</div></div>');
   } else {
@@ -1172,7 +1312,7 @@ function buildAnalysisHTML(days){
   (f.growthCalcSteps||[]).forEach(step=>push('<li style="color:var(--dim)">'+step+'</li>'));
   push('</ul>');
   push('<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(245,200,66,.2);font-size:9px;color:var(--muted)">');
-  push('⚠ Note: The <b>YoY % in the KPI ribbon above</b> compares the same calendar slice (1 Jan – '+latestMMDD+') this year vs last year only — a short-term snapshot. ');
+  push('⚠ Note: The <b>YoY % in the KPI ribbon above</b> compares the same calendar slice (1 Jan – '+(function(s){const p=s.split('-');return parseInt(p[1])+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[0])-1];})(latestMMDD)+') this year vs last year only — a short-term snapshot. ');
   push('The forecast uses the <b>long-term trend</b> across all post-COVID years because traffic here has been consistently breaking records during major holiday periods.</div>');
   push('</div>');
   push('<div class="af-card-body">');
@@ -1349,26 +1489,58 @@ function buildAnalysisHTML(days){
       push('</div></div>');
     })();
 
-    // ── AI Context Analysis ──────────────────────────────────────────────────
-    // Uses Claude + web search to pull in real HK news, weather, events for Easter
-    const _easterYear = f.targetEasterLabel ? f.targetEasterLabel.replace('Easter ','') : '2026';
-    const _gfDate = f.dayProfiles['-2'] ? f.dayProfiles['-2'].date : '';
-    const _emDate = f.dayProfiles['1']  ? f.dayProfiles['1'].date  : '';
-    const _aiCardId = 'ai-context-card-'+Date.now();
-    push('<div class="af-card" style="margin-top:20px;border:1px solid rgba(245,200,66,.3);background:rgba(245,200,66,.04)" id="'+_aiCardId+'">');
-    push('<div class="af-card-hdr" style="background:rgba(245,200,66,.08);border-bottom:1px solid rgba(245,200,66,.2);display:flex;align-items:center;justify-content:space-between">');
-    push('<div><h3 style="color:var(--gold);margin:0">🤖 AI Context Analysis — Real-World Factors</h3>');
-    push('<div class="kpi-sub" style="margin-top:2px">Claude analyses HK &amp; Mainland factors impacting traffic for <b style="color:var(--gold)">'+f.targetEasterLabel+'</b></div></div>');
-    push('<button id="ai-ctx-btn-'+_aiCardId+'" onclick="runAIContextAnalysis(\''+_aiCardId+'\',\''+_easterYear+'\',\''+_gfDate+'\',\''+_emDate+'\')" style="padding:7px 16px;border-radius:6px;border:1px solid var(--gold);background:rgba(245,200,66,.12);color:var(--gold);cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700;white-space:nowrap">▶ Run Analysis</button>');
+
+    // ── Context Factors card ──────────────────────────────────────────────────
+    const _ctxData = JSON.parse(atob(__CTX_DATA_B64__));
+        const _ctx = _ctxData[f.holidayType] || _ctxData.easter;
+    const _ctxLabel = f.targetEasterLabel || 'Holiday';
+
+    push('<div class="af-card" style="margin-top:20px;border-left:3px solid var(--gold)">');
+    push('<div class="af-card-hdr" style="background:rgba(245,200,66,.06)">');
+    push('<h3 style="color:var(--gold)">📋 Contextual Factors — '+_ctxLabel+'</h3>');
+    push('<div class="kpi-sub">Key HK &amp; Mainland factors that typically affect cross-border traffic during this period</div>');
+    push('</div><div class="af-card-body">');
+
+    // Weather strip
+    push('<div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:10px">');
+    push('<span style="font-size:18px">🌤</span>');
+    push('<div><div style="font-size:10px;font-weight:700;color:var(--text);margin-bottom:2px">Weather Outlook</div>');
+    push('<div style="font-size:10px;color:var(--dim);line-height:1.5">'+_ctx.weather+'</div></div>');
     push('</div>');
-    push('<div id="ai-ctx-body-'+_aiCardId+'" class="af-card-body">');
-    push('<div style="color:var(--muted);font-size:11px;padding:20px 0;text-align:center">');
-    push('Click <b style="color:var(--gold)">▶ Run Analysis</b> to let Claude search for:<br>');
-    push('<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px">');
-    ['🌤 HK Easter weather forecast','📰 HK cross-border travel news','🚧 Border/MTR disruptions','📅 Competing events & holidays','✈️ Inbound tourism sentiment'].forEach(t=>{
-      push('<span style="background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:10px;font-family:Space Mono,monospace">'+t+'</span>');
+
+    // Two-column HK / Mainland
+    push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">');
+
+    // HK factors
+    push('<div>');
+    push('<div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:5px">🇭🇰 Hong Kong Factors</div>');
+    push('<ul style="list-style:none;padding:0;margin:0">');
+    _ctx.hk.forEach(_fi=>{
+      push('<li style="font-size:10px;color:var(--dim);padding:3px 0;border-bottom:1px solid var(--border);line-height:1.4">• '+_fi+'</li>');
     });
-    push('</div></div></div></div>');
+    push('</ul></div>');
+
+    // Mainland factors
+    push('<div>');
+    push('<div style="font-size:10px;font-weight:700;color:#ef4444;margin-bottom:6px;display:flex;align-items:center;gap:5px">🇨🇳 Mainland China Factors</div>');
+    push('<ul style="list-style:none;padding:0;margin:0">');
+    _ctx.mainland.forEach(_fi=>{
+      push('<li style="font-size:10px;color:var(--dim);padding:3px 0;border-bottom:1px solid var(--border);line-height:1.4">• '+_fi+'</li>');
+    });
+    push('</ul></div>');
+
+    push('</div>'); // grid
+
+    // Watch points
+    push('<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">');
+    push('<div style="font-size:10px;font-weight:700;color:var(--text);margin-bottom:5px">👁 Key Watch Points (2 weeks before)</div>');
+    push('<div style="display:flex;flex-wrap:wrap;gap:6px">');
+    _ctx.watch.forEach(w=>{
+      push('<span style="background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:9px;font-family:Space Mono,monospace;color:var(--dim)">'+w+'</span>');
+    });
+    push('</div></div>');
+    push('</div></div>'); // af-card-body + af-card
+
 
     // ── Day selector buttons ──────────────────────────────────────────────────
     push('<div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0">');
@@ -1628,96 +1800,6 @@ function buildAnalysisHTML(days){
   }
 
 
-  // ══ HK ANNUAL EVENTS CALENDAR ════════════════════════════════════════════════
-  // Known recurring exhibitions and fairs that drive cross-border traffic peaks
-  push('<div class="af-page-title">🏟 HK Annual Events & Exhibitions</div>');
-  push('<div class="af-card">');
-  push('<div class="af-card-hdr"><h3>Major Recurring Events — Traffic Impact Reference</h3>');
-  push('<span class="kpi-sub">Historical peak weeks during these events · compare vs avg weekday/weekend benchmark · dates are approximate</span></div>');
-  push('<div class="af-card-body" style="padding:0">');
-
-  // Define known annual events
-  const _annualEvents = [
-    // Summer events
-    {name:'📚 Book Fair (香港書展)',       month:7, weekNo:3, duration:7, type:'summer',
-     note:'HKCEC, 3rd week of July · ~100万人次 · visitor-heavy (Mainland tourists)',
-     color:'#f59e0b'},
-    {name:'🎮 Ani-Com & Games (動漫電玩節)', month:7, weekNo:4, duration:5, type:'summer',
-     note:'HKCEC, late July · attracts HK youth + Mainland fans · high Sat/Sun peaks',
-     color:'#7c6af7'},
-    {name:'👶 Baby Products Expo (嬰兒博覽)', month:8, weekNo:2, duration:4, type:'summer',
-     note:'HKCEC, mid-August · family cross-border travel · strong Mainland visitor component',
-     color:'#34d399'},
-    {name:'🎨 Art Basel HK / Art Central',   month:3, weekNo:2, duration:5, type:'spring',
-     note:'Convention area, mid-March · high-end visitor traffic · significant Mainland collector travel',
-     color:'#f87171'},
-    {name:'🏡 HOFEX (Food & Hotel Asia)',     month:5, weekNo:1, duration:4, type:'trade',
-     note:'HKCEC, early May (odd years) · trade show · modest public day impact',
-     color:'#38bdf8'},
-    {name:'⌚ HK Watch & Clock Fair',         month:9, weekNo:2, duration:5, type:'trade',
-     note:'HKCEC, mid-September · trade + public · Mainland buyers significant',
-     color:'#fb923c'},
-    {name:'🎮 Games & Comics Fest (秋季)',    month:11,weekNo:3, duration:4, type:'autumn',
-     note:'HKCEC, late November · increasingly popular with cross-border attendance',
-     color:'#a78bfa'},
-    {name:'🎉 New Year Countdown',            month:12,weekNo:5, duration:2, type:'christmas',
-     note:'Victoria Harbour · Dec 31 + Jan 1 · massive outbound departure surge Dec 31',
-     color:'#f59e0b'},
-  ];
-
-  // For each event, check if we have historical data in that week and compute avg
-  const _evWdBase = wdwph.weekday.avgTotal||1;
-  const _evPhBase = wdwph.phwk.avgTotal||1;
-
-  push('<div style="overflow-x:auto"><table class="af-table" style="min-width:600px">');
-  push('<thead><tr>');
-  push('<th style="text-align:left;padding:6px 10px">Event</th>');
-  push('<th>Typical Period</th>');
-  push('<th>Duration</th>');
-  push('<th>Hist. Avg Pax/Day</th>');
-  push('<th>vs Weekday</th>');
-  push('<th>vs Wknd/PH</th>');
-  push('<th style="text-align:left">Notes</th>');
-  push('</tr></thead><tbody>');
-
-  const _moNames2=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-  _annualEvents.forEach((ev,i)=>{
-    // Find days in loaded data that fall in this event's typical week
-    const _evDays = days.filter(d=>{
-      const dm=parseInt(d.date.substring(5,7));
-      const dd=parseInt(d.date.substring(8));
-      if(dm!==ev.month) return false;
-      // Approx: week 1 = day 1-7, week 2 = 8-14, week 3 = 15-21, week 4 = 22-28, week 5 = 28-31
-      const startDay = (ev.weekNo-1)*7+1;
-      const endDay = Math.min(startDay+ev.duration+6,31);
-      return dd>=startDay && dd<=endDay;
-    });
-    const _evAvg = _evDays.length>=3
-      ? Math.round(_evDays.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/_evDays.length) : null;
-    const _vsWD = _evAvg ? ((_evAvg-_evWdBase)/_evWdBase*100) : null;
-    const _vsWE = _evAvg ? ((_evAvg-_evPhBase)/_evPhBase*100) : null;
-
-    const weekLabel = ev.weekNo===5?'End of month':
-      ['','1st','2nd','3rd','4th','Late'][Math.min(ev.weekNo,5)]+' wk of '+_moNames2[ev.month];
-
-    push('<tr style="'+(i%2===0?'':'background:var(--surface2)')+'">');
-    push('<td style="font-weight:600;color:'+ev.color+';padding:6px 10px;white-space:nowrap;max-width:200px">'+ev.name+'</td>');
-    push('<td style="text-align:center;font-size:10px;color:var(--muted);white-space:nowrap">'+weekLabel+'</td>');
-    push('<td style="text-align:center">'+ev.duration+'d</td>');
-    push('<td class="hi" style="text-align:center">'+(_evAvg?nt(_evAvg):'<span style="color:var(--muted);font-size:9px">no data</span>')+'</td>');
-    push('<td class="'+(_vsWD===null?'':_vsWD>=0?'pos':'neg')+'">'+(_vsWD===null?'—':(_vsWD>=0?'+':'')+_vsWD.toFixed(1)+'%')+'</td>');
-    push('<td class="'+(_vsWE===null?'':_vsWE>=0?'pos':'neg')+'">'+(_vsWE===null?'—':(_vsWE>=0?'+':'')+_vsWE.toFixed(1)+'%')+'</td>');
-    push('<td style="font-size:9px;color:var(--muted);text-align:left;max-width:200px">'+ev.note+'</td>');
-    push('</tr>');
-  });
-
-  push('</tbody></table></div>');
-  push('<div style="padding:8px 12px;font-size:9px;color:var(--muted);border-top:1px solid var(--border)">');
-  push('Hist. avg shows average daily pax during that calendar week across all loaded years. ');
-  push('Load multiple years of data for more reliable estimates. Exact event dates vary year-to-year — confirm with HKTDC / HKCEC.</div>');
-  push('</div></div>');
-
   push('</div>'); // af-wrap
   return o.join('');
 }
@@ -1728,8 +1810,8 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   const fullYoy2   = fullYearAnalysis(days);
   const dow        = dowAnalysis(days);
   const holidays   = holidayAnalysis(days);
-  const easter     = forecastEaster2026(days);
-  const easterDays = getEasterDays(days);
+  const easter     = forecastNextHoliday(days);
+  const easterDays = easter ? easter.easterDays : [];
   const ww         = weekdayWeekendAnalysis(days);
   const latestDate = days.length ? days[days.length-1].date : '';
   const latestMMDD2 = latestDate.substring(5);
@@ -3924,631 +4006,66 @@ function renderContent(){
 // HKR:     5.0 pax/min = 300 pax/hr per counter  |  600 pax/hr per e-channel
 // Visitor: 3.0 pax/min = 180 pax/hr per counter  |  360 pax/hr per e-channel
 // Hall capacity baseline: ~2,500 pax (arrival hall capacity for load reference)
-// ── AI Context Analysis ──────────────────────────────────────────────────────
-async function runAIContextAnalysis(cardId, easterYear, gfDate, emDate){
-  const btn  = document.getElementById('ai-ctx-btn-'+cardId);
-  const body = document.getElementById('ai-ctx-body-'+cardId);
-  if(!btn||!body) return;
-
-  btn.disabled = true;
-  btn.textContent = '⏳ Analysing…';
-
-  // Animate loading dots
-  let dot=0;
-  const loadTimer = setInterval(()=>{
-    body.innerHTML = `<div style="padding:24px;text-align:center;font-family:'Space Mono',monospace">
-      <div style="font-size:28px;margin-bottom:12px">${['🔍','📰','🌤','📊','🚆'][dot%5]}</div>
-      <div style="font-size:11px;color:var(--muted)">${['Reviewing HK cross-border travel context…','Checking Mainland holiday & tourism factors…','Assessing weather & seasonal patterns…','Evaluating economic & policy environment…','Synthesising traffic impact assessment…'][dot%5]}</div>
-    </div>`;
-    dot++;
-  }, 900);
-
-  // Build rich context from loaded data
-  const days = typeof eraFilter==='function' ? eraFilter(allDays) : allDays;
-  const latestDate = allDays.length ? allDays[allDays.length-1].date : 'unknown';
-  const easter = typeof forecastEaster2026==='function' ? forecastEaster2026(days) : null;
-  const projSummary = easter ? Object.entries(easter.dayProfiles||{}).sort((a,b)=>+a[0]-+b[0])
-    .map(([off,dp])=>`  ${dp.label}: projected ${dp.projTotal.toLocaleString()} pax`).join('\n') : 'N/A';
-
-  const prompt = `You are an expert analyst for LSC (羅湖 Lo Wu Boundary Control Point), the busiest HK-Mainland land border crossing.
-
-Today's date: ${new Date().toLocaleDateString('en-HK',{year:'numeric',month:'long',day:'numeric'})}.
-Data loaded through: ${latestDate}.
-Target Easter: ${easterYear} (Good Friday ${gfDate} → Day after Easter Monday ${emDate}).
-
-Current base projections:
-${projSummary}
-
-Your task: Provide a comprehensive real-world factors assessment for Easter ${easterYear} cross-border traffic at Lo Wu. Cover BOTH Hong Kong AND Mainland China factors.
-
-Structure your response with these sections:
-
-## 🇭🇰 Hong Kong Factors
-
-**Weather & Seasonal**
-Typical April weather in HK (temperature, humidity, rain probability, typhoon season onset). How does weather affect cross-border travel decisions?
-
-**Public Holidays & Events**
-Easter is a statutory HK PH. Any major HK events, festivals, concerts, or exhibitions that could compete for resident leisure time or attract Mainland visitors?
-
-**Transport & Infrastructure**
-MTR East Rail / Lo Wu service capacity. Any known engineering works, service enhancements, or disruptions typical in Easter period?
-
-**Economic & Consumer Sentiment**
-HK retail, tourism, F&B sectors — are residents more likely to travel outbound or stay in HK? Typical HK Easter travel patterns (short getaway vs day trips).
-
-## 🇨🇳 Mainland China Factors
-
-**Holiday Alignment**
-Is Easter a public holiday in Mainland? How does the timing align with Qingming Festival (清明節, usually early April)? If Qingming falls near Easter, combined holiday effects?
-
-**Mainland Tourism Appetite**
-Mainland visitor trends to HK. Any travel campaigns, visa policies, or cross-border incentive schemes? Typical Mainland visitor behaviour during Easter (shopping, leisure, transit)?
-
-**Mainland Events & Competition**
-Are there major events in Guangdong / GBA region that might attract HK residents to cross over, or keep Mainlanders in GBA instead of coming to HK?
-
-**Economic Factors**
-Consumer confidence in GBA. Exchange rate HKD/RMB implications for Mainland visitor spending motivation. Any cross-border e-commerce or duty-free incentives?
-
-**Border Policy & Capacity**
-ImmD / Mainland immigration capacity arrangements for peak Easter period. Any mutual recognition schemes, faster clearance tech deployments expected?
-
-## 📊 Overall Impact Assessment
-
-Provide:
-- **HK Factors Impact**: Positive / Neutral / Negative on total pax (brief reason)  
-- **Mainland Factors Impact**: Positive / Neutral / Negative on total pax (brief reason)
-- **Overall Sentiment Score**: A single integer from -3 (very negative) to +3 (very positive) on ONE line, formatted exactly as: "Overall Sentiment Score: +1" or "Overall Sentiment Score: -2" etc.
-- **Suggested Projection Adjustment**: e.g. "Base projections appear reasonable. Consider +3-5% uplift if Qingming falls immediately before Easter, boosting the pre-Easter departure surge."
-- **Key Watch Points** (3-5 bullet points of what to monitor in the 2 weeks before Easter)
-
-Be specific and practical. Note where you are reasoning from general knowledge vs what would need live verification. Keep total response under 600 words.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1200,
-        system: 'You are a concise, practical expert analyst. Provide structured, actionable analysis. Use markdown headers and bullet points. Be specific about HK and Mainland China factors separately.',
-        messages: [{role:'user', content: prompt}]
-      })
-    });
-
-    clearInterval(loadTimer);
-
-    if(!res.ok){
-      const err = await res.json().catch(()=>({error:{message:'HTTP '+res.status}}));
-      throw new Error(err.error?.message || 'HTTP '+res.status);
-    }
-
-    const data = await res.json();
-    const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim();
-    if(!text) throw new Error('Empty response from API');
-
-    // Markdown → HTML
-    function md(t){
-      return t
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
-        .replace(/\*(.+?)\*/g,'<i>$1</i>')
-        .replace(/^## (.+)$/gm,'<h4 style="color:var(--gold);font-size:11px;margin:14px 0 5px;padding-bottom:3px;border-bottom:1px solid rgba(245,200,66,.2);letter-spacing:.05em">$1</h4>')
-        .replace(/^\*\*(.+?)\*\*$/gm,'<div style="font-size:10px;font-weight:700;color:var(--text);margin:7px 0 2px">$1</div>')
-        .replace(/^[-•] (.+)$/gm,'<li style="margin:2px 0;font-size:10.5px;color:var(--dim);line-height:1.5">$1</li>')
-        .replace(/(<li[^>]*>.*<\/li>\n?)+/gs,'<ul style="margin:4px 0 8px 14px;padding:0">$&</ul>')
-        .replace(/\n\n+/g,'<br>')
-        .replace(/\n/g,' ');
-    }
-
-    // Extract sentiment score
-    const scoreMatch = text.match(/Overall Sentiment Score:\s*([+-]?\d)/i);
-    const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
-    const scoreCol = score>=2?'#22c55e':score<=-2?'#f87171':'#f59e0b';
-    const scoreLabel = score>=2?'Positive 📈':score<=-2?'Negative 📉':'Neutral ➡';
-    const scoreBar = score>=0
-      ? '<div style="display:flex;align-items:center;gap:4px">'+'<div style="width:12px;height:12px;border-radius:2px;background:#444"></div>'.repeat(3)+'<div style="width:12px;height:12px;border-radius:2px;background:'+scoreCol+'"></div>'.repeat(Math.min(score,3))+'</div>'
-      : '<div style="display:flex;align-items:center;gap:4px">'+'<div style="width:12px;height:12px;border-radius:2px;background:'+scoreCol+'"></div>'.repeat(Math.min(-score,3))+'<div style="width:12px;height:12px;border-radius:2px;background:#444"></div>'.repeat(3)+'</div>';
-
-    body.innerHTML = `
-      <div style="padding:12px 16px">
-        <div style="display:flex;align-items:center;gap:14px;padding:10px 14px;
-             background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.2);
-             border-radius:6px;margin-bottom:14px">
-          <div style="text-align:center;min-width:56px">
-            <div style="font-size:26px;font-weight:700;color:${scoreCol};line-height:1">${score>=0?'+':''}${score}</div>
-            <div style="font-size:8px;color:${scoreCol};font-family:'Space Mono',monospace;margin-top:2px">${scoreLabel}</div>
-          </div>
-          <div style="flex:1">
-            ${scoreBar}
-            <div style="font-size:9px;color:var(--muted);margin-top:4px">
-              Impact score: −3 (very negative) → +3 (very positive) vs base forecast<br>
-              <span style="opacity:.7">Knowledge-based analysis · verify live data before operational decisions · ${new Date().toLocaleString('en-HK')}</span>
-            </div>
-          </div>
-          <button onclick="runAIContextAnalysis('${cardId}','${easterYear}','${gfDate}','${emDate}')"
-            style="padding:5px 10px;border-radius:5px;border:1px solid var(--border);
-            background:transparent;color:var(--muted);cursor:pointer;font-size:9px;
-            font-family:'Space Mono',monospace;white-space:nowrap">↻ Refresh</button>
-        </div>
-        <div style="font-size:10.5px;line-height:1.6;color:var(--dim)">${md(text)}</div>
-        <div style="margin-top:12px;padding-top:8px;border-top:1px solid var(--border);
-             font-size:8.5px;color:var(--muted);font-family:'Space Mono',monospace">
-          ⚠ Knowledge-based analysis. Weather forecasts, live news &amp; policy changes require independent verification before operational use.
-        </div>
-      </div>`;
-
-  } catch(err){
-    clearInterval(loadTimer);
-    body.innerHTML = `<div style="padding:16px">
-      <div style="color:#f87171;font-size:11px;font-family:'Space Mono',monospace;margin-bottom:8px">⚠ ${err.message}</div>
-      <div style="font-size:10px;color:var(--muted);margin-bottom:12px">Make sure you are using the app on claude.ai</div>
-      <button onclick="runAIContextAnalysis('${cardId}','${easterYear}','${gfDate}','${emDate}')"
-        style="padding:6px 14px;border-radius:5px;border:1px solid var(--border);
-        background:transparent;color:var(--muted);cursor:pointer;font-size:10px;
-        font-family:'Space Mono',monospace">↻ Retry</button>
-    </div>`;
-  }
-
-  btn.disabled = false;
-  btn.textContent = '↻ Re-run';
-}
-
 function exportAnalysisPDF(){
+  const el = document.getElementById('content');
+  if(!el){ alert('Load data first.'); return; }
+
   const isPC = currentEra==='postcovid';
   const hdrCol = isPC ? '#1A5276' : '#1D6A40';
   const latestD = allDays.length ? allDays[allDays.length-1].date : '';
   const eraLabel = isPC ? 'Post-COVID' : 'Since Commissioning';
 
-  // Inject a print-only <style> that overrides the dark theme and hides UI chrome.
-  // window.print() reads this directly — no pop-ups, no blobs, no CSP issues.
-  const styleId = '__lsc_print_css__';
+  // Inject a print-only stylesheet + a light-mode overlay div, then trigger print
+  const styleId = '__pdf_style__';
   document.getElementById(styleId)?.remove();
-  const s = document.createElement('style');
-  s.id = styleId;
-  s.media = 'print';
-  s.textContent = `
-    @page { margin: 12mm; size: A4 landscape; }
+  const st = document.createElement('style');
+  st.id = styleId; st.media = 'print';
+  st.textContent = [
+    '@page{margin:10mm;size:A4 landscape}',
+    'body>*:not(#__pdf_wrap__){display:none!important}',
+    '#__pdf_wrap__{display:block!important;font-family:Calibri,Arial,sans-serif;font-size:10px;color:#111;background:#fff}',
+    '.af-page-title{color:'+hdrCol+';font-size:12px;font-weight:700;border-bottom:2px solid '+hdrCol+';padding-bottom:2px;margin:12px 0 6px;page-break-before:auto}',
+    '.af-card{border:1px solid #dde3ec;border-radius:3px;margin-bottom:8px;page-break-inside:avoid;background:#fff}',
+    '.af-card-hdr{background:#eef2f7;padding:5px 10px;border-bottom:1px solid #dde3ec}',
+    '.af-card-hdr h3{font-size:10px;font-weight:700;color:'+hdrCol+';margin:0}',
+    '.af-card-body{padding:6px 10px;background:#fff}',
+    'table{border-collapse:collapse;width:100%;font-size:8.5px;margin-bottom:6px}',
+    'th{background:'+hdrCol+';color:#fff;padding:3px 5px;text-align:center;font-size:8px}',
+    'td{padding:2px 5px;border-bottom:1px solid #eee;color:#111}',
+    'tr:nth-child(even) td{background:#f7f9fc}',
+    '.pos{color:#16a34a;font-weight:700}.neg{color:#dc2626;font-weight:700}',
+    '.hi{font-weight:700}.arr-c{color:#1565c0}.dep-c{color:#7d3c98}',
+    '.kpi-ribbon{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}',
+    '.kpi-card{border:1px solid #dde3ec;border-radius:3px;padding:5px 9px;min-width:110px;background:#fff}',
+    '.kpi-val{font-size:14px;font-weight:700;color:'+hdrCol+'}',
+    '.kpi-lbl{font-size:7px;color:#777;text-transform:uppercase}',
+    '.kpi-sub{font-size:7px;color:#999}',
+    '.kpi-trend,.hourly-chart,.hourly-wrap,button{display:none!important}',
+    '.eday-panel{display:block!important}',
+    '.bar-track{background:#e5e7eb;height:6px;overflow:hidden;border-radius:2px}',
+    '.bar-fill{height:100%}.bf-accent{background:'+hdrCol+'}.bf-gold{background:#b07d10}',
+    '.day-cards{display:flex;flex-wrap:wrap;gap:6px}',
+    '.day-card{border:1px solid #dde3ec;border-radius:3px;padding:5px 8px;min-width:110px;font-size:8.5px;background:#fff}',
+    '.day-card-total{font-size:14px;font-weight:700;color:'+hdrCol+'}',
+    '.af-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}',
+    '.kc-accent,.kc-gold,.kc-purple,.kc-res,.kc-dep{background:#fff!important}',
+    '*{--bg:#fff;--surface:#f9fafb;--surface2:#f3f4f6;--border:#dde3ec;--text:#111;--dim:#333;--muted:#666;--accent:'+hdrCol+';--res:#16a34a;--vis:#b07d10;--gold:#b07d10;--arrival:#1565c0;--departure:#7d3c98}'
+  ].join('\n');
+  document.head.appendChild(st);
 
-    /* hide everything except the analysis content area */
-    body > *:not(#__lsc_print_wrap__) { display: none !important; }
-
-    #__lsc_print_wrap__ {
-      display: block !important;
-      position: static !important;
-      width: 100% !important;
-      background: #fff !important;
-      color: #111 !important;
-      font-family: Calibri, Arial, sans-serif !important;
-      font-size: 10px !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-
-    /* CSS variable overrides for print */
-    * {
-      --bg: #fff !important; --surface: #f9fafb !important; --surface2: #f3f4f6 !important;
-      --surface3: #eff0f1 !important; --border: #e0e4ea !important;
-      --text: #111 !important; --dim: #333 !important; --muted: #666 !important;
-      --accent: ${hdrCol} !important; --res: #16a34a !important; --vis: #B07D10 !important;
-      --gold: #B07D10 !important; --arrival: #1565C0 !important; --departure: #7D3C98 !important;
-      color-scheme: light !important;
-    }
-
-    /* layout */
-    .af-wrap { background: #fff !important; padding: 0 !important; }
-    .af-card  { border: 1px solid #dde3ec !important; border-radius: 4px !important;
-                margin-bottom: 8px !important; page-break-inside: avoid !important;
-                background: #fff !important; }
-    .af-card-hdr { background: #eef2f7 !important; padding: 6px 10px !important;
-                   border-bottom: 1px solid #dde3ec !important; }
-    .af-card-hdr h3 { color: ${hdrCol} !important; font-size: 10px !important; margin: 0 !important; }
-    .af-card-body { padding: 6px 10px !important; background: #fff !important; }
-    .af-page-title { color: ${hdrCol} !important; font-size: 12px !important; font-weight: 700 !important;
-                     border-bottom: 2px solid ${hdrCol} !important; padding-bottom: 3px !important;
-                     margin: 12px 0 6px !important; page-break-before: auto !important; }
-    .kpi-ribbon { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; }
-    .kpi-card   { border: 1px solid #dde3ec !important; border-radius: 4px !important;
-                  padding: 6px 10px !important; background: #fff !important; min-width: 100px !important; }
-    .kpi-val  { font-size: 14px !important; font-weight: 700 !important; color: ${hdrCol} !important; }
-    .kpi-lbl  { font-size: 7.5px !important; color: #666 !important; text-transform: uppercase !important; }
-    .kpi-sub  { font-size: 7.5px !important; color: #888 !important; }
-    table { border-collapse: collapse !important; width: 100% !important;
-            font-size: 8.5px !important; margin-bottom: 6px !important; }
-    th { background: ${hdrCol} !important; color: #fff !important;
-         padding: 3px 6px !important; text-align: center !important; font-size: 8px !important; }
-    td { padding: 2px 6px !important; border-bottom: 1px solid #eee !important;
-         background: #fff !important; color: #111 !important; }
-    tr:nth-child(even) td { background: #f7f9fc !important; }
-    .pos { color: #16a34a !important; font-weight: 700 !important; }
-    .neg { color: #dc2626 !important; font-weight: 700 !important; }
-    .hi  { font-weight: 700 !important; }
-    .arr-c { color: #1565C0 !important; }
-    .dep-c { color: #7D3C98 !important; }
-    .bar-track { background: #e5e7eb !important; border-radius: 2px !important;
-                 height: 6px !important; overflow: hidden !important; }
-    .bar-fill { height: 100% !important; }
-    .bf-accent { background: ${hdrCol} !important; }
-    .bf-gold   { background: #B07D10 !important; }
-    .day-cards { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; }
-    .day-card  { border: 1px solid #dde3ec !important; border-radius: 3px !important;
-                 padding: 6px 8px !important; min-width: 120px !important;
-                 font-size: 8.5px !important; background: #fff !important; }
-    .eday-panel { display: block !important; }
-    /* hide interactive / decorative elements */
-    button, .hb-tip, .peak-star, input, select { display: none !important; }
-    .hourly-chart { display: none !important; }   /* bar charts don't print well */
-  `;
-  document.head.appendChild(s);
-
-  // Create a wrapper div that we can target cleanly
+  // Build print wrapper with header + cloned content
   const wrap = document.createElement('div');
-  wrap.id = '__lsc_print_wrap__';
-
-  // Print header
+  wrap.id = '__pdf_wrap__';
   const hdr = document.createElement('div');
-  hdr.style.cssText = `background:${hdrCol};color:#fff;padding:10px 16px;margin-bottom:12px;
-    display:flex;justify-content:space-between;align-items:center;border-radius:3px`;
-  hdr.innerHTML = `<div style="font-size:16px;font-weight:700">LSC — Analysis &amp; Forecast Report</div>
-    <div style="font-size:9px;opacity:.85">${eraLabel} &nbsp;·&nbsp; As at: ${latestD} &nbsp;·&nbsp; ${new Date().toLocaleString('en-HK')}</div>`;
+  hdr.style.cssText = 'background:'+hdrCol+';color:#fff;padding:8px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border-radius:3px';
+  hdr.innerHTML = '<b style="font-size:15px">LSC — Analysis &amp; Forecast Report</b><span style="font-size:9px;opacity:.8">'+eraLabel+' · As at: '+latestD+'</span>';
   wrap.appendChild(hdr);
-
-  // Clone the analysis content
-  const contentEl = document.getElementById('content');
-  if(contentEl){
-    const clone = contentEl.cloneNode(true);
-    // Make all eday-panels visible in clone
-    clone.querySelectorAll('.eday-panel').forEach(p => p.style.display = 'block');
-    // Remove buttons from clone
-    clone.querySelectorAll('button').forEach(b => b.remove());
-    wrap.appendChild(clone);
-  }
-
+  const clone = el.cloneNode(true);
+  clone.querySelectorAll('.eday-panel').forEach(p=>p.style.display='block');
+  clone.querySelectorAll('button').forEach(b=>b.remove());
+  wrap.appendChild(clone);
   document.body.appendChild(wrap);
+
   window.print();
-
-  // Cleanup after print dialog closes
-  setTimeout(()=>{
-    wrap.remove();
-    s.remove();
-  }, 1500);
+  setTimeout(()=>{ wrap.remove(); st.remove(); }, 1500);
 }
-
-function exportPPTX(){
-  if(!allDays.length){ alert('No data loaded.'); return; }
-  const days = eraFilter(allDays);
-  if(!days.length){ alert('No days in selected era range.'); return; }
-
-  const pres = new PptxGenJS();
-  pres.layout = 'LAYOUT_16x9';
-  pres.title = 'LSC — Passenger Statistics';
-  pres.author = 'Immigration Department';
-  pres.subject = 'Record High Analysis & Forecast';
-
-  const era = currentEra==='postcovid'?'Post-COVID':'Since Commissioning';
-  const latestDate = allDays[allDays.length-1].date;
-  const eraFrom = currentEra==='postcovid'?POST_COVID_DATE:COMM_DATE;
-  const isPC = currentEra==='postcovid';
-
-  // ── Colour palette ──────────────────────────────────────────────────────────
-  const C = {
-    bg:     '0A0E1A',  // near-black slide background
-    panel:  '111827',  // card background
-    navy:   isPC?'0D2B6B':'0A3020',  // header bar
-    accent: isPC?'00D4B8':'4ADE80',  // teal / green
-    gold:   'F5C842',
-    arr:    '00B4C8',
-    dep:    '7C6AF7',
-    res:    '4ADE80',
-    warn:   'F87171',
-    white:  'FFFFFF',
-    dim:    'AAB4C8',
-    muted:  '556070',
-    border: '1E2A3A',
-  };
-  const nt = n => n==null?'—':Number(n).toLocaleString();
-  const fmtPct = n => n==null?'—':(n>=0?'+':'')+n.toFixed(1)+'%';
-
-  // ── Shared helpers ───────────────────────────────────────────────────────────
-  // Slide header bar
-  function addHeader(sl, title, subtitle){
-    sl.background = { color: C.bg };
-    sl.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.68, fill:{color:C.navy}, line:{color:C.navy} });
-    sl.addShape(pres.shapes.RECTANGLE, { x:0, y:0.68, w:10, h:0.04, fill:{color:C.accent}, line:{color:C.accent} });
-    sl.addText(title, { x:0.38, y:0.02, w:7.5, h:0.64, fontSize:15, bold:true, color:C.white, valign:'middle', fontFace:'Calibri', charSpacing:1 });
-    if(subtitle) sl.addText(subtitle, { x:0.38, y:0.02, w:9.2, h:0.64, fontSize:9, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
-  }
-  // KPI card
-  function addKPI(sl, x, y, w, h, label, value, sub, accentCol){
-    sl.addShape(pres.shapes.RECTANGLE, { x, y, w, h, fill:{color:C.panel}, line:{color:C.border,width:1} });
-    sl.addShape(pres.shapes.RECTANGLE, { x, y, w, h:0.05, fill:{color:accentCol||C.accent}, line:{color:accentCol||C.accent} });
-    sl.addText(label, { x:x+0.15, y:y+0.12, w:w-0.3, h:0.3, fontSize:8, color:C.dim, fontFace:'Calibri' });
-    sl.addText(value, { x:x+0.15, y:y+0.38, w:w-0.3, h:h*0.5, fontSize:22, bold:true, color:accentCol||C.accent, fontFace:'Calibri', shrinkText:true });
-    if(sub) sl.addText(sub, { x:x+0.15, y:y+h-0.28, w:w-0.3, h:0.25, fontSize:8, color:C.muted, fontFace:'Calibri' });
-  }
-  // Footnote
-  function addFootnote(sl, text){
-    sl.addShape(pres.shapes.RECTANGLE, { x:0, y:5.35, w:10, h:0.28, fill:{color:C.navy}, line:{color:C.navy} });
-    sl.addText(text, { x:0.3, y:5.36, w:9.4, h:0.26, fontSize:7.5, color:C.dim, fontFace:'Calibri', valign:'middle' });
-  }
-
-  const yoy  = yoyAnalysis(days);
-  const fullY = fullYearAnalysis(days);
-  const dow  = dowAnalysis(days);
-  const hols = holidayAnalysis(days);
-  const ww   = weekdayWeekendAnalysis(days);
-  const easterDaysAll = getEasterDays(days);
-  const lastY = yoy.length ? yoy[yoy.length-1] : null;
-  const prevY = yoy.length>1 ? yoy[yoy.length-2] : null;
-  const gPct  = lastY&&prevY&&prevY.avgDaily ? ((lastY.avgDaily-prevY.avgDaily)/prevY.avgDaily*100) : null;
-  const peakD = days.reduce((a,b)=>((b.dt&&b.dt.ad_tot)||0)>((a.dt&&a.dt.ad_tot)||0)?b:a, days[0]);
-
-  // ══════════════════════════════════════════════════════════════════
-  // SLIDE 1 — TITLE
-  // ══════════════════════════════════════════════════════════════════
-  const s1 = pres.addSlide();
-  s1.background = { color: C.bg };
-  // Left accent strip
-  s1.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:0.1, h:5.625, fill:{color:C.accent}, line:{color:C.accent} });
-  // Background panel right
-  s1.addShape(pres.shapes.RECTANGLE, { x:6.8, y:0, w:3.2, h:5.625, fill:{color:C.panel}, line:{color:C.border,width:1} });
-  // Title
-  s1.addText('LSC', { x:0.3, y:1.0, w:6.2, h:1.6, fontSize:36, bold:true, color:C.white, fontFace:'Calibri', lineSpacingMultiple:1.1 });
-  s1.addText('Passenger Statistics — Record High Analysis', { x:0.3, y:2.75, w:6.2, h:0.5, fontSize:16, color:C.accent, fontFace:'Calibri' });
-  s1.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.32, w:3.2, h:0.04, fill:{color:C.gold}, line:{color:C.gold} });
-  s1.addText(era+' Era  ·  As at '+fDate(latestDate), { x:0.3, y:3.45, w:6.2, h:0.38, fontSize:12, color:C.gold, fontFace:'Calibri' });
-  s1.addText('Data period: '+fDate(eraFrom)+' – '+fDate(latestDate), { x:0.3, y:3.9, w:6, h:0.3, fontSize:10, color:C.dim, fontFace:'Calibri' });
-  s1.addText(days.filter(d=>!isBorderClosed(d.date)).length.toLocaleString()+' operational days in dataset', { x:0.3, y:4.25, w:6, h:0.3, fontSize:10, color:C.dim, fontFace:'Calibri' });
-  // Right panel stats
-  s1.addText('QUICK SNAPSHOT', { x:7.0, y:0.3, w:2.8, h:0.4, fontSize:9, color:C.dim, fontFace:'Calibri', bold:true, align:'center', charSpacing:2 });
-  const snap=[
-    {l:'Avg Daily ('+(lastY?lastY.year:'')+')' , v:lastY?nt(lastY.avgDaily):'—', c:C.accent},
-    {l:'Same-period YoY', v:gPct!=null?fmtPct(gPct):'—', c:gPct!=null&&gPct>=0?C.res:C.warn},
-    {l:'Avg Wknd / PH', v:nt(ww.phwk.avgTotal), c:C.gold},
-    {l:'Peak Day', v:peakD?nt(peakD.dt.ad_tot):'—', c:C.gold},
-  ];
-  snap.forEach((k,i)=>{
-    s1.addText(k.l, { x:7.0, y:0.85+i*1.1, w:2.8, h:0.3, fontSize:8, color:C.muted, fontFace:'Calibri', align:'center' });
-    s1.addText(k.v, { x:7.0, y:1.1+i*1.1, w:2.8, h:0.55, fontSize:20, bold:true, color:k.c, fontFace:'Calibri', align:'center' });
-  });
-  s1.addText('Immigration Department  ·  Confidential', { x:0.3, y:5.25, w:9.4, h:0.25, fontSize:8, color:C.muted, fontFace:'Calibri' });
-
-  // ══════════════════════════════════════════════════════════════════
-  // SLIDE 2 — EXECUTIVE SUMMARY KPIs (2-row grid of 6 cards)
-  // ══════════════════════════════════════════════════════════════════
-  const s2 = pres.addSlide();
-  addHeader(s2, 'EXECUTIVE SUMMARY', era+' · '+fDate(eraFrom)+' – '+fDate(latestDate));
-  const kpis2=[
-    {l:'Days in Dataset',       v:days.filter(d=>!isBorderClosed(d.date)).length.toLocaleString(), s:'operational days',    c:C.accent},
-    {l:'Avg Daily ('+( lastY?lastY.year:'')+')', v:lastY?nt(lastY.avgDaily):'—',                 s:'pax/day',             c:C.gold},
-    {l:'YoY Growth (same period)', v:gPct!=null?fmtPct(gPct):'—',                                 s:'vs prior same period', c:gPct!=null&&gPct>=0?C.res:C.warn},
-    {l:'Avg Weekday (Non-PH)',  v:nt(ww.weekday.avgTotal),                                        s:ww.weekday.count+' days baseline', c:C.arr},
-    {l:'Avg Weekend / PH',      v:nt(ww.phwk.avgTotal),                                           s:ww.phwk.count+' days',  c:C.gold},
-    {l:'All-time Peak Day',     v:peakD?nt(peakD.dt.ad_tot):'—',                                  s:peakD?fDate(peakD.date):'',       c:C.gold},
-  ];
-  kpis2.forEach((k,i)=>{
-    const col=i%3, row=Math.floor(i/3);
-    addKPI(s2, 0.25+col*3.25, 0.9+row*2.2, 3.1, 2.0, k.l, k.v, k.s, k.c);
-  });
-  // Peak day context
-  if(peakD) addFootnote(s2, 'Peak day: '+fDate(peakD.date)+' ('+( getRemarks(peakD.date)||'—')+')'
-    +' · Arrival: '+nt(peakD.dt.arr_tot||0)+' · Departure: '+nt(peakD.dt.dep_tot||0)
-    +' · HKR: '+nt(peakD.dt.ad_res||0)+' · Visitor: '+nt(peakD.dt.ad_vis||0)
-    +(ww.weekday.avgTotal>0?' · Peak is ×'+( peakD.dt.ad_tot/ww.weekday.avgTotal).toFixed(1)+' avg weekday':''));
-
-  // ══════════════════════════════════════════════════════════════════
-  // SLIDE 3 — YEAR-OVER-YEAR TREND (bar chart + commentary)
-  // ══════════════════════════════════════════════════════════════════
-  const s3 = pres.addSlide();
-  const _moParts3 = latestDate.substring(5).split('-');
-  const pLabel = parseInt(_moParts3[1])+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(_moParts3[0])-1];
-  addHeader(s3, 'YEAR-OVER-YEAR TRAFFIC TREND', 'Same period (1 Jan – '+pLabel+') compared across years');
-
-  if(yoy.length>1){
-    s3.addChart(pres.charts.BAR, [{ name:'Avg Daily Pax', labels:yoy.map(y=>y.year), values:yoy.map(y=>y.avgDaily) }], {
-      x:0.25, y:0.85, w:6.0, h:3.9, barDir:'col',
-      chartColors:[C.accent],
-      showValue:true, valAxisMinVal:0,
-      dataLabelFontSize:7, dataLabelColor:C.white,
-      catAxisLabelColor:C.dim, valAxisLabelColor:C.dim,
-      plotAreaFill:{color:C.panel},
-      dataLabelPosition:'outEnd',
-    });
-    // YoY table on right
-    s3.addShape(pres.shapes.RECTANGLE, { x:6.5, y:0.85, w:3.25, h:0.4, fill:{color:C.navy}, line:{color:C.navy} });
-    s3.addText('Year-on-Year Growth', { x:6.55, y:0.85, w:3.15, h:0.4, fontSize:9, bold:true, color:C.white, fontFace:'Calibri', valign:'middle' });
-    yoy.slice(-8).forEach((y,i)=>{
-      const prev=yoy[yoy.indexOf(y)-1];
-      const g=prev&&prev.avgDaily?((y.avgDaily-prev.avgDaily)/prev.avgDaily*100):null;
-      const gCol=g!=null&&g>=0?C.res:C.warn;
-      const rowBg=y.caveat==='early-reopen'?'1A1408':C.panel;
-      s3.addShape(pres.shapes.RECTANGLE, { x:6.5, y:1.3+i*0.48, w:3.25, h:0.46, fill:{color:rowBg}, line:{color:C.border,width:1} });
-      s3.addText(y.year+(y.caveat==='early-reopen'?' ⚠':''), { x:6.6, y:1.32+i*0.48, w:0.7, h:0.42, fontSize:10, bold:true, color:y.caveat==='early-reopen'?C.gold:C.white, fontFace:'Calibri', valign:'middle' });
-      s3.addText(nt(y.avgDaily), { x:7.35, y:1.32+i*0.48, w:1.2, h:0.42, fontSize:10, color:C.dim, fontFace:'Calibri', valign:'middle', align:'right' });
-      s3.addText(g!=null?fmtPct(g):'—', { x:8.6, y:1.32+i*0.48, w:1.0, h:0.42, fontSize:10, bold:true, color:gCol, fontFace:'Calibri', valign:'middle', align:'right' });
-    });
-    addFootnote(s3, 'Avg daily calculated from same calendar period (1 Jan – '+pLabel+') for fair comparison. Border closure period (Feb 2020 – Jan 2023) excluded from averages. ⚠ 2023 = early-reopening year, public remained cautious; figures understate structural demand.');
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  // SLIDE 4 — FULL YEAR TREND
-  // ══════════════════════════════════════════════════════════════════
-  const s4b = pres.addSlide();
-  addHeader(s4b, 'ANNUAL TRAFFIC — FULL YEAR TOTALS', 'Complete calendar year · COVID closure excluded · current year partial');
-  const fyData = fullY.filter(y=>!isBorderClosed(y.year+'-06-01')&&y.count>10);
-  if(fyData.length>1){
-    s4b.addChart(pres.charts.BAR, [
-      { name:'Total Traffic', labels:fyData.map(y=>y.year), values:fyData.map(y=>y.total) },
-    ], {
-      x:0.25, y:0.88, w:9.5, h:3.7, barDir:'col',
-      chartColors:[C.arr],
-      showValue:true, valAxisMinVal:0,
-      dataLabelFontSize:7, dataLabelColor:C.white,
-      catAxisLabelColor:C.dim, valAxisLabelColor:C.dim,
-      plotAreaFill:{color:C.panel},
-    });
-    // Mark 2023 caveat
-    s4b.addText('⚠ 2023: Border reopened Jan 8, 2023. Traffic ramped gradually. Year understates structural demand.', { x:0.3, y:4.65, w:9.4, h:0.35, fontSize:9, color:C.gold, fontFace:'Calibri', italic:true });
-  }
-  addFootnote(s4b, 'Full-year totals. Border closure days (2020-02-04 to 2023-01-07) excluded from averages. Current year is partial and based on data loaded. Chart shows all post-COVID years with sufficient data.');
-
-  // ══════════════════════════════════════════════════════════════════
-  // SLIDE 5 — DAY-OF-WEEK PROFILE
-  // ══════════════════════════════════════════════════════════════════
-  const s4 = pres.addSlide();
-  addHeader(s4, 'TRAFFIC PROFILE BY DAY OF WEEK  (last 12 months)', 'Average pax/day · arrival vs departure breakdown');
-  if(dow.length){
-    const maxAvg=Math.max(...dow.map(d=>d.avg))||1;
-    // Chart left
-    s4.addChart(pres.charts.BAR, [
-      { name:'Arrival',   labels:dow.map(d=>d.day), values:dow.map(d=>d.avgArr) },
-      { name:'Departure', labels:dow.map(d=>d.day), values:dow.map(d=>d.avgDep) },
-    ], {
-      x:0.25, y:0.85, w:6.2, h:3.9, barDir:'col', barGrouping:'stacked',
-      chartColors:[C.arr, C.dep],
-      showValue:false, valAxisMinVal:0,
-      catAxisLabelColor:C.dim, valAxisLabelColor:C.dim,
-      plotAreaFill:{color:C.panel},
-    });
-    // Table right
-    s4.addShape(pres.shapes.RECTANGLE, { x:6.6, y:0.85, w:3.15, h:0.38, fill:{color:C.navy}, line:{color:C.navy} });
-    ['Day','Total','Arrival','Dep'].forEach((h,i)=>{
-      s4.addText(h, { x:6.62+[0,0.72,1.45,2.3][i], y:0.87, w:[0.7,0.7,0.82,0.82][i], h:0.34, fontSize:8, bold:true, color:C.dim, fontFace:'Calibri', valign:'middle', align:'center' });
-    });
-    const monRef=(dow.find(d=>d.day==='Mon')||{avg:1}).avg||1;
-    dow.forEach((d,i)=>{
-      const isWknd=d.day==='Sat'||d.day==='Sun';
-      const rowBg=isWknd?'15120A':C.panel;
-      s4.addShape(pres.shapes.RECTANGLE, { x:6.6, y:1.28+i*0.48, w:3.15, h:0.46, fill:{color:rowBg}, line:{color:C.border,width:1} });
-      s4.addText(d.day, { x:6.62, y:1.3+i*0.48, w:0.7, h:0.42, fontSize:10, bold:isWknd, color:isWknd?C.gold:C.white, fontFace:'Calibri', valign:'middle' });
-      s4.addText(nt(d.avg), { x:7.34, y:1.3+i*0.48, w:0.7, h:0.42, fontSize:10, color:C.dim, fontFace:'Calibri', valign:'middle', align:'right' });
-      s4.addText(nt(d.avgArr), { x:8.07, y:1.3+i*0.48, w:0.82, h:0.42, fontSize:9, color:C.arr, fontFace:'Calibri', valign:'middle', align:'right' });
-      s4.addText(nt(d.avgDep), { x:8.92, y:1.3+i*0.48, w:0.8, h:0.42, fontSize:9, color:C.dep, fontFace:'Calibri', valign:'middle', align:'right' });
-    });
-    addFootnote(s4, 'Stacked bar: teal = arrival, purple = departure. Weekends typically 30–60% above weekday baseline due to leisure travel and public holiday concentration. Mon–Fri baseline excludes public holidays.');
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  // SLIDE 6 — BENCHMARK (Weekday vs Weekend/PH)
-  // ══════════════════════════════════════════════════════════════════
-  const s5 = pres.addSlide();
-  addHeader(s5, 'TRAFFIC BENCHMARK', 'Average weekday (non-PH) vs weekend / public holiday');
-  [
-    { lbl:'Average Weekday (Non-Public Holiday)', d:ww.weekday, color:C.arr, x:0.25 },
-    { lbl:'Average Weekend / Public Holiday',     d:ww.phwk,    color:C.gold, x:5.1  },
-  ].forEach(b=>{
-    s5.addShape(pres.shapes.RECTANGLE, { x:b.x, y:0.85, w:4.65, h:4.5, fill:{color:C.panel}, line:{color:C.border,width:1} });
-    s5.addShape(pres.shapes.RECTANGLE, { x:b.x, y:0.85, w:4.65, h:0.06, fill:{color:b.color}, line:{color:b.color} });
-    s5.addText(b.lbl, { x:b.x+0.2, y:0.98, w:4.25, h:0.5, fontSize:11, bold:true, color:C.white, fontFace:'Calibri' });
-    s5.addText(nt(b.d.avgTotal), { x:b.x+0.2, y:1.55, w:4.25, h:1.1, fontSize:48, bold:true, color:b.color, fontFace:'Calibri', shrinkText:true });
-    s5.addText('pax / day', { x:b.x+0.2, y:2.7, w:4.25, h:0.35, fontSize:11, color:C.dim, fontFace:'Calibri' });
-    // breakdown
-    s5.addShape(pres.shapes.RECTANGLE, { x:b.x+0.2, y:3.15, w:4.25, h:0.04, fill:{color:C.border}, line:{color:C.border} });
-    [
-      ['▲ Avg Arrival',   nt(b.d.avgArr),  C.arr],
-      ['▼ Avg Departure', nt(b.d.avgDep),  C.dep],
-      ['HKR (Resident)',  nt(b.d.avgRes||0), C.res],
-      ['Visitor (Mainland)', nt(b.d.avgVis||0), C.gold],
-    ].forEach(([l,v,c],j)=>{
-      s5.addText(l, { x:b.x+0.2, y:3.28+j*0.27, w:2.5, h:0.26, fontSize:9, color:C.dim, fontFace:'Calibri', valign:'middle' });
-      s5.addText(v, { x:b.x+2.7, y:3.28+j*0.27, w:1.75, h:0.26, fontSize:10, bold:true, color:c, fontFace:'Calibri', valign:'middle', align:'right' });
-    });
-    s5.addText(b.d.count.toLocaleString()+' days in dataset', { x:b.x+0.2, y:4.45, w:4.25, h:0.25, fontSize:8, color:C.muted, fontFace:'Calibri' });
-  });
-  addFootnote(s5, 'Visitor category is ~99.8% Mainland Chinese travellers crossing via Home Return Permit (回鄉證) or Two Way Permit (雙程證). '
-    +'Weekend/PH vs Weekday uplift: ×'+(ww.weekday.avgTotal>0?(ww.phwk.avgTotal/ww.weekday.avgTotal).toFixed(2):'—')+' avg. '
-    +'Peak demand planning should be anchored to Weekend/PH baseline rather than weekday average.');
-
-  // ══════════════════════════════════════════════════════════════════
-  // SLIDE 7 — HOLIDAY TYPE ANALYSIS
-  // ══════════════════════════════════════════════════════════════════
-  const s7 = pres.addSlide();
-  addHeader(s7, 'PEAK HOLIDAY ANALYSIS', 'Average daily traffic by holiday type · top 8 by volume');
-  const topH = hols.slice(0,8);
-  if(topH.length){
-    // Bar chart
-    s7.addChart(pres.charts.BAR, [{
-      name:'Avg Daily Pax',
-      labels: topH.map(h=>h.cat.length>22?h.cat.substring(0,20)+'…':h.cat),
-      values: topH.map(h=>h.avg),
-    }], {
-      x:0.25, y:0.85, w:9.5, h:3.5, barDir:'bar',
-      chartColors:[C.gold],
-      showValue:true, valAxisMinVal:0,
-      dataLabelFontSize:8, dataLabelColor:C.white,
-      catAxisLabelColor:C.dim, valAxisLabelColor:C.dim,
-      plotAreaFill:{color:C.panel},
-    });
-    // Key observations text box
-    const easter_h = hols.find(h=>h.cat.toLowerCase().includes('good friday'));
-    const golden_h = hols.find(h=>h.cat.toLowerCase().includes('national day golden week'));
-    s7.addShape(pres.shapes.RECTANGLE, { x:0.25, y:4.42, w:9.5, h:0.88, fill:{color:C.panel}, line:{color:C.border,width:1} });
-    s7.addText('Key observations:', { x:0.4, y:4.48, w:2, h:0.28, fontSize:9, bold:true, color:C.white, fontFace:'Calibri' });
-    let obs='';
-    if(easter_h) obs+='Good Friday avg: '+nt(easter_h.avg)+' pax (peak recorded: '+nt(easter_h.max)+').  ';
-    if(golden_h) obs+='National Day Golden Week avg: '+nt(golden_h.avg)+' pax.  ';
-    obs+='Weekend/PH avg: '+nt(ww.phwk.avgTotal)+'.  Holiday uplift vs weekday: ×'+(ww.weekday.avgTotal>0?(ww.phwk.avgTotal/ww.weekday.avgTotal).toFixed(2):'—')+'.';
-    s7.addText(obs, { x:0.4, y:4.7, w:9.3, h:0.52, fontSize:9, color:C.dim, fontFace:'Calibri', wrap:true });
-  }
-
-  // ══════════════════════════════════════════════════════════════════
-  // SLIDE 8 — EASTER FORECAST
-  // ══════════════════════════════════════════════════════════════════
-  const easter = forecastEaster2026(days);
-  if(easter && Object.keys(easter.dayProfiles).length){
-    const f = easter;
-    const tLabel = f.targetEasterLabel||'Easter';
-    const s6 = pres.addSlide();
-    s6.background = { color: C.bg };
-    // Gold header for Easter
-    s6.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.68, fill:{color:'7B4F00'}, line:{color:'7B4F00'} });
-    s6.addShape(pres.shapes.RECTANGLE, { x:0, y:0.68, w:10, h:0.04, fill:{color:C.gold}, line:{color:C.gold} });
-    s6.addText(tLabel.toUpperCase()+' FORECAST', { x:0.38, y:0.02, w:7, h:0.64, fontSize:15, bold:true, color:C.white, valign:'middle', fontFace:'Calibri', charSpacing:1 });
-    s6.addText('Growth: '+(f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'% ('+f.growthMethod+')  ·  Baseline: '+f.postCovidEasterCount+' post-COVID Easter days', { x:0.38, y:0.02, w:9.2, h:0.64, fontSize:9, color:C.dim, align:'right', valign:'middle', fontFace:'Calibri' });
-
-    // Day cards (5 across)
-    const profiles = Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).slice(0,5);
-    profiles.forEach(([off,dp],i)=>{
-      const sumArr=dp.profile.reduce((s,h)=>s+(h.arr_tot||0),0)||0;
-      const sumTot=dp.profile.reduce((s,h)=>s+(h.ad_tot||0),0)||1;
-      const pArr=Math.round(dp.projTotal*(sumArr/sumTot));
-      const pDep=dp.projTotal-pArr;
-      const x=0.2+i*1.92, cardW=1.78;
-      const hexCol=dp.color.replace('var(--accent)',C.accent).replace('var(--res)',C.res).replace('var(--vis)',C.gold).replace('var(--gold)',C.gold).replace('#','');
-      s6.addShape(pres.shapes.RECTANGLE, { x, y:0.88, w:cardW, h:2.85, fill:{color:C.panel}, line:{color:C.border,width:1} });
-      s6.addShape(pres.shapes.RECTANGLE, { x, y:0.88, w:cardW, h:0.06, fill:{color:hexCol}, line:{color:hexCol} });
-      s6.addText(dp.label.replace(/ \(.*\)/,''), { x:x+0.1, y:1.0, w:cardW-0.2, h:0.45, fontSize:9, bold:true, color:C.white, fontFace:'Calibri' });
-      s6.addText(fDate(dp.date), { x:x+0.1, y:1.48, w:cardW-0.2, h:0.28, fontSize:8, color:C.dim, fontFace:'Calibri' });
-      s6.addText(nt(dp.projTotal), { x:x+0.1, y:1.78, w:cardW-0.2, h:0.65, fontSize:22, bold:true, color:C.gold, fontFace:'Calibri', shrinkText:true });
-      s6.addText('total pax', { x:x+0.1, y:2.42, w:cardW-0.2, h:0.22, fontSize:7.5, color:C.muted, fontFace:'Calibri' });
-      s6.addText('▲ '+nt(pArr), { x:x+0.1, y:2.65, w:cardW-0.2, h:0.24, fontSize:8.5, color:C.arr, fontFace:'Calibri' });
-      s6.addText('▼ '+nt(pDep), { x:x+0.1, y:2.9, w:cardW-0.2, h:0.24, fontSize:8.5, color:C.dep, fontFace:'Calibri' });
-      s6.addText(dp.isEstimated?'⚠ estimated':dp.histCount+' yr avg', { x:x+0.1, y:3.15, w:cardW-0.2, h:0.2, fontSize:7, color:C.muted, fontFace:'Calibri' });
-    });
-
-    // Narrative block
-    const histDep = f.easterDays.length ? f.easterDays.reduce((a,b)=>(b.dt.dep_tot||0)>(a.dt.dep_tot||0)?b:a, f.easterDays[0]) : null;
-    const avgRes  = f.easterDays.length ? Math.round(f.easterDays.reduce((s,d)=>s+(d.dt.ad_res||0),0)/f.easterDays.reduce((s,d)=>s+(d.dt.ad_tot||0),1)*100) : null;
-    const peakDepOff = Object.entries(f.dayProfiles).reduce((best,[k,dp])=>dp.projTotal>best[1]?[k,dp.projTotal]:[],['',0]);
-    s6.addShape(pres.shapes.RECTANGLE, { x:0.2, y:3.48, w:9.6, h:1.98, fill:{color:C.panel}, line:{color:C.border,width:1} });
-    s6.addText('Operational Context & Historical Insight', { x:0.35, y:3.56, w:9.3, h:0.32, fontSize:10, bold:true, color:C.gold, fontFace:'Calibri' });
-    let narr='';
-    narr += tLabel+' is one of the highest-traffic periods of the year. Good Friday typically sees a surge in HKR outbound departures as residents begin the long weekend, while Easter Monday/Tuesday brings return flows. ';
-    if(histDep) narr += 'Historical peak departure day: '+fDate(histDep.date)+' ('+( getRemarks(histDep.date)||'—')+') — '+nt(histDep.dt.dep_tot||0)+' departures recorded. ';
-    if(avgRes)  narr += 'HKR share of Easter traffic: ~'+avgRes+'% (residents dominate, using e-channels and manned counters). Visitor share (~'+(100-avgRes)+'%) is predominantly Mainland Chinese travellers. ';
-    narr += 'Projection applies a '+( f.growthRate>=0?'+':'')+( f.growthRate*100).toFixed(1)+'% trend factor derived from '+f.growthMethod+' on post-COVID data. ';
-    narr += 'Hall management: expect queuing zone at 60–80% capacity during peak departure hours on Good Friday.';
-    s6.addText(narr, { x:0.35, y:3.92, w:9.3, h:1.45, fontSize:9, color:C.dim, fontFace:'Calibri', wrap:true, lineSpacingMultiple:1.3 });
-  }
-
-  // ── Save ──────────────────────────────────────────────────────────────────
-  const eraSlug = currentEra==='postcovid'?'PostCOVID':'SinceComm';
-  pres.writeFile({ fileName:'RecordHigh_'+eraSlug+'_'+latestDate+'.pptx' });
-}
-
-
-// estimator render triggered from switchSection directly
-</script>
-</body>
-</html>
