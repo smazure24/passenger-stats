@@ -331,7 +331,7 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
   </div>
   <div>
     <label>Since Commissioning start date:</label><br/>
-    <input type="date" id="commDate" value="2003-09-07"/>
+    <input type="date" id="commDate" value="2007-08-15"/>
   </div>
   <button class="era-apply" onclick="applyConfig()">APPLY &amp; REFRESH</button>
   <span style="font-size:10px;color:var(--muted)">Post-COVID default: 08 Jan 2023 (HK border reopening)</span>
@@ -360,20 +360,19 @@ input[type=range].tpsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
 </main>
 
 <script>
-const __CTX_DATA_B64__ = "eyJlYXN0ZXIiOiB7IndlYXRoZXIiOiAiQXByaWwgaXMgdHJhbnNpdGlvbiBzZWFzb24gaW4gSEsuIE1pbGQgMjAtMjZDLCBtb2RlcmF0ZSBodW1pZGl0eSwgb2NjYXNpb25hbCByYWluLiBMb3cgdHlwaG9vbiByaXNrLiBHb29kIGNvbmRpdGlvbnMgZm9yIGNyb3NzLWJvcmRlciB0cmF2ZWwuIiwgImhrIjogWyJFYXN0ZXIgaXMgYSA0LWRheSBzdGF0dXRvcnkgcHVibGljIGhvbGlkYXkgaW4gSEsgKEdvb2QgRnJpZGF5IHRvIEVhc3RlciBNb25kYXkpIiwgIlN0cm9uZyBvdXRib3VuZCBzdXJnZSBvbiBHb29kIEZyaWRheSBhcyBIS1IgaGVhZCB0byBNYWlubGFuZCBmb3IgdGhlIGxvbmcgd2Vla2VuZCIsICJSZXR1cm4gd2F2ZSBwZWFrcyBvbiBFYXN0ZXIgU3VuZGF5L01vbmRheSBldmVuaW5nLCBhcnJpdmFsLWhlYXZ5IiwgIkNoZWNrIE1UUiBFYXN0IFJhaWwgZW5naW5lZXJpbmcgd29ya3Mgc2NoZWR1bGUgZm9yIHRoZSBFYXN0ZXIgd2Vla2VuZCJdLCAibWFpbmxhbmQiOiBbIkVhc3RlciBpcyBOT1QgYSBNYWlubGFuZCBwdWJsaWMgaG9saWRheSwgbm9ybWFsIHdvcmtpbmcgd2VlayBmb3IgbW9zdCIsICJDaGluZyBNaW5nIEZlc3RpdmFsIChRaW5nbWluZykgb2Z0ZW4gZmFsbHMgbmVhciBFYXN0ZXIgaW4gZWFybHkgQXByaWwiLCAiSWYgUWluZ21pbmcgb3ZlcmxhcHMgRWFzdGVyLCBNYWlubGFuZCByZXNpZGVudHMgZ2V0IGV4dGVuZGVkIGJyZWFrIGFuZCBpbmNyZWFzZWQgaW5ib3VuZCB2aXNpdG9ycyIsICJHQkEgcmVzaWRlbnRzIHRlbmQgdG8gdmlzaXQgSEsgZm9yIEVhc3RlciBzaG9wcGluZyBhbmQgbGVpc3VyZSIsICJObyBtYWpvciBNYWlubGFuZCBHb2xkZW4gV2VlayBjb21wZXRpdGlvbiBcdTIwMTQgSEsgaXMgYW4gYXR0cmFjdGl2ZSBzaG9ydC1icmVhayBkZXN0aW5hdGlvbiJdLCAid2F0Y2giOiBbIkV4YWN0IFFpbmdtaW5nIGRhdGUgdnMgRWFzdGVyIG92ZXJsYXAiLCAiTVRSIHNlcnZpY2UgYW5ub3VuY2VtZW50cyIsICJXZWF0aGVyIGZvcmVjYXN0IiwgIkhvdGVsIG9jY3VwYW5jeSBkYXRhIiwgIk1haW5sYW5kIHRyYXZlbCBzZW50aW1lbnQiXX0sICJsYWJvdXIiOiB7IndlYXRoZXIiOiAiRWFybHkgTWF5IGluIEhLLiBXYXJtIDI1LTI5QywgaHVtaWRpdHkgcmlzaW5nLiBHZW5lcmFsbHkgcGxlYXNhbnQuIE9jY2FzaW9uYWwgdGh1bmRlcnN0b3JtcyBwb3NzaWJsZS4iLCAiaGsiOiBbIkxhYm91ciBEYXkgTWF5IDEgaXMgYSBISyBzdGF0dXRvcnkgUEggXHUyMDE0IDEtZGF5IGhvbGlkYXkgb25seSIsICJISyByZXNpZGVudHMgb2Z0ZW4gY29tYmluZSB3aXRoIGFubnVhbCBsZWF2ZSBmb3Igc2hvcnQgTWFpbmxhbmQgdHJpcHMiLCAiSEsgbWFsbHMgYW5kIHRvdXJpc20gc2l0ZXMgYnVzeSB3aXRoIGluYm91bmQgTWFpbmxhbmQgdmlzaXRvcnMiXSwgIm1haW5sYW5kIjogWyJMYWJvdXIgRGF5IEdvbGRlbiBXZWVrID0gTWF5IDEtNSwgZml2ZSBkYXlzIFx1MjAxNCBtYWpvciBNYWlubGFuZCBob2xpZGF5IiwgIk9uZSBvZiB0aGUgMyBiaWdnZXN0IHRyYXZlbCBwZWFrcyBpbiBDaGluYSwgY29tcGFyYWJsZSB0byBOYXRpb25hbCBEYXkiLCAiR0JBIHJlc2lkZW50cyBmbG9vZCBpbnRvIEhLIGZvciBzaG9wcGluZywgZGluaW5nLCBhbmQgZW50ZXJ0YWlubWVudCIsICJWaXNpdG9yIHNoYXJlIGF0IExvIFd1IHBlYWtzIHNpZ25pZmljYW50bHkgZHVyaW5nIHRoaXMgd2VlayIsICJISyBob3RlbCByYXRlcyBzdXJnZSBjb25maXJtaW5nIHN0cm9uZyBNYWlubGFuZCB2aXNpdG9yIGRlbWFuZCJdLCAid2F0Y2giOiBbIk1haW5sYW5kIHRvdXJpc20gYnVyZWF1IGFubm91bmNlbWVudHMiLCAiSG90ZWwgcmF0ZSB0cmVuZHMgaW4gSEsiLCAiTVRSIEd1YW5nemhvdSBzZXJ2aWNlIGNhcGFjaXR5IiwgIkV4Y2hhbmdlIHJhdGUgbW92ZW1lbnQiLCAiQ29hY2ggYW5kIG1pbmlidXMgYm9va2luZyBkYXRhIl19LCAic3VtbWVyIjogeyJ3ZWF0aGVyIjogIkp1bHktQXVndXN0IGlzIHBlYWsgdHlwaG9vbiBzZWFzb24uIEhvdCBhbmQgaHVtaWQgMzAtMzRDLiBBIE5vLjggc2lnbmFsIGltbWVkaWF0ZWx5IGhhbHRzIGFsbCBjcm9zcy1ib3JkZXIgdHJhZmZpYy4gQXVndXN0IGlzIHRoZSBtb3N0IGFjdGl2ZSB0eXBob29uIG1vbnRoLiIsICJoayI6IFsiQm9vayBGYWlyIChIb25nIEtvbmcgQm9vayBGYWlyKSBtaWQtSnVseSwgYXJvdW5kIDFNIGF0dGVuZGFuY2UsIHZpc2l0b3ItaGVhdnksIGJvb3N0cyBhcnJpdmFscyIsICJBbmktQ29tIGFuZCBHYW1lcyBsYXRlIEp1bHksIGF0dHJhY3RzIEhLIHlvdXRoIGFuZCBNYWlubGFuZCBmYW5zIiwgIkJhYnkgRXhwbyBBdWd1c3QsIGZhbWlseSB2aXNpdHMgd2l0aCBzdHJvbmcgTWFpbmxhbmQgdmlzaXRvciBjb21wb25lbnQiLCAiU2Nob29sIHN1bW1lciBicmVhaywgSEsgZmFtaWxpZXMgdHJhdmVsIG91dGJvdW5kIGVzcGVjaWFsbHkgbGF0ZSBKdWx5IHRvIEF1Z3VzdCJdLCAibWFpbmxhbmQiOiBbIk5vIE1haW5sYW5kIHN0YXR1dG9yeSBob2xpZGF5cyBpbiBKdWx5LUF1Z3VzdCBhcGFydCBmcm9tIHdlZWtlbmRzIiwgIk1haW5sYW5kIHNjaG9vbCBzdW1tZXIgYnJlYWsgbWlkLUp1bHkgdG8gQXVndXN0LCBmYW1pbGllcyB2aXNpdCBISyBmb3IgbGVpc3VyZSBhbmQgc2hvcHBpbmciLCAiRXh0cmVtZSBoZWF0IGluIGlubGFuZCBDaGluYSBtYWtlcyBjb2FzdGFsIEhLIG1vcmUgYXR0cmFjdGl2ZSB0byBNYWlubGFuZCB2aXNpdG9ycyIsICJHQkEgaGlnaC1zcGVlZCByYWlsIGRyYXdzIGRheS10cmlwcGVycyB0byBISyBmb3Igc2hvcHBpbmcgYW5kIGRpbmluZyJdLCAid2F0Y2giOiBbIlR5cGhvb24gZm9yZWNhc3RzIHZpYSBIS08gNS1kYXkgb3V0bG9vayIsICJIS0NFQyBldmVudCBjYWxlbmRhciIsICJIb3RlbCBhbmQgdHJhdmVsIHBhY2thZ2UgYm9va2luZ3MiLCAiQ29hY2ggY2FwYWNpdHkiLCAiTWFpbmxhbmQgc2Nob29sIGhvbGlkYXkgc2NoZWR1bGUiXX0sICJuYXRpb25hbCI6IHsid2VhdGhlciI6ICJFYXJseSBPY3RvYmVyOiBwbGVhc2FudCBhdXR1bW4gd2VhdGhlciAyNC0yOEMsIGxvdyBodW1pZGl0eSwgbWluaW1hbCB0eXBob29uIHJpc2suIElkZWFsIHRyYXZlbCBjb25kaXRpb25zLiIsICJoayI6IFsiTmF0aW9uYWwgRGF5IE9jdCAxIGlzIGEgSEsgc3RhdHV0b3J5IFBIIiwgIkZpcmV3b3JrcyBkaXNwbGF5IG92ZXIgVmljdG9yaWEgSGFyYm91ciBkcmF3cyBodWdlIGNyb3dkcyIsICJISyByZXRhaWwgYW5kIHRvdXJpc20gc2VjdG9yIGF0IGZ1bGwgY2FwYWNpdHkiXSwgIm1haW5sYW5kIjogWyJOYXRpb25hbCBEYXkgR29sZGVuIFdlZWsgPSBPY3QgMS03LCBzZXZlbiBkYXlzIFx1MjAxNCBvbmUgb2YgQ2hpbmEgYmlnZ2VzdCB0cmF2ZWwgcGVyaW9kcyIsICJIaWdoZXN0IE1haW5sYW5kIHZpc2l0b3Igdm9sdW1lIG9mIHRoZSB5ZWFyIGF0IExvIFd1IiwgIlZpc2l0b3Igc2hhcmUgY2FuIGV4Y2VlZCAzMCBwZXJjZW50IG9mIGRhaWx5IHRvdGFsIHZzIDIyIHBlcmNlbnQgb24gbm9ybWFsIGRheXMiLCAiU2hlbnpoZW4gYW5kIEdCQSByZXNpZGVudHMgZm9ybSB0aGUgY29yZSwgbWFueSBmb3IgZGF5IHNob3BwaW5nIHRyaXBzIiwgIk91dGJvdW5kIEhLUiBzdXJnZSBwcmUtaG9saWRheSwgZGVwYXJ0dXJlLWhlYXZ5IG9uIFNlcCAzMCJdLCAid2F0Y2giOiBbIk1haW5sYW5kIGFjY29tbW9kYXRpb24gYm9va2luZ3MgaW4gSEsiLCAiQ3Jvc3MtYm9yZGVyIGNvYWNoIGNhcGFjaXR5IiwgIk1UUiBHdWFuZ3pob3Ugc2VydmljZSBmcmVxdWVuY3kiLCAiSEsgVG91cmlzbSBCb2FyZCBwcm9qZWN0aW9ucyJdfSwgImNocmlzdG1hcyI6IHsid2VhdGhlciI6ICJMYXRlIERlY2VtYmVyOiBjb29sIGFuZCBkcnkgMTUtMjBDLCBsb3cgaHVtaWRpdHksIGNsZWFyIHNraWVzLiBCZXN0IHdlYXRoZXIgb2YgdGhlIHllYXIuIFZlcnkgZmF2b3VyYWJsZSBmb3IgdHJhdmVsLiIsICJoayI6IFsiQ2hyaXN0bWFzIERlYyAyNS0yNywgdGhyZWUgc3RhdHV0b3J5IFBIcyBcdTIwMTQgZXh0ZW5kZWQgaG9saWRheSBmb3IgSEtSIiwgIkRlYyAzMSBtYXNzaXZlIGRlcGFydHVyZSBzdXJnZSBhcyBIS1IgY3Jvc3MgdG8gTWFpbmxhbmQgZm9yIE5ZRSBjZWxlYnJhdGlvbnMiLCAiSmFuIDIgTWFpbmxhbmQgUHVibGljIEhvbGlkYXkgXHUyMDE0IHN0cm9uZyBpbmJvdW5kIE1haW5sYW5kIHZpc2l0b3JzIiwgIkhLIHJldGFpbCBnb2xkZW4gc2Vhc29uIHdpdGggbHV4dXJ5IHNob3BwaW5nIGFuZCBDaHJpc3RtYXMgbWFya2V0cyJdLCAibWFpbmxhbmQiOiBbIkNocmlzdG1hcyBpcyBOT1QgYSBNYWlubGFuZCBQSCwgbm9ybWFsIHdvcmtpbmcgZGF5cyBEZWMgMjUtMjYiLCAiSmFuIDEgSVMgYSAxLWRheSBNYWlubGFuZCBQSCBcdTIwMTQgaW5ib3VuZCBzdXJnZSBEZWMgMzEgYW5kIEphbiAxIiwgIkphbiAyIE1haW5sYW5kIGV4dHJhIGxlYXZlIGRheSBcdTIwMTQgc3Ryb25nIGluYm91bmQgdmlzaXRvciB0cmFmZmljIHRvIEhLIiwgIkdCQSBoaWdoLXNwZW5kaW5nIHZpc2l0b3JzIGRvbWluYXRlIENocmlzdG1hcyBwZXJpb2Qgc2hvcHBpbmciLCAiTmV3IFllYXIgRXZlIGhpc3RvcmljYWxseSBoYXMgdGhlIGhpZ2hlc3Qgc2luZ2xlLWhvdXIgZGVwYXJ0dXJlIGNvdW50IG9mIHRoZSB5ZWFyIl0sICJ3YXRjaCI6IFsiSmFuIDIgTWFpbmxhbmQgUEggY29uZmlybWF0aW9uIiwgIkhLIGhvdGVsIG9jY3VwYW5jeSBDaHJpc3RtYXMgd2VlayIsICJDTlkgZGF0ZSBpZiBpbiBKYW51YXJ5IiwgIk1UUiBhbmQgY29hY2ggY2FwYWNpdHkgRGVjIDMxIl19fQ==";
 
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+// --- CONSTANTS ----------------------------------------------------------------
 const TOP_N = 5;
 // Post-COVID default: HK fully reopened borders 2023-01-08
 let POST_COVID_DATE = '2023-01-08';
-let COMM_DATE = '2003-09-07';
+let COMM_DATE = '2007-08-15';
 let currentEra = 'postcovid';
 let currentSection = 'total';
 
 let allDays = [];
 let allFileNames = [];
 
-// ─── PARSE ────────────────────────────────────────────────────────────────────
+// --- PARSE --------------------------------------------------------------------
 function toNum(v){
   if(v===null||v===undefined||v===''||v==='-')return null;
   const n=Number(String(v).replace(/,/g,''));return isNaN(n)?null:n;
@@ -463,7 +462,7 @@ function parseSheet(ws,fileName,sheetName){
   return days;
 }
 
-// ── New Records Alert ─────────────────────────────────────────────────────────
+// -- New Records Alert ---------------------------------------------------------
 // Called after loading new files. newDates = set of dates in newly loaded files.
 // Checks all major record categories and alerts if any new date is now #1.
 function checkNewRecords(prevDays, newDays){
@@ -542,13 +541,13 @@ function checkNewRecords(prevDays, newDays){
   // Top 5 appearances
   const top5only = topAppearances.filter(a=>!(a.isNewRecord&&a.rank===1));
   if(top5only.length){
-    html += `<div style="font-size:10px;color:#94a3b8;margin-top:4px">📊 Also in Top 5: `;
-    html += top5only.slice(0,6).map(r=>`<span style="color:#cbd5e1">#${r.rank} ${r.label} (${Number(r.value).toLocaleString()} · ${fDate(r.date)})</span>`).join(' &nbsp;·&nbsp; ');
+    html += '<div style="font-size:10px;color:#94a3b8;margin-top:4px">📊 Also in Top 5: ';
+    html += top5only.slice(0,6).map(function(r){ return '<span style="color:#cbd5e1">#'+r.rank+' '+r.label+' ('+Number(r.value).toLocaleString()+' · '+fDate(r.date)+')</span>'; }).join(' &nbsp;&middot;&nbsp; ');
     html += '</div>';
   }
 
   html += '</div>';
-  html += '<button onclick="document.getElementById('__records_alert__').remove()" style="background:transparent;border:1px solid #475569;color:#94a3b8;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:Space Mono,monospace;font-size:10px;white-space:nowrap;flex-shrink:0">✕ Dismiss</button>';
+  html += '<button onclick="dismissRecordsAlert()" style="background:transparent;border:1px solid #475569;color:#94a3b8;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:Space Mono,monospace;font-size:10px;white-space:nowrap;flex-shrink:0">x Dismiss</button>';
   html += '</div>';
 
   banner.innerHTML = html;
@@ -576,7 +575,7 @@ async function parseFiles(files){
   return days;
 }
 
-// ─── FILE HANDLING ────────────────────────────────────────────────────────────
+// --- FILE HANDLING ------------------------------------------------------------
 function showLoad(v){
   document.getElementById('upLoading').style.display=v?'block':'none';
   document.getElementById('dashLoading').style.display=v?'block':'none';
@@ -597,7 +596,7 @@ async function handleFiles(files){
       showErr(`No data found. First rows of "${sn}":\n\n${preview}\n\nSend this screenshot to fix the parser.`);
       showLoad(false);return;
     }
-    // Merge + deduplicate by date — if same date appears in multiple files,
+    // Merge + deduplicate by date - if same date appears in multiple files,
     // keep the one with the highest total pax (most complete data)
     const prevDays = [...allDays]; // snapshot before merge for record comparison
     const mergedMap = {};
@@ -624,7 +623,7 @@ function resetAll(){
   document.getElementById('upError').style.display='none';
 }
 
-// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+// --- DASHBOARD ----------------------------------------------------------------
 function showDashboard(){
   document.getElementById('uploadScreen').style.display='none';
   document.getElementById('dashboard').style.display='block';
@@ -653,13 +652,13 @@ function switchSection(sec,btn){
 
 }
 
-// ─── FILTER BY ERA ────────────────────────────────────────────────────────────
+// --- FILTER BY ERA ------------------------------------------------------------
 function eraFilter(days){
   const cutoff=currentEra==='postcovid'?POST_COVID_DATE:COMM_DATE;
   return days.filter(d=>d.date>=cutoff);
 }
 
-// ─── TOP-N ───────────────────────────────────────────────────────────────────
+// --- TOP-N -------------------------------------------------------------------
 function topN(days,valueFn,n=TOP_N){
   return [...days]
     .map(d=>({day:d,value:valueFn(d)}))
@@ -679,7 +678,7 @@ function topNHourly(days,valueFn,n=TOP_N){
   return candidates.sort((a,b)=>b.value-a.value).slice(0,n);
 }
 
-// ─── FORMAT ──────────────────────────────────────────────────────────────────
+// --- FORMAT ------------------------------------------------------------------
 function fN(n){return(n===null||n===undefined)?'—':Number(n).toLocaleString();}
 function fDate(s){
   if(!s)return'';
@@ -692,12 +691,12 @@ function dayOfWeek(s){
   const _sp=s.split('-');return new Date(Date.UTC(+_sp[0],+_sp[1]-1,+_sp[2])).toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'});
 }
 
-// ─── HK HOLIDAY REMARKS ENGINE ───────────────────────────────────────────────
+// --- HK HOLIDAY REMARKS ENGINE -----------------------------------------------
 // Compute Easter Sunday for a given year (Anonymous Gregorian algorithm)
-// ══════════════════════════════════════════════════════════════════════════════
-// HK GENERAL HOLIDAYS — Official gazette lookup table (gov.hk)
+// ------------------------------------------------------------------------------
+// HK GENERAL HOLIDAYS - Official gazette lookup table (gov.hk)
 // Source: https://www.gov.hk/en/about/abouthk/holiday/
-// ══════════════════════════════════════════════════════════════════════════════
+// ------------------------------------------------------------------------------
 
 // Official gazetted HK General Holidays 2023-2026 (exact dates from gov.hk)
 const HK_GAZETTE_PH = {
@@ -756,7 +755,7 @@ const HK_GAZETTE_PH = {
   '2025-10-29': 'Chung Yeung Festival',
   '2025-12-25': 'Christmas Day',
   '2025-12-26': 'First Weekday after Christmas',
-  // 2026 (note: Ching Ming on Sun → Mon sub; clashes with Easter Mon → extra Tue PH)
+  // 2026 (note: Ching Ming on Sun - Mon sub; clashes with Easter Mon - extra Tue PH)
   '2026-01-01': "New Year's Day",
   '2026-01-02': 'Mainland Public Holiday',
   '2026-02-17': 'Lunar New Year (Day 1)',
@@ -835,7 +834,7 @@ const NATIONAL_GAMES_YEARS = [2021, 2025];
 function getRemarks(dateStr){
   if(!dateStr) return '';
 
-  // ── 1. Official gazette lookup first (2023-2026) ──────────────────────────
+  // -- 1. Official gazette lookup first (2023-2026) --------------------------
   if(HK_GAZETTE_PH[dateStr]) return HK_GAZETTE_PH[dateStr];
 
   const d = new Date(dateStr+'T00:00:00');
@@ -846,9 +845,9 @@ function getRemarks(dateStr){
   const isWeekend = dow===0||dow===6;
   const isSat = dow===6;
   const isSun = dow===0;
-  const isSummer = (month===7&&day>=15) || month===8; // Summer = Jul 15 – Aug 31
+  const isSummer = (month===7&&day>=15) || month===8; // Summer = Jul 15 - Aug 31
 
-  // ── 2. Fixed-date public holidays (algorithmic fallback for other years) ──
+  // -- 2. Fixed-date public holidays (algorithmic fallback for other years) --
   if(month===1&&day===1) return "New Year's Day";
   if(month===1&&day===2&&dow===1) return "New Year's Day Holiday (Sub)";
   if(month===1&&day===2) return 'Mainland Public Holiday';
@@ -869,7 +868,7 @@ function getRemarks(dateStr){
   if(month===12&&day===26) return 'Boxing Day / First Weekday after Christmas';
   if(month===12&&day===27&&dow===1) return 'Christmas Holiday';
 
-  // ── 3. Easter (computed for non-gazetted years) ───────────────────────────
+  // -- 3. Easter (computed for non-gazetted years) ---------------------------
   const easter = easterSunday(year);
   const easterDiff = Math.round((d-easter)/86400000);
   if(easterDiff===-2) return 'Good Friday';
@@ -880,7 +879,7 @@ function getRemarks(dateStr){
   if(easterDiff>=-3&&easterDiff<=2)
     return `Easter Holiday${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
 
-  // ── 4. Lunar New Year ─────────────────────────────────────────────────────
+  // -- 4. Lunar New Year -----------------------------------------------------
   const lny = LUNAR_NEW_YEAR[year];
   if(lny){
     const lnyDate = new Date(year,lny[0]-1,lny[1]);
@@ -893,7 +892,7 @@ function getRemarks(dateStr){
     if(lnyDiff>=-7&&lnyDiff<0) return 'Pre-Lunar New Year';
   }
 
-  // ── 5. Ching Ming ─────────────────────────────────────────────────────────
+  // -- 5. Ching Ming ---------------------------------------------------------
   const chingMing = CHING_MING[year];
   if(chingMing){
     if(dateStr===chingMing) return 'Ching Ming Festival';
@@ -901,47 +900,47 @@ function getRemarks(dateStr){
     if(Math.round((d-cmDate)/86400000)===1&&dow===1) return 'Ching Ming Festival Holiday';
   }
 
-  // ── 6. Buddha's Birthday ─────────────────────────────────────────────────
+  // -- 6. Buddha's Birthday -------------------------------------------------
   const bday = BUDDHAS_BIRTHDAY[year];
   if(bday&&dateStr===bday) return "Buddha's Birthday";
   if(bday){const bd=new Date(bday);if(Math.round((d-bd)/86400000)===1&&dow===1)return"Buddha's Birthday Holiday";}
 
-  // ── 7. Tuen Ng / Dragon Boat ─────────────────────────────────────────────
+  // -- 7. Tuen Ng / Dragon Boat ---------------------------------------------
   const tuenNg = TUEN_NG[year];
   if(tuenNg&&dateStr===tuenNg) return 'Dragon Boat Festival (Tuen Ng)';
   if(tuenNg){const tn=new Date(tuenNg);if(Math.round((d-tn)/86400000)===1&&dow===1)return'Tuen Ng Festival Holiday';}
 
-  // ── 8. Chung Yeung ───────────────────────────────────────────────────────
+  // -- 8. Chung Yeung -------------------------------------------------------
   const cy = CHUNG_YEUNG[year];
   if(cy&&dateStr===cy) return 'Chung Yeung Festival';
   if(cy){const cyd=new Date(cy);if(Math.round((d-cyd)/86400000)===1&&dow===1)return'Chung Yeung Festival Holiday';}
 
-  // ── 9. National Games ────────────────────────────────────────────────────
+  // -- 9. National Games ----------------------------------------------------
   if(year===2025&&month===11&&day>=9&&day<=26)
     return `National Games 2025${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
   if(year===2021&&month===9&&day>=15&&day<=27)
     return `National Games 2021${isWeekend?' ('+(isSat?'Saturday':'Sunday')+')':''}`;
 
-  // ── 10. Labour Week (first week of May cross-border) ─────────────────────
+  // -- 10. Labour Week (first week of May cross-border) ---------------------
   if(month===5&&day>=2&&day<=7){
     if(isWeekend) return `Labour Week (${isSat?'Saturday':'Sunday'})`;
     return 'Labour Week';
   }
 
-  // ── 11. Summer period ────────────────────────────────────────────────────
+  // -- 11. Summer period ----------------------------------------------------
   if(isSummer){
     if(isSat) return 'Summer Saturday';
     if(isSun) return 'Summer Sunday';
     if(month===7||month===8) return 'Summer Weekday';
   }
 
-  // ── 12. Christmas holiday period ─────────────────────────────────────────
+  // -- 12. Christmas holiday period -----------------------------------------
   if((month===12&&day>=22&&day<=24)||(month===12&&day===27&&dow!==1)){
     if(isWeekend) return `Christmas Holiday (${isSat?'Saturday':'Sunday'})`;
     return 'Christmas Holiday';
   }
 
-  // ── 13. Weekends ─────────────────────────────────────────────────────────
+  // -- 13. Weekends ---------------------------------------------------------
   if(isSat) return 'Saturday';
   if(isSun) return 'Sunday';
   return '';
@@ -949,7 +948,7 @@ function getRemarks(dateStr){
 
 
 
-// ── Monthly breakdown analysis ──────────────────────────────────────────────
+// -- Monthly breakdown analysis ----------------------------------------------
 function monthlyAnalysis(days){
   if(!days.length) return [];
   const byYM={};
@@ -969,7 +968,7 @@ function monthlyAnalysis(days){
     .sort((a,b)=>a.ym.localeCompare(b.ym));
 }
 
-// ── Easter forecast accuracy (actual vs naïve +YoY projection) ─────────────
+// -- Easter forecast accuracy (actual vs na-ve +YoY projection) -------------
 function forecastAccuracyTracker(days){
   const easterDays=getEasterDays(days);
   if(!easterDays.length) return [];
@@ -1012,7 +1011,7 @@ function buildAnalysisHTML(days){
 
   push('<div class="af-wrap">');
 
-  // ══ EXPORT BAR ═══════════════════════════════════════════════════════════════
+  // -- EXPORT BAR ---------------------------------------------------------------
   push('<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px;padding:10px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">');
   push('<span style="font-size:10px;font-family:Space Mono,monospace;color:var(--muted);letter-spacing:.06em;margin-right:4px">EXPORT:</span>');
   push('<button onclick="exportExcel()" style="padding:6px 14px;border-radius:6px;border:1px solid #34d399;background:transparent;color:#34d399;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700">📊 Excel</button>');
@@ -1020,7 +1019,7 @@ function buildAnalysisHTML(days){
   push('<button onclick="exportAnalysisPDF()" style="padding:6px 14px;border-radius:6px;border:1px solid #7c6af7;background:transparent;color:#7c6af7;cursor:pointer;font-size:10px;font-family:Space Mono,monospace;font-weight:700">📄 PDF</button>');
   push('</div>');
 
-  // ══ KPI RIBBON ═══════════════════════════════════════════════════════════════
+  // -- KPI RIBBON ---------------------------------------------------------------
   const lastYoy = yoy.length ? yoy[yoy.length-1] : null;
   const prevYoy = yoy.length>1 ? yoy[yoy.length-2] : null;
   const yoyGrowth = lastYoy&&prevYoy&&prevYoy.avgDaily ? ((lastYoy.avgDaily-prevYoy.avgDaily)/prevYoy.avgDaily*100) : null;
@@ -1101,7 +1100,7 @@ function buildAnalysisHTML(days){
   push('</div>');
   push('</div>'); // kpi-ribbon
 
-  // ══ ROW 1: YoY table + Day-of-Week ═══════════════════════════════════════════
+  // -- ROW 1: YoY table + Day-of-Week -------------------------------------------
   push('<div class="af-page-title">📊 Year-over-Year Trend</div>');
   push('<div class="af-grid">');
 
@@ -1143,7 +1142,7 @@ function buildAnalysisHTML(days){
   push('</tbody></table></div>');
   push('<div style="font-size:9px;color:var(--muted);padding:8px 16px;border-top:1px solid var(--border)">⚠ "Closed/Excl." = days within the border closure period (2020-02-04 to 2023-01-07) excluded from averages. ⚠ 2023 = early-reopening year, public cautious; treat as lower-bound reference.</div></div></div>');
 
-  // ── Full-year table ─────────────────────────────────────────────────────────
+  // -- Full-year table ---------------------------------------------------------
   push('<div class="af-card" style="grid-column:1/-1;margin-top:16px">');
   push('<div class="af-card-hdr"><h3>Annual Traffic — Full Year</h3><span class="kpi-sub">'+fullYoy.length+' years · complete calendar year totals · current year marked as partial · ⚠ 2023 early-reopen caveat applies</span></div>');
   push('<div class="af-card-body" style="padding:0"><div style="overflow-x:auto">');
@@ -1175,9 +1174,9 @@ function buildAnalysisHTML(days){
   push('</div></div>');
   push('</div>'); // af-grid (DoW card)
 
-  // ══ ROW 2: Holiday type analysis ═════════════════════════════════════════════
+  // -- ROW 2: Holiday type analysis ---------------------------------------------
 
-  // ══ WEEKDAY vs WEEKEND / PUBLIC HOLIDAY ═══════════════════════════════════════
+  // -- WEEKDAY vs WEEKEND / PUBLIC HOLIDAY ---------------------------------------
   push('<div class="af-page-title">📅 Weekday vs Weekend &amp; Public Holiday</div>');
   push('<div class="kpi-ribbon" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">');
   // Weekday card
@@ -1256,12 +1255,12 @@ function buildAnalysisHTML(days){
   push('</tbody></table></div></div>');
   push('</div>'); // af-grid
 
-  // ══ SECTION 3: Easter 2026 Forecast ══════════════════════════════════════════
+  // -- SECTION 3: Easter 2026 Forecast ------------------------------------------
   const _fcastTitle = easter ? (easter.targetEasterLabel||'Easter')+' Forecast' : 'Upcoming Holiday Forecast';
   const _fcastIcon = easter ? (easter.holidayIcon||'📅') : '📅';
   push('<div class="af-page-title">'+_fcastIcon+' '+_fcastTitle+'</div>');
 
-  // ── Auto-switch status banner ──────────────────────────────────────────────
+  // -- Auto-switch status banner ----------------------------------------------
   {
     const _latestLoaded = days.length ? days[days.length-1].date : '—';
     const _allUpcoming = [];
@@ -1302,7 +1301,7 @@ function buildAnalysisHTML(days){
   const wwF = wdwph;
   const pctAboveWD = wwF.weekday.avgTotal ? Math.round((f.projectedTotal-wwF.weekday.avgTotal)/wwF.weekday.avgTotal*100) : null;
   const pctAboveWE = wwF.phwk.avgTotal ? Math.round((f.projectedTotal-wwF.phwk.avgTotal)/wwF.phwk.avgTotal*100) : null;
-  // ── Baseline + Historical Easter Table ─────────────────────────────────────
+  // -- Baseline + Historical Easter Table -------------------------------------
   push('<div class="af-card" style="margin-bottom:16px">');
   push('<div class="af-card-hdr"><h3>Baseline & Historical Easter Reference</h3>');
   push('<span class="kpi-sub">'+f.easterDays.length+' historical Easter days loaded · projection baseline: <b>post-COVID '+f.postCovidEasterCount+' days</b> '+f.baselineNote+' · growth: '+(f.factor>=1?'+':'')+((f.factor-1)*100).toFixed(1)+'% ('+f.growthMethod+')</span></div>');
@@ -1385,7 +1384,7 @@ function buildAnalysisHTML(days){
   push('</div></div>');
 
 
-    // ── Day cards using per-day profiles ─────────────────────────────────────
+    // -- Day cards using per-day profiles -------------------------------------
     push('<div class="day-cards">');
     Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp])=>{
       const tot = dp.projTotal||0;
@@ -1407,7 +1406,7 @@ function buildAnalysisHTML(days){
     });
     push('</div>');
 
-    // ── Auto-generated narrative ─────────────────────────────────────────────
+    // -- Auto-generated narrative ---------------------------------------------
     (function(){
       // Find peak departure day and peak arrival day
       const profiles = Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]);
@@ -1490,8 +1489,97 @@ function buildAnalysisHTML(days){
     })();
 
 
-    // ── Context Factors card ──────────────────────────────────────────────────
-    const _ctxData = JSON.parse(atob(__CTX_DATA_B64__));
+    // -- Context Factors card --------------------------------------------------
+    const _ctxData = {
+      easter: {
+        weather: "April: mild 20-26 degrees C, moderate humidity, occasional rain. Low typhoon risk. Good conditions for cross-border travel.",
+        hk: [
+          "Easter is a 4-day statutory PH in HK (Good Friday to Easter Monday)",
+          "Strong outbound surge on Good Friday - HKR heading to Mainland for long weekend",
+          "Return wave peaks Easter Sunday/Monday evening - arrival heavy",
+          "Competing HK events (HKJC racing, local festivals) may retain some residents",
+          "Check MTR East Rail engineering works schedule for Easter weekend"
+        ],
+        mainland: [
+          "Easter is NOT a Mainland public holiday - normal working week for most",
+          "Ching Ming Festival often falls near Easter (early April)",
+          "If Qingming overlaps or adjacent, extended holiday increases Mainland inbound traffic",
+          "GBA residents visit HK for Easter shopping and leisure",
+          "Watch RMB/HKD exchange rate - affects Mainland consumer shopping motivation",
+          "No Mainland Golden Week competition - HK attractive as short break destination"
+        ],
+        watch: ["Exact Qingming date vs Easter overlap","MTR service announcements","Weather forecast","Hotel occupancy data","Social media Mainland travel sentiment"]
+      },
+      labour: {
+        weather: "Early May: warm 25-29 degrees C, humidity rising, pre-typhoon season. Generally pleasant. Occasional thunderstorms.",
+        hk: [
+          "Labour Day (May 1) is a HK statutory PH - 1-day holiday only",
+          "HKR often combine with annual leave for short Mainland trips",
+          "HK malls and tourism sites busy with inbound Mainland visitors",
+          "Book Fair and trade shows typically not in May - lower event competition"
+        ],
+        mainland: [
+          "Labour Day Golden Week (5-1) = May 1-5 (5 days) - major Mainland holiday",
+          "One of China 3 biggest travel peaks - comparable to National Day",
+          "GBA residents flood into HK for shopping, dining, entertainment",
+          "Visitor share at Lo Wu peaks significantly during this week",
+          "HK hotel rates surge - confirms strong Mainland visitor demand",
+          "HKR also travel to Mainland to enjoy the festive atmosphere"
+        ],
+        watch: ["Mainland tourism bureau announcements","Hotel rate trends","MTR Guangzhou service capacity","Exchange rate movement","Cross-border coach booking data"]
+      },
+      summer: {
+        weather: "July-August: peak typhoon season. Hot humid 30-34 degrees C. Typhoon No.8 signal halts ALL cross-border traffic immediately. August is most active typhoon month.",
+        hk: [
+          "Book Fair (Hong Kong Book Fair) mid-July: around 1M attendance, strong Mainland visitor component",
+          "Ani-Com and Games late July: attracts HK youth and Mainland fans",
+          "Baby Products Expo August: family visits, Mainland mothers significant component",
+          "School summer break: HK families travel outbound, especially late July-August",
+          "HKCEC events create artificial peaks in their respective weeks"
+        ],
+        mainland: [
+          "No Mainland statutory holidays in July-August (excluding weekends)",
+          "Mainland school summer break mid-July to Aug: families visit HK for leisure",
+          "GBA high-speed rail increasingly draws day-trippers to HK",
+          "Extreme heat in inland China makes coastal HK more attractive to visitors"
+        ],
+        watch: ["Typhoon forecasts (HKO 5-day outlook)","HKCEC event calendar","Hotel and travel package bookings","Cross-border coach capacity","Mainland school holiday schedule"]
+      },
+      national: {
+        weather: "Early October: pleasant autumn 24-28 degrees C, low humidity, minimal typhoon risk. Ideal travel conditions.",
+        hk: [
+          "National Day Oct 1 is a HK statutory PH",
+          "Fireworks display over Victoria Harbour draws huge crowds",
+          "HK retail, F&B, tourism sector at full capacity",
+          "Some HK residents travel outbound to avoid crowds"
+        ],
+        mainland: [
+          "National Day Golden Week (Oct 1-7) - China biggest travel period",
+          "Highest Mainland visitor volume of the year at Lo Wu",
+          "Visitor share can exceed 30% of daily total (vs 22% normal)",
+          "GBA residents form the core - many for day shopping trips",
+          "HKR also use the opportunity - pre-holiday departure surge Sep 30"
+        ],
+        watch: ["Mainland accommodation bookings in HK","Cross-border coach capacity","MTR Guangzhou service frequency","HK Tourism Board pre-holiday projections"]
+      },
+      christmas: {
+        weather: "Late December: cool dry 15-20 degrees C, low humidity, clear skies. Best weather of the year - very favourable for travel.",
+        hk: [
+          "Christmas Dec 25-27: 3 statutory PHs - extended holiday for HKR",
+          "Dec 31: massive departure surge - HKR cross to Mainland for NYE celebrations",
+          "Jan 2: Mainland Public Holiday - strong inbound Mainland visitors",
+          "HK retail golden season - luxury shopping, Christmas markets"
+        ],
+        mainland: [
+          "Christmas is NOT a Mainland PH - normal working days Dec 25-26",
+          "Jan 1 IS a 1-day Mainland PH - inbound Dec 31 and Jan 1",
+          "Jan 2: Mainland takes extra leave - strong inbound to HK",
+          "Mainland consumers attracted by HK Christmas retail deals",
+          "NYE cross-border traffic: historically the year single highest departure hour"
+        ],
+        watch: ["Jan 2 Mainland PH status confirmation","HK hotel occupancy Christmas week","MTR coach capacity Dec 31"]
+      }
+    };
         const _ctx = _ctxData[f.holidayType] || _ctxData.easter;
     const _ctxLabel = f.targetEasterLabel || 'Holiday';
 
@@ -1542,7 +1630,7 @@ function buildAnalysisHTML(days){
     push('</div></div>'); // af-card-body + af-card
 
 
-    // ── Day selector buttons ──────────────────────────────────────────────────
+    // -- Day selector buttons --------------------------------------------------
     push('<div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0">');
     push('<span style="font-size:10px;color:var(--muted);align-self:center;font-family:Space Mono,monospace;letter-spacing:.06em">SELECT DAY:</span>');
     Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp],idx)=>{
@@ -1551,7 +1639,7 @@ function buildAnalysisHTML(days){
     });
     push('</div>');
 
-    // ── Per-day hourly panels ─────────────────────────────────────────────────
+    // -- Per-day hourly panels -------------------------------------------------
     Object.entries(f.dayProfiles).sort((a,b)=>+a[0]-+b[0]).forEach(([off,dp],idx)=>{
       const pid = 'dp_'+off.replace('-','m');
       push('<div id="'+pid+'" class="eday-panel" style="display:'+(idx===0?'block':'none')+'">');
@@ -1596,7 +1684,7 @@ function buildAnalysisHTML(days){
         push('<td style="color:'+dp.color+';font-weight:700">'+nt(proj)+'</td>');
         push('</tr>');
       });
-      // ── Day-end totals row ──────────────────────────────────────────────
+      // -- Day-end totals row ----------------------------------------------
       const _rows = dp.profile.filter(hr=>/\d{4}/.test(hr.time));
       const _totArrRes=_rows.reduce((s,h)=>s+(h.arr_res||0),0);
       const _totArrVis=_rows.reduce((s,h)=>s+(h.arr_vis||0),0);
@@ -1620,7 +1708,7 @@ function buildAnalysisHTML(days){
 
   }
 
-  // ══ MoM TREND CHART ══════════════════════════════════════════════════════════
+  // -- MoM TREND CHART ----------------------------------------------------------
   const _mData=monthlyAnalysis(days);
   if(_mData.length>2){
     push('<div class="af-page-title">📈 Monthly Traffic Trend</div>');
@@ -1650,7 +1738,7 @@ function buildAnalysisHTML(days){
     push('</div>');
     push('</div></div>');
 
-    // MoM table — last 12 months
+    // MoM table - last 12 months
     push('<div class="af-card" style="margin-top:16px">');
     push('<div class="af-card-hdr"><h3>Monthly Detail — Last 12 Months</h3></div>');
     push('<div class="af-card-body" style="padding:0"><div style="overflow-x:auto">');
@@ -1673,7 +1761,7 @@ function buildAnalysisHTML(days){
     push('</tbody></table></div></div></div>');
   }
 
-  // ══ HKR vs VISITOR BREAKDOWN ═══════════════════════════════════════════════
+  // -- HKR vs VISITOR BREAKDOWN -----------------------------------------------
   push('<div class="af-page-title">👥 HKR vs Visitor Breakdown</div>');
   push('<div class="af-grid" style="grid-template-columns:1fr 1fr">');
   // Stacked bar by year
@@ -1720,7 +1808,7 @@ function buildAnalysisHTML(days){
   push('</div></div>');
   push('</div>'); // af-grid
 
-  // ══ PEAK HOUR HEATMAP ════════════════════════════════════════════════════════
+  // -- PEAK HOUR HEATMAP --------------------------------------------------------
   push('<div class="af-page-title">🕐 Peak Hour Heatmap</div>');
   push('<div class="af-card">');
   push('<div class="af-card-hdr"><h3>Hourly × Day-of-Week Avg Pax Heatmap</h3><span class="kpi-sub">Average pax per time slot per day of week · last 12 months · darker = busier</span></div>');
@@ -1777,7 +1865,7 @@ function buildAnalysisHTML(days){
   push('</table></div>');
   push('</div></div>');
 
-  // ══ FORECAST ACCURACY ════════════════════════════════════════════════════════
+  // -- FORECAST ACCURACY --------------------------------------------------------
   const _faData=forecastAccuracyTracker(days);
   if(_faData.length>0){
     push('<div class="af-page-title">🎯 Easter Forecast Accuracy</div>');
@@ -1816,7 +1904,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   const latestDate = days.length ? days[days.length-1].date : '';
   const latestMMDD2 = latestDate.substring(5);
   const _mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  function fAsAt(mmdd){ // '03-22' → '22 Mar'
+  function fAsAt(mmdd){ // '03-22' - '22 Mar'
     const p=mmdd.split('-'); return parseInt(p[1])+' '+_mo[parseInt(p[0])-1];
   }
   const _moParts = latestMMDD2.split('-');
@@ -1828,7 +1916,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   const NC = 13; // expanded to 13 for hourly profile (prev year + hist avg + projection)
   ws['!rows'] = [];
 
-  // ── helpers ──────────────────────────────────────────────────────────────
+  // -- helpers --------------------------------------------------------------
   // Draw thick black outer border around a rectangular region
   function boxBorder(r1, r2, c1, c2){
     const blk = {style:'medium', color:{rgb:'000000'}};
@@ -1876,12 +1964,12 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       border:{bottom:{style:'medium',color:{rgb:isPostCovid?'2E86C1':'28A263'}}}
     }};
   }
-  // ── Cell border sets ──────────────────────────────────────────────────────
+  // -- Cell border sets ------------------------------------------------------
   const bThin   = {style:'thin',  color:{rgb:'D0D8E4'}};
   const bMed    = {style:'medium',color:{rgb:isPostCovid?'1E4D9A':'1E5C35'}};
   const bWhite  = {style:'thin',  color:{rgb:'FFFFFF'}};
 
-  // Full cage borders — thin sides, configurable top/bottom
+  // Full cage borders - thin sides, configurable top/bottom
   function bCage(topStyle, botStyle){
     const t = topStyle==='med'?bMed:topStyle==='none'?null:bThin;
     const b = botStyle==='med'?bMed:botStyle==='none'?null:bThin;
@@ -1927,7 +2015,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   }
   function pctC(v, bg, fg, bold){ const c=dataC(v+'%',bg,fg,bold); return c; }
 
-  // ── TITLE BANNER ─────────────────────────────────────────────────────────
+  // -- TITLE BANNER ---------------------------------------------------------
   ws['!rows'][R]={hpt:6};
   for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'5DADE2':'52C28A'}},border:{}}};
   ws[XLSX.utils.encode_cell({r:R,c:0})]={v:(isPostCovid?'POST-COVID':'SINCE COMMISSIONING')+'  ●',t:'s',s:{font:{name:'Calibri',sz:8,bold:true,color:{rgb:isPostCovid?'0D2B6B':'0A2218'}},fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'29B6F6':'43A047'}},alignment:{horizontal:'left',vertical:'center'},border:{}}};
@@ -1950,9 +2038,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   // spacer
   ws['!rows'][R]={hpt:6}; for(let i=0;i<NC;i++) ws[XLSX.utils.encode_cell({r:R,c:i})]=blank('F5F7FA'); R++;
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // SECTION 1: YoY TREND — SAME PERIOD
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
+  // SECTION 1: YoY TREND - SAME PERIOD
+  // -------------------------------------------------------------------------
   const _s1Start=R;
   ws['!rows'][R]={hpt:20};
   const s1Hdrs=['YEAR-OVER-YEAR TREND — SAME PERIOD (1 Jan – '+periodLabel+' each year)'];
@@ -1998,9 +2086,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   merge(R,0,R,9); ws['!rows'][R]={hpt:18}; R++;
   R++; // spacer
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   // SECTION 2: FULL YEAR TREND
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   const _s2Start=R;
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('ANNUAL TRAFFIC — FULL YEAR',navyBg,'FFFFFF',11,true,'left');
@@ -2041,9 +2129,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   merge(R,0,R,9); ws['!rows'][R]={hpt:18}; R++;
   R++; // spacer
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   // SECTION 3: WEEKDAY vs WEEKEND/PH BENCHMARK
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   const _s3Start=R;
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('TRAFFIC BENCHMARK — WEEKDAY vs WEEKEND / PUBLIC HOLIDAY',navyBg,'FFFFFF',11,true,'left');
@@ -2075,9 +2163,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   });
   R++; // spacer
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   // SECTION 4: HOLIDAY TYPE ANALYSIS
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   const _s4Start=R;
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY HOLIDAY / DAY TYPE  (Top '+Math.min(holidays.length,20)+')',navyBg,'FFFFFF',11,true,'left');
@@ -2112,9 +2200,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   });
   R++; // spacer
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   // SECTION 5: DAY OF WEEK
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   const _s5Start=R;
   ws['!rows'][R]={hpt:20};
   ws[XLSX.utils.encode_cell({r:R,c:0})]=hdrCell('AVERAGE TRAFFIC BY DAY OF WEEK  (last 12 months)',navyBg,'FFFFFF',11,true,'left');
@@ -2141,9 +2229,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
   });
   R++; // spacer
 
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   // SECTION 6: EASTER FORECAST
-  // ─────────────────────────────────────────────────────────────────────────
+  // -------------------------------------------------------------------------
   if(easter){
     const f = easter;
     const tLabel = f.targetEasterLabel||'Easter';
@@ -2187,20 +2275,20 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
     });
     R++; // spacer
 
-    // ── Hourly profile: 13-column layout ─────────────────────────────────────
+    // -- Hourly profile: 13-column layout -------------------------------------
     // Col 0:   Time
-    // Col 1-7: Most Recent Year actual (ArrR, ArrV, ▲Arr, DepR, DepV, ▼Dep, Total)
+    // Col 1-7: Most Recent Year actual (ArrR, ArrV, -Arr, DepR, DepV, -Dep, Total)
     // Col 8:   Historical Avg Total
-    // Col 9-11: 2026 Projection (▲Arr, ▼Dep, Total)
+    // Col 9-11: 2026 Projection (-Arr, -Dep, Total)
     // Col 12:  [blank]
     const NHC = 13;
     // Ensure ws['!cols'] exists and has at least NHC entries
     if(!ws['!cols']) ws['!cols']=[];
     while(ws['!cols'].length < NHC) ws['!cols'].push({wch:11});
     // Colour palette for the three section groups
-    const _c2025  = isPostCovid?'1A6B8A':'1E6B3A'; // teal/green — last year actual
-    const _cHist  = '7B6000';                        // amber — historical avg
-    const _cProj  = isPostCovid?'1A3A7A':'1B4A2A';  // navy — projection
+    const _c2025  = isPostCovid?'1A6B8A':'1E6B3A'; // teal/green - last year actual
+    const _cHist  = '7B6000';                        // amber - historical avg
+    const _cProj  = isPostCovid?'1A3A7A':'1B4A2A';  // navy - projection
     const _c2025L = isPostCovid?'E6F7FB':'E6F7EE';  // light teal bg
     const _cHistL = 'FFFBEA';                        // light amber bg
     const _cProjL = isPostCovid?'EBF2FF':'EBF7EE';  // light navy bg
@@ -2227,16 +2315,16 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       const dp = f.dayProfiles[off];
       if(!dp||!dp.profile.length) return;
 
-      // ── Find most recent year's actual Easter data for this offset ──────────
+      // -- Find most recent year's actual Easter data for this offset ----------
       const _allForOff = (f.byOffset[parseInt(off)]||[]).sort((a,b)=>b.date.localeCompare(a.date));
       const _prevDay   = _allForOff.find(d=>d.date < dp.date); // most recent historical day at same offset
       const _prevYear  = _prevDay ? _prevDay.date.substring(0,4) : null;
       const _prevHrsRaw = (_prevDay && _prevDay.hrs) ? _prevDay.hrs.filter(h=>/^\d{4}/.test(h.time||'')) : [];
-      // Build a map: time → hourly row for prev year
+      // Build a map: time - hourly row for prev year
       const _prevMap = {};
       _prevHrsRaw.forEach(h=>{ _prevMap[h.time]=h; });
 
-      // ── Section title bar ─────────────────────────────────────────────────────
+      // -- Section title bar -----------------------------------------------------
       ws['!rows'][R]={hpt:18};
       const _titleText = 'HOURLY PROFILE: '+dp.label.toUpperCase().replace(/ \(.*\)/,'')+
         '  ('+fDate(dp.date)+') — '+(_prevYear||'N/A')+' ACTUAL  |  HIST. AVG  |  '+tLabel+' PROJECTION';
@@ -2245,7 +2333,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       ws[XLSX.utils.encode_cell({r:R,c:0})].s.alignment={horizontal:'left',vertical:'center',indent:1};
       mrg.push({s:{r:R,c:0},e:{r:R,c:11}}); R++;  // title spans cols 0-11 only
 
-      // ── Group header row ────────────────────────────────────────────────────
+      // -- Group header row ----------------------------------------------------
       ws['!rows'][R]={hpt:14};
       // Time col
       ws[XLSX.utils.encode_cell({r:R,c:0})]=hHdr('','444444','FFFFFF');
@@ -2262,7 +2350,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
       // col 12 intentionally empty (no fill)
       R++;
 
-      // ── Column header row ────────────────────────────────────────────────────
+      // -- Column header row ----------------------------------------------------
       ws['!rows'][R]={hpt:13};
       ['Time',
        'Arr HKR','Arr Vis','▲ Arrival','Dep HKR','Dep Vis','▼ Dep','Total',  // prev year actual
@@ -2275,7 +2363,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
         ws[XLSX.utils.encode_cell({r:R,c:i})]=hHdr(h,_bg,'FFFFFF',8);
       }); R++;
 
-      // ── Data rows ────────────────────────────────────────────────────────────
+      // -- Data rows ------------------------------------------------------------
       const hrs=dp.profile.filter(h=>/^\d{4}/.test(h.time||''));
       const peakH=hrs.reduce((a,b)=>(b.ad_tot||0)>(a.ad_tot||0)?b:a,hrs[0]||{time:'',ad_tot:0});
 
@@ -2334,7 +2422,7 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
         ws['!rows'][R]={hpt:12}; R++;
       });
 
-      // ── DAY TOTAL row ─────────────────────────────────────────────────────────
+      // -- DAY TOTAL row ---------------------------------------------------------
       const _totBg = _cProj;
       const _tSty=(v,bg)=>({v:v||0,t:'n',s:{font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},
         fill:{type:'pattern',pattern:'solid',fgColor:{rgb:bg||_totBg}},
@@ -2408,9 +2496,9 @@ function buildAnalysisSheet(days, wb, buildSheet, S, border, C, isPostCovid, fDa
 }
 
 
-// ─── PDF EXPORT ──────────────────────────────────────────────────────────────
+// --- PDF EXPORT --------------------------------------------------------------
 
-// ── Mid-Autumn Festival actual dates (day before the HK PH "Day following") ──
+// -- Mid-Autumn Festival actual dates (day before the HK PH "Day following") --
 const MID_AUTUMN = {
   2003:'2003-09-11',2004:'2004-09-28',2005:'2005-09-18',2006:'2006-10-06',
   2007:'2007-09-25',2008:'2008-09-14',2009:'2009-10-03',2010:'2010-09-22',
@@ -2419,7 +2507,7 @@ const MID_AUTUMN = {
   2019:'2019-09-13',2020:'2020-10-01',2021:'2021-09-21',2022:'2022-09-10',
   2023:'2023-09-29',2024:'2024-09-17',2025:'2025-10-06',2026:'2026-09-25',
 };
-// Winter Solstice dates (冬至) — significant cross-border family visit day
+// Winter Solstice dates (--) - significant cross-border family visit day
 const WINTER_SOLSTICE = {
   2003:'2003-12-22',2004:'2004-12-21',2005:'2005-12-22',2006:'2006-12-22',
   2007:'2007-12-22',2008:'2008-12-21',2009:'2009-12-22',2010:'2010-12-22',
@@ -2429,7 +2517,7 @@ const WINTER_SOLSTICE = {
   2023:'2023-12-22',2024:'2024-12-21',2025:'2025-12-22',2026:'2026-12-22',
 };
 
-// Returns a detailed remark for use in Excel exports — includes Mainland holiday context
+// Returns a detailed remark for use in Excel exports - includes Mainland holiday context
 function getDetailedRemarks(dateStr){ return getRemarks(dateStr); }
 function _unusedDetailedRemarks(dateStr){
   if(!dateStr) return '';
@@ -2449,7 +2537,7 @@ function _unusedDetailedRemarks(dateStr){
   // Winter Solstice
   if(WINTER_SOLSTICE[year]===dateStr) return 'Winter Solstice (冬至)';
 
-  // National Day context — add Mainland flag for Golden Week range
+  // National Day context - add Mainland flag for Golden Week range
   if(month===10&&day>=1&&day<=7){
     if(base) return base + ' — Mainland PH';
     return 'National Day Golden Week — Mainland PH';
@@ -2459,16 +2547,16 @@ function _unusedDetailedRemarks(dateStr){
   if(month===5&&day===1) return 'Labour Day (勞動節) — HK & Mainland PH';
   if(month===5&&day>=2&&day<=7) return (base||'Labour Week')+' — Mainland Labour Golden Week';
 
-  // LNY — add Mainland context
+  // LNY - add Mainland context
   if(base&&base.includes('Lunar New Year')) return base+' — HK & Mainland PH';
 
-  // Ching Ming — Mainland PH
+  // Ching Ming - Mainland PH
   if(base&&base.includes('Ching Ming')) return base+' — HK & Mainland PH';
 
-  // Dragon Boat — Mainland PH
+  // Dragon Boat - Mainland PH
   if(base&&base.includes('Dragon Boat')||base&&base.includes('Tuen Ng')) return base+' — HK & Mainland PH';
 
-  // Chung Yeung — HK PH (not Mainland)
+  // Chung Yeung - HK PH (not Mainland)
   if(base&&base.includes('Chung Yeung')) return base+' (HK PH)';
 
   // All other cases: return base with PH tag
@@ -2487,18 +2575,18 @@ function exportExcel(){
   const latestDate=allDays.length?allDays[allDays.length-1].date:'';
   const wb=XLSX.utils.book_new();
 
-  // ── STYLE PALETTE — era-aware colour themes ───────────────────────────────
-  // Post-COVID  → Blue/Navy  (cool, modern)
-  // Since Comm. → Forest Green (classic, authoritative)
+  // -- STYLE PALETTE - era-aware colour themes -------------------------------
+  // Post-COVID  - Blue/Navy  (cool, modern)
+  // Since Comm. - Forest Green (classic, authoritative)
   const isPostCovid = currentEra === 'postcovid';
   const C = isPostCovid ? {
-    // ── POST-COVID: LIGHT BLUE — airy, professional ───────────────────────────
-    navyDark:  {rgb:'1A5276'}, // medium teal-blue — title bar
-    navy:      {rgb:'2E86C1'}, // medium blue — section headers
-    navyMid:   {rgb:'5DADE2'}, // sky blue — column headers
+    // -- POST-COVID: LIGHT BLUE - airy, professional ---------------------------
+    navyDark:  {rgb:'1A5276'}, // medium teal-blue - title bar
+    navy:      {rgb:'2E86C1'}, // medium blue - section headers
+    navyMid:   {rgb:'5DADE2'}, // sky blue - column headers
     accent:    {rgb:'2E86C1'},
-    grpArr:    {rgb:'2980B9'}, // arrival — clear blue
-    grpDep:    {rgb:'7D3C98'}, // departure — medium violet
+    grpArr:    {rgb:'2980B9'}, // arrival - clear blue
+    grpDep:    {rgb:'7D3C98'}, // departure - medium violet
     gold:      {rgb:'B07D10'},
     goldBg:    {rgb:'FEFCF0'},
     goldText:  {rgb:'B07D10'},
@@ -2509,13 +2597,13 @@ function exportExcel(){
     tagFg:     {rgb:'1A5276'},
     eraLabel:  'Post-COVID',
   } : {
-    // ── SINCE COMMISSIONING: LIGHT GREEN — fresh, professional ───────────────
-    navyDark:  {rgb:'1D6A40'}, // medium forest green — title bar
-    navy:      {rgb:'28A263'}, // medium green — section headers
-    navyMid:   {rgb:'52C28A'}, // light emerald — column headers
+    // -- SINCE COMMISSIONING: LIGHT GREEN - fresh, professional ---------------
+    navyDark:  {rgb:'1D6A40'}, // medium forest green - title bar
+    navy:      {rgb:'28A263'}, // medium green - section headers
+    navyMid:   {rgb:'52C28A'}, // light emerald - column headers
     accent:    {rgb:'28A263'},
-    grpArr:    {rgb:'17A589'}, // arrival — teal-green
-    grpDep:    {rgb:'2E86C1'}, // departure — blue contrast
+    grpArr:    {rgb:'17A589'}, // arrival - teal-green
+    grpDep:    {rgb:'2E86C1'}, // departure - blue contrast
     gold:      {rgb:'9A7010'},
     goldBg:    {rgb:'FEFCEF'},
     goldText:  {rgb:'9A7010'},
@@ -2546,7 +2634,7 @@ function exportExcel(){
   function fill(rgb){return{type:'pattern',pattern:'solid',fgColor:rgb};}
   function align(h='left',wrap=false){return{horizontal:h,vertical:'center',wrapText:wrap};}
 
-  // ── CELL STYLE FACTORIES ──────────────────────────────────────────────────
+  // -- CELL STYLE FACTORIES --------------------------------------------------
   const S={
     mainTitle: {font:font({sz:14,bold:true,color:C.white}),    fill:fill(C.navyDark), alignment:align('center'), border:{bottom:border.med}},
     subTitle:  {font:font({sz:10,color:{rgb:'CCDDFF'}}),         fill:fill(C.navyDark), alignment:align('center')},
@@ -2568,7 +2656,7 @@ function exportExcel(){
     totalN:    {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.totalBg),  alignment:align('center'), border:allBorders, numFmt:'#,##0'},
     totalNAlt: {font:font({sz:10,bold:true,color:C.totalFg}),    fill:fill(C.totalBg),  alignment:align('center'), border:allBordersAlt, numFmt:'#,##0'},
     blank:     {font:font(),                                     fill:fill(C.white),    border:{}},
-    // ── SORT KEY HIGHLIGHT ──
+    // -- SORT KEY HIGHLIGHT --
     sortHdr:   {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.med}},
     sortHdrL:  {font:font({sz:9,bold:true,color:C.white}),      fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.med}},
     sort1:     {font:font({sz:10,bold:true,color:C.white}),     fill:fill(C.navyMid),  alignment:align('center'), border:{bottom:border.thin}, numFmt:'#,##0'},
@@ -2577,7 +2665,7 @@ function exportExcel(){
     sortNAlt:  {font:font({sz:10,bold:true,color:C.navyDark}),  fill:fill({rgb:isPostCovid?'B8D8FF':'A8E8C0'}), alignment:align('center'), border:{bottom:border.thin}, numFmt:'#,##0'},
   };
 
-  // ── SHEET BUILDER ─────────────────────────────────────────────────────────
+  // -- SHEET BUILDER ---------------------------------------------------------
   function buildSheet(sheetTitle, sections, colWidths){
     const ws={};
     const merges=[];
@@ -2586,9 +2674,9 @@ function exportExcel(){
 
     ws['!rows'] = ws['!rows'] || [];
 
-    // ════════════════════════════════════════════════════════
-    // HEADER BLOCK — 5 rows, professional report style
-    // ════════════════════════════════════════════════════════
+    // --------------------------------------------------------
+    // HEADER BLOCK - 5 rows, professional report style
+    // --------------------------------------------------------
 
     // helper: solid fill cell
     function hCell(v,sz,bold,color,bgRgb,halign,italic){
@@ -2601,8 +2689,8 @@ function exportExcel(){
     }
     function blank(bgRgb){return hCell('',9,false,'FFFFFF',bgRgb);}
 
-    // ── 5-ROW HEADER — matches PDF report layout ────────────────────────────────
-    // R0: Era strip    6pt  era colour + "POST-COVID ●"
+    // -- 5-ROW HEADER - matches PDF report layout --------------------------------
+    // R0: Era strip    6pt  era colour + "POST-COVID -"
     // R1: Org bar     30pt  medium-dark + "LSC" left + "PASSENGER STATISTICS" right
     // R2: Sheet name  20pt  era colour  + sheet title left + "as at date" right
     // R3: Info strip  12pt  very light  + date range + op days
@@ -2620,7 +2708,7 @@ function exportExcel(){
     );
     merges.push({s:{r:R,c:0},e:{r:R,c:maxCols-1}}); R++;
 
-    // R1: Org bar — "LSC" bold left, "PASSENGER STATISTICS" right
+    // R1: Org bar - "LSC" bold left, "PASSENGER STATISTICS" right
     ws['!rows'][R]={hpt:30};
     for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',11,false,'FFFFFF',hdrDark);
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell('LSC',18,true,'FFFFFF',hdrDark,'left');
@@ -2629,7 +2717,7 @@ function exportExcel(){
     ws[XLSX.utils.encode_cell({r:R,c:_orgSplit})]=hCell('PASSENGER STATISTICS',9,false,isPostCovid?'AED6F1':'A9DFBF',hdrDark,'right');
     merges.push({s:{r:R,c:_orgSplit},e:{r:R,c:maxCols-1}}); R++;
 
-    // R2: Sheet name bar — era colour, sheet title left, date right
+    // R2: Sheet name bar - era colour, sheet title left, date right
     ws['!rows'][R]={hpt:20};
     for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',10,false,'FFFFFF',accentBarCol);
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(sheetTitle,11,true,'FFFFFF',accentBarCol,'left');
@@ -2638,7 +2726,7 @@ function exportExcel(){
     ws[XLSX.utils.encode_cell({r:R,c:_sheetSplit})]=hCell('as at  '+fDate(latestDate),9,false,isPostCovid?'D6EEFF':'CCF0DE',accentBarCol,'right');
     merges.push({s:{r:R,c:_sheetSplit},e:{r:R,c:maxCols-1}}); R++;
 
-    // R3: Info strip — very light
+    // R3: Info strip - very light
     ws['!rows'][R]={hpt:12};
     for(let c=0;c<maxCols;c++) ws[XLSX.utils.encode_cell({r:R,c})]=hCell('',8,false,'FFFFFF',metaBg);
     ws[XLSX.utils.encode_cell({r:R,c:0})]=hCell(
@@ -2663,7 +2751,7 @@ function exportExcel(){
     sections.forEach((sec,secIdx)=>{
       const _secStartR = R; // track where this section begins
       const nc=sec.headers.length;
-      // ── Section title classification ─────────────────────────────────────────
+      // -- Section title classification -----------------------------------------
       const titleIsArrival = sec.title.toLowerCase().includes('arrival') ||
                              sec.title.toLowerCase().includes('inbound');
       const titleIsDeparture = sec.title.toLowerCase().includes('departure') ||
@@ -2685,7 +2773,7 @@ function exportExcel(){
       const secTint = secTintMap[secAccent] || 'F5F5F5';
 
       // Direction label
-      // "total number/traffic" → TOTAL; arrival-only → ARRIVAL; departure → DEPARTURE
+      // "total number/traffic" - TOTAL; arrival-only - ARRIVAL; departure - DEPARTURE
       const titleIsTotal = sec.title.toLowerCase().includes('total number') ||
                            sec.title.toLowerCase().includes('total passenger') ||
                            sec.title.toLowerCase().includes('total traffic') ||
@@ -2698,7 +2786,7 @@ function exportExcel(){
                      : titleIsTotal ? 'TOTAL PASSENGERS'
                      : 'TOTAL PASSENGERS';
 
-      // ── SUB-ROW A: Thin top accent bar for this section ──────────────────
+      // -- SUB-ROW A: Thin top accent bar for this section ------------------
       ws['!rows'][R] = {hpt: 4};
       for(let col=0; col<maxCols; col++){
         ws[XLSX.utils.encode_cell({r:R,c:col})] = col<nc
@@ -2708,13 +2796,13 @@ function exportExcel(){
       merges.push({s:{r:R,c:0},e:{r:R,c:nc-1}});
       R++;
 
-      // ── SUB-ROW B: Two-column title bar ───────────────────────────────────
+      // -- SUB-ROW B: Two-column title bar -----------------------------------
       //   Left cell (col 0):  section number badge  e.g. "01"
       //   Next cols (1..nc-2): main title text
       //   Right cell (nc-1):  direction tag  e.g. "ARRIVAL / TOTAL"
       ws['!rows'][R] = {hpt: 22};
 
-      // Badge cell (col 0) — dark accent bg, white number
+      // Badge cell (col 0) - dark accent bg, white number
       ws[XLSX.utils.encode_cell({r:R,c:0})] = {v: String(secIdx+1).padStart(2,'0'), t:'s', s:{
         font:{name:'Calibri',sz:10,bold:true,color:{rgb:'FFFFFF'}},
         fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secAccent}},
@@ -2722,7 +2810,7 @@ function exportExcel(){
         border:{bottom:{style:'medium',color:{rgb:secAccent}}}
       }};
 
-      // Title cells (col 1 .. nc-2) — light tint bg, dark bold text
+      // Title cells (col 1 .. nc-2) - light tint bg, dark bold text
       const titleStyle = {
         font:{name:'Calibri',sz:11,bold:true,color:{rgb:secAccent}},
         fill:{type:'pattern',pattern:'solid',fgColor:{rgb:secTint}},
@@ -2735,7 +2823,7 @@ function exportExcel(){
       }
       if(nc>2) merges.push({s:{r:R,c:1},e:{r:R,c:nc-2}});
 
-      // Direction tag cell (last col) — accent bg, white italic text
+      // Direction tag cell (last col) - accent bg, white italic text
       if(nc >= 2){
         ws[XLSX.utils.encode_cell({r:R,c:nc-1})] = {v: dirLabel, t:'s', s:{
           font:{name:'Calibri',sz:9,bold:false,italic:true,color:{rgb:'FFFFFF'}},
@@ -2765,7 +2853,7 @@ function exportExcel(){
         R++;
       }
 
-      // Column headers — centre all; Remarks (last col) left; black outer border
+      // Column headers - centre all; Remarks (last col) left; black outer border
       for(let c=0;c<nc;c++){
         const isLastH=c===nc-1;
         const isSort=sec.sortCol!==undefined&&c===sec.sortCol;
@@ -2840,7 +2928,7 @@ function exportExcel(){
     return ws;
   }
 
-  // ── DATA HELPERS ─────────────────────────────────────────────────────────
+  // -- DATA HELPERS ---------------------------------------------------------
   function daily9col(x,i){
     return[i+1,fDate(x.day.date),dayOfWeek(x.day.date),
       x.day.dt.arr_res,x.day.dt.arr_vis,x.day.dt.dep_res,x.day.dt.dep_vis,x.day.dt.ad_tot,
@@ -2878,7 +2966,7 @@ function exportExcel(){
   const grpRem={label:'',span:1,style:S.colHdrL};
   const hHdr=['Rank','Date','Day','Time','Arr R','Arr V','Arr Total','Dep R','Dep V','Dep Total','Total','Remarks'];
 
-  // ── SHEET 1: Total Traffic ──
+  // -- SHEET 1: Total Traffic --
   {
     const ws=buildSheet(
       `Record High — Total Traffic`,
@@ -2905,7 +2993,7 @@ function exportExcel(){
     // Data rows: col 7 = white filler merged with Remarks; col 8 = plain white
     const _blkW={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:'FFFFFF'}},border:{}}};
     const _blkA={v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:isPostCovid?'F4F8FF':'F4FFF8'}},border:{}}};
-    // Accent colours for sec2 (arrival) and sec3 (departure) — must match buildSheet logic
+    // Accent colours for sec2 (arrival) and sec3 (departure) - must match buildSheet logic
     const _sec2Acc=isPostCovid?'2980B9':'17A589';
     const _sec3Acc=isPostCovid?'7D3C98':'2E86C1';
     function _accentCell(col){ return {v:'',t:'s',s:{fill:{type:'pattern',pattern:'solid',fgColor:{rgb:col}},border:{}}}; }
@@ -2941,7 +3029,7 @@ function exportExcel(){
     XLSX.utils.book_append_sheet(wb,ws,'Total Traffic');
   }
 
-  // ── SHEET 2: HKR ──
+  // -- SHEET 2: HKR --
   {
     const ws=buildSheet(
       `Record High — HKR (Residents)`,
@@ -2964,7 +3052,7 @@ function exportExcel(){
     XLSX.utils.book_append_sheet(wb,ws,'HKR');
   }
 
-  // ── SHEET 3: Visitor ──
+  // -- SHEET 3: Visitor --
   {
     const ws=buildSheet(
       `Record High — Visitors`,
@@ -2987,7 +3075,7 @@ function exportExcel(){
     XLSX.utils.book_append_sheet(wb,ws,'Visitor');
   }
 
-  // ── SHEET 4: Hourly ──
+  // -- SHEET 4: Hourly --
   {
     function hRows(fn){return topNHourly(days,fn).map(hourlyRow);}
     const ws=buildSheet(
@@ -3030,14 +3118,14 @@ function exportExcel(){
 }
 
 
-// ════════════════════════════════════════════════════════════════════════════
+// ----------------------------------------------------------------------------
 // ANALYSIS & FORECAST ENGINE
-// ════════════════════════════════════════════════════════════════════════════
+// ----------------------------------------------------------------------------
 
-// ─── Throughput parameters (Immigration control) ───────────────────────────
+// --- Throughput parameters (Immigration control) ---------------------------
 const TP = {
-  counterPPH:    180,   // visitors: 3.0 pax/min × 60 (used in estimateResources)
-  eChannelPPH:   600,   // HKR: 10.0 pax/min × 60
+  counterPPH:    180,   // visitors: 3.0 pax/min - 60 (used in estimateResources)
+  eChannelPPH:   600,   // HKR: 10.0 pax/min - 60
   resEChannel:   0.82,  // 82% of HKR use e-channel
   visEChannel:   0.10,  // ~10% of visitors use e-channel (ePassport eligible, avg)
   visCounter:    0.90,  // 90% of visitors use manned counter
@@ -3046,7 +3134,7 @@ const TP = {
   hallCapacity:  2500,  // arrival hall capacity pax (load baseline)
 };
 
-// ─── Easter date calculator ────────────────────────────────────────────────
+// --- Easter date calculator ------------------------------------------------
 function getEaster(year){
   const a=year%19,b=Math.floor(year/100),c=year%100;
   const d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25);
@@ -3059,7 +3147,7 @@ function getEaster(year){
 }
 function isoDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 
-// ─── Identify Easter days in dataset ──────────────────────────────────────
+// --- Identify Easter days in dataset --------------------------------------
 function getEasterDays(days){
   const easterDays=[];
   for(const day of days){
@@ -3070,7 +3158,7 @@ function getEasterDays(days){
   return easterDays;
 }
 
-// ─── Average hourly profile from a set of days ────────────────────────────
+// --- Average hourly profile from a set of days ----------------------------
 function avgHourlyProfile(days){
   const slots={};
   for(const day of days){
@@ -3097,9 +3185,9 @@ function avgHourlyProfile(days){
   return Object.values(avg).sort((a,b)=>a.time.localeCompare(b.time));
 }
 
-// ─── Year-over-year analysis ───────────────────────────────────────────────
+// --- Year-over-year analysis -----------------------------------------------
 // border closure period (COVID):
-// 2020-02-04 to 2023-01-07 — no passenger traffic during these dates
+// 2020-02-04 to 2023-01-07 - no passenger traffic during these dates
 const BORDER_CLOSED_FROM = '2020-02-04';
 const BORDER_CLOSED_TO   = '2023-01-07';
 function isBorderClosed(dateStr){
@@ -3107,7 +3195,7 @@ function isBorderClosed(dateStr){
 }
 
 
-// ── Timezone-safe date helpers ────────────────────────────────────────────────
+// -- Timezone-safe date helpers ------------------------------------------------
 // All calendar arithmetic uses UTC to avoid DST/timezone shifts in any locale.
 function isoAddDays(isoStr, n){
   const p=isoStr.split('-');
@@ -3119,7 +3207,7 @@ function walkDates(start, end, fn){
 }
 
 function yoyAnalysis(days){
-  // Compare same calendar period across years (Jan 1 → as-at MM-DD)
+  // Compare same calendar period across years (Jan 1 - as-at MM-DD)
   // IMPORTANT: Exclude days within the border closure period (COVID 2020-02-04 to 2023-01-07)
   // so "Since Commissioning" averages are not dragged down by zero-traffic closure days.
   if(!days.length) return [];
@@ -3133,7 +3221,7 @@ function yoyAnalysis(days){
   for(const d of days){
     const y = d.date.substring(0,4);
     const mmdd = d.date.substring(5);
-    // Same-period filter: only count Jan 1 → asAtMMDD in each year
+    // Same-period filter: only count Jan 1 - asAtMMDD in each year
     if(mmdd > asAtMMDD) continue;
     // Exclude closed / near-zero days from averages
     // (keeps 'Since Commissioning' stats meaningful despite COVID closure)
@@ -3151,13 +3239,13 @@ function yoyAnalysis(days){
     byYear[y].count++;
   }
   // Recompute closedDays mathematically for each year:
-  // Count calendar days in [Jan 1 → asAtMMDD] that fall in the closure period,
+  // Count calendar days in [Jan 1 - asAtMMDD] that fall in the closure period,
   // regardless of whether those days are present in the uploaded data.
   for(const [y, v] of Object.entries(byYear)){
     let closed=0;
     const periodEnd = y+'-'+asAtMMDD;
     const periodStart = y+'-01-01';
-    // Walk every day in [periodStart .. periodEnd] — timezone-safe string walk
+    // Walk every day in [periodStart .. periodEnd] - timezone-safe string walk
     walkDates(periodStart, periodEnd, iso=>{ if(isBorderClosed(iso)) closed++; });
     v.closedDays=closed;
   }
@@ -3170,7 +3258,7 @@ function yoyAnalysis(days){
   })).sort((a,b)=>a.year.localeCompare(b.year));
 }
 
-// Full-year analysis — all days in each calendar year (no same-period cap)
+// Full-year analysis - all days in each calendar year (no same-period cap)
 // Excludes border closure days. Marks incomplete years (current year = partial).
 function fullYearAnalysis(days){
   if(!days.length) return [];
@@ -3206,9 +3294,9 @@ function fullYearAnalysis(days){
 }
 
 
-// ─── Day-of-week analysis ──────────────────────────────────────────────────
+// --- Day-of-week analysis --------------------------------------------------
 function dowAnalysis(days, limitYears){
-  // Only use the last 3 calendar years for recency — avoids early-reopen 2023 diluting pattern
+  // Only use the last 3 calendar years for recency - avoids early-reopen 2023 diluting pattern
   limitYears = limitYears || 1;
   const maxYear = days.length ? Math.max(...days.map(d=>+d.date.substring(0,4))) : new Date().getFullYear();
   const cutoffYear = maxYear - limitYears + 1;
@@ -3233,7 +3321,7 @@ function dowAnalysis(days, limitYears){
   }));
 }
 
-// ─── Holiday-type analysis ─────────────────────────────────────────────────
+// --- Holiday-type analysis -------------------------------------------------
 
 
 function holidayAnalysis(days){
@@ -3276,7 +3364,7 @@ function holidayAnalysis(days){
   })).sort((a,b)=>b.avg-a.avg);
 }
 
-// ─── Counter & e-Channel estimator ────────────────────────────────────────
+// --- Counter & e-Channel estimator ----------------------------------------
 function weekdayWeekendAnalysis(days){
   // Weekday = Mon-Fri AND not a public holiday/special day
   // Weekend/PH = Sat, Sun, OR any holiday remark
@@ -3314,7 +3402,7 @@ function estimateResources(arrRes, arrVis, depRes, depVis){
     totalCounters:arrCounter+depCounter, totalECh:arrECh+depECh};
 }
 
-// ─── Forecast Easter 2026 ──────────────────────────────────────────────────
+// --- Forecast Easter 2026 --------------------------------------------------
 // Detect the next upcoming major HK holiday after the latest loaded date
 function detectUpcomingHoliday(days){
   if(!days||!days.length) return null;
@@ -3355,13 +3443,13 @@ function detectUpcomingHoliday(days){
 
 
 
-// ─── UNIVERSAL HOLIDAY FORECAST ENGINE ────────────────────────────────────────
+// --- UNIVERSAL HOLIDAY FORECAST ENGINE ----------------------------------------
 // Detects the NEXT upcoming major holiday from the loaded data and forecasts it.
 // Supports: Easter, Labour Golden Week (5/1-5), National Day GW (10/1-7),
 //           Lunar New Year, Christmas, Ching Ming
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
-// Define all holiday "windows" — how many days before/after the anchor date to include
+// Define all holiday "windows" - how many days before/after the anchor date to include
 const HOLIDAY_DEFS = [
   {
     type:'easter', icon:'🐣', label:y=>'Easter '+y,
@@ -3422,7 +3510,7 @@ const HOLIDAY_DEFS = [
     type:'summer', icon:'☀️', label:y=>'Summer Season '+y,
     getAnchor: y => y+'-07-15',
     getDates: y => {
-      // Build one entry per week (Mon of each week) Jul 15 – Aug 31
+      // Build one entry per week (Mon of each week) Jul 15 - Aug 31
       const dates=[]; let cur=y+'-07-15';
       const end=y+'-08-31';
       const weekLabels=['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6','Week 7'];
@@ -3499,7 +3587,7 @@ function detectNextForecastHoliday(days){
   return best;
 }
 
-// Universal holiday forecast — same methodology as Easter, but for any holiday
+// Universal holiday forecast - same methodology as Easter, but for any holiday
 function forecastNextHoliday(days){
   const POST_COVID_REOPEN='2023-01-08';
   if(!days||!days.length) return null;
@@ -3516,7 +3604,7 @@ function forecastNextHoliday(days){
   const postCovidHolDays = allHolDays.filter(d=>d.date>=POST_COVID_REOPEN);
   const projBase = postCovidHolDays.length>0 ? postCovidHolDays : allHolDays;
 
-  // 3. Growth rate — same OLS method
+  // 3. Growth rate - same OLS method
   const yoy=yoyAnalysis(days);
   let growthRate=0.05, growthMethod='default 5%', dynamicCap=0.20;
   const postCovidYears=yoy.filter(y=>y.year>='2023'&&y.count>=30&&y.avgDaily>0);
@@ -3625,7 +3713,7 @@ function forecastEaster2026(days){
   const easterDays=getEasterDays(days);
   if(easterDays.length===0)return null;
 
-  // ── Classify each historical Easter day by its position in the Easter period ──
+  // -- Classify each historical Easter day by its position in the Easter period --
   // Position: -2=Good Friday, -1=Easter Sat, 0=Easter Sun, 1=Easter Mon, 2=Day After etc.
   function easterOffset(dateStr){
     const year=parseInt(dateStr.substring(0,4));
@@ -3642,7 +3730,7 @@ function forecastEaster2026(days){
     byOffset[off].push(d);
   }
 
-  // ── Growth rate: OLS regression on post-COVID avg daily ─────────────────────
+  // -- Growth rate: OLS regression on post-COVID avg daily ---------------------
   const yoy=yoyAnalysis(days);
   let growthRate=0.05;
   let growthMethod='default 5%';
@@ -3702,7 +3790,7 @@ function forecastEaster2026(days){
   growthRate=Math.max(-0.10,Math.min(dynamicCap,growthRate));
   const factor=1+growthRate;
 
-  // ── Dynamically compute target Easter year from latest loaded date ──────────
+  // -- Dynamically compute target Easter year from latest loaded date ----------
   const _latestLoaded = days[days.length-1].date;
   const _latestY = parseInt(_latestLoaded.substring(0,4));
   let _targetY = _latestY;
@@ -3734,7 +3822,7 @@ function forecastEaster2026(days){
      '2':{date:_eDate( 2),label:_eLabel( 2),color:'var(--vis)'},
   };
 
-  // Post-COVID Easter days only — for projection baseline.
+  // Post-COVID Easter days only - for projection baseline.
   // Pre-COVID Easter had much lower volumes (different traffic regime).
   // Always project from current-era data, even when Since Commissioning era is selected.
   const postCovidEasterDays = easterDays.filter(d=>d.date>=POST_COVID_REOPEN);
@@ -3792,7 +3880,7 @@ function forecastEaster2026(days){
     };
   }
 
-  // Overall Easter average — from post-COVID base for projection
+  // Overall Easter average - from post-COVID base for projection
   const avgEasterTotal=Math.round(projectionBase.reduce((s,d)=>s+(d.dt.ad_tot||0),0)/projectionBase.length);
   const baselineNote = baseLabel;
 
@@ -3813,7 +3901,7 @@ function forecastEaster2026(days){
   };
 }
 
-// ─── BUILD ANALYSIS HTML ───────────────────────────────────────────────────
+// --- BUILD ANALYSIS HTML ---------------------------------------------------
 function buildSectionHTML(days,sec){
   if(sec==='total'){
     return`<div class="tables-grid">
@@ -3849,7 +3937,7 @@ function buildSectionHTML(days,sec){
   }
 }
 
-// ─── TABLE BUILDERS ───────────────────────────────────────────────────────────
+// --- TABLE BUILDERS -----------------------------------------------------------
 
 function buildTotalTrafficTable(days){
   const rows=topN(days,d=>d.dt.ad_tot);
@@ -3987,7 +4075,7 @@ function buildTable(title,colHeaders,isLeft,rows,totalCols,_unused,accentColor){
   </table></div></div>`;
 }
 
-// ─── RENDER ──────────────────────────────────────────────────────────────────
+// --- RENDER ------------------------------------------------------------------
 function renderContent(){
   const days=eraFilter(allDays);
   const latestDate=allDays.length?allDays[allDays.length-1].date:'';
@@ -3997,12 +4085,12 @@ function renderContent(){
   document.getElementById('content').innerHTML=buildSectionHTML(days,currentSection);
 }
 
-// ════════════════════════════════════════════════════════════════════════
+// ------------------------------------------------------------------------
 // THROUGHPUT ESTIMATOR
-// ════════════════════════════════════════════════════════════════════════
+// ------------------------------------------------------------------------
 
 // Service rates pax/unit/hour
-// ── Service rates based on operational data ──────────────────────────────────
+// -- Service rates based on operational data ----------------------------------
 // HKR:     5.0 pax/min = 300 pax/hr per counter  |  600 pax/hr per e-channel
 // Visitor: 3.0 pax/min = 180 pax/hr per counter  |  360 pax/hr per e-channel
 // Hall capacity baseline: ~2,500 pax (arrival hall capacity for load reference)
@@ -4069,3 +4157,7 @@ function exportAnalysisPDF(){
   window.print();
   setTimeout(()=>{ wrap.remove(); st.remove(); }, 1500);
 }
+</script>
+
+</body>
+</html>
