@@ -1120,6 +1120,7 @@ function xlPatchWorkbook(bytes, sheets){
     if(/<sheetViews>[\s\S]*?<\/sheetViews>/.test(xml)) xml = xml.replace(/<sheetViews>[\s\S]*?<\/sheetViews>/, '<sheetViews>'+view+'</sheetViews>');
     else xml = xml.replace(/(<dimension[^>]*\/>)/, '$1<sheetViews>'+view+'</sheetViews>');
     xml = xml.replace(/<pageMargins[^>]*\/>/, '');
+    xml = xml.replace(/<c r="([A-Z]+[0-9]+)"( s="[0-9]+")? t="str"><v><\/v><\/c>/g, '<c r="$1"$2/>');
     const foot = '&amp;L&amp;"Arial,Regular"&amp;8'+xlEsc(p.footerLeft)+'&amp;R&amp;"Arial,Regular"&amp;8Page &amp;P of &amp;N';
     let tail = '<printOptions horizontalCentered="1"/>'+
       '<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.6" header="0.2" footer="0.3"/>'+
@@ -1167,8 +1168,8 @@ function buildReport(eraKey){
   const era = isPC ? 'Post-COVID' : 'Since Commissioning';
   const first = days[0].date, asat = days[days.length-1].date;
   const opDays = days.filter(function(d){ return !isBorderClosed(d.date); }).length;
-  const scope = 'LSC Passenger Statistics   |   '+fDate(first)+' to '+fDate(asat)+'   |   '+
-                opDays.toLocaleString('en-US')+' operational days';
+  const scope = isPC ? 'LSC Passenger Statistics   |   '+fDate(first)+' to '+fDate(asat)+'   |   '+
+                opDays.toLocaleString('en-US')+' operational days' : 'LSC Passenger Statistics';
   const footer = 'LSC Passenger Statistics \u2014 Record High ('+era+') \u2014 as at '+fDate(asat);
   const refs = {};
   const n0 = function(k){ return function(o){ return o[k]||0; }; };
@@ -1197,7 +1198,7 @@ function buildReport(eraKey){
       sh.gap();
     });
     sh.r--;  // no gap after the last table
-    const w = [7, 17, xlWidth(occs)];
+    const w = [7, 19.29, Math.max(52.29, xlWidth(occs))];
     for(let k=3; k<ncols; k++) w.push(13);
     sh.widths(w);
     sh.finish(footer);
@@ -1278,7 +1279,7 @@ function buildReport(eraKey){
     hr.gap();
   });
   hr.r--;
-  hr.widths([7, 17, 12, xlWidth(hOccs), 12, 12, 12, 12, 12, 12, 12]);
+  hr.widths([7, 20, 12, xlWidth(hOccs), 12, 12, 12, 12, 12, 12, 12]);
   hr.finish(footer);
 
   // --- Analysis sheet --------------------------------------------------------------
@@ -1328,9 +1329,9 @@ function buildReport(eraKey){
   an.section('Annual Traffic \u2014 Full Year');
   const colsA = colsY.slice(0, 9);
   an.header(colsA);
-  trendRows(fy, colsA, false, function(y){ return y.isPartial ? y.year+' YTD' : y.year; });
+  trendRows(fy, colsA, false, function(y){ return y.year; });
   if(fy.length && fy[fy.length-1].isPartial){
-    an.note(yrNow+' YTD = 1 Jan \u2013 '+periodLabel+' '+yrNow+' (in progress).  Its Avg Daily is comparable with full years because it is a per-day figure.');
+    an.note(yrNow+' = 1 Jan \u2013 '+periodLabel+' '+yrNow+' (in progress).  Its Avg Daily is comparable with full years because it is a per-day figure.');
   }
   an.gap();
 
@@ -1492,23 +1493,27 @@ function buildReport(eraKey){
 
   // --- Summary (first tab): links to the No. 1 row of each category, boxed by group ---
   const sm = xlSheet('Summary', 'Record High \u2014 Summary ('+era+')', scope, T);
-  const colsS = [['Category','label',false], ['Record','num',true], ['Date','date',false],
+  const colsDaily = [['Category','label',false], ['Record High','num',true], ['Date','date',false],
+    ['Event','text',false], ['','text',false]];
+  const colsHourly = [['Category','label',false], ['Record High','num',true], ['Date','date',false],
     ['Time','time',false], ['Event','text',false]];
   const link = function(ref, c, asText){
     const a = "'"+ref.sheet.name+"'!"+xlCol(c)+ref.row;
     const v = ref.sheet.get(ref.row, c);
     return asText ? {f:a+'&""', v:String(v===null || v===undefined ? '' : v)} : {f:a, v:v};
   };
-  const sOccs = [];
-  function summaryBlock(title, groups){
+  const dOccs = [], hOccsS = [];
+  // Each group is outlined in black; in the daily table the Event text runs across D:E
+  function summaryBlock(title, groups, hourly){
+    const cols = hourly ? colsHourly : colsDaily;
     sm.section(title);
-    sm.header(colsS, true);
+    sm.header(cols, true);
     groups.forEach(function(g){
       const rows = g.filter(function(c){ return refs[c[1]]; });
       rows.forEach(function(c, i){
         const ref = refs[c[1]];
         const occ = link(ref, ref.occCol, true);
-        sOccs.push(occ.v);
+        (hourly ? hOccsS : dOccs).push(occ.v);
         const border = function(j, n){
           const b = {bottom:xlLine(i===rows.length-1 ? XL.BLACK : XL.LINE)};
           if(i===0) b.top = xlLine(XL.BLACK);
@@ -1516,23 +1521,23 @@ function buildReport(eraKey){
           if(j===n-1) b.right = xlLine(XL.BLACK);
           return b;
         };
-        sm.row(colsS, [c[0], link(ref, ref.col), link(ref, ref.dateCol),
-          ref.timeCol ? link(ref, ref.timeCol, true) : 'Full day', occ],
-          {border:border, color:ref.timeCol ? null : {3:XL.LIGHT}});
+        const vals = hourly ? [c[0], link(ref, ref.col), link(ref, ref.dateCol), link(ref, ref.timeCol, true), occ]
+                            : [c[0], link(ref, ref.col), link(ref, ref.dateCol), occ, ''];
+        sm.row(cols, vals, {border:border});
       });
     });
   }
   summaryBlock('Daily Record Highs', [
     [['Total passengers','d_total'], ['Arrival passengers','d_arr'], ['Departure passengers','d_dep']],
     [['Total HKR','d_hkr_total'], ['Arrival HKR','d_hkr_arr'], ['Departure HKR','d_hkr_dep']],
-    [['Total visitors','d_vis_total'], ['Arrival visitors','d_vis_arr'], ['Departure visitors','d_vis_dep']]]);
+    [['Total visitors','d_vis_total'], ['Arrival visitors','d_vis_arr'], ['Departure visitors','d_vis_dep']]], false);
   sm.gap();
   summaryBlock('Hourly Record Highs', [
     [['Total passengers','h_total']],
     [['Arrival passengers','h_arr'], ['Departure passengers','h_dep']],
     [['Arrival HKR','h_hkr_arr'], ['Departure HKR','h_hkr_dep']],
-    [['Arrival visitors','h_vis_arr'], ['Departure visitors','h_vis_dep']]]);
-  sm.widths([24, 13, 17, 12, xlWidth(sOccs, 24)]);
+    [['Arrival visitors','h_vis_arr'], ['Departure visitors','h_vis_dep']]], true);
+  sm.widths([24, 14.86, 17, 12, Math.max(xlWidth(hOccsS, 24), xlWidth(dOccs)-12)]);
   sm.finish(footer);
 
   const sheets = [sm, ttl, hkr, vis, hr, an];
